@@ -1,13 +1,9 @@
-# Example from: https://gitlab.fi.muni.cz/unix/examples/ci-examples/-/blob/java-maven/.gitlab-ci.yml
+# Based on https://gitlab.fi.muni.cz/unix/examples/ci-examples/-/blob/java-maven/.gitlab-ci.yml
 image: maven:3-jdk-11
 
-stages:
-  - build
-
 build:
-  stage: build
   tags:
     - shared-fi
   script:
     - mvn dependency:resolve --quiet
-    - mvn compile package
+    - mvn package
