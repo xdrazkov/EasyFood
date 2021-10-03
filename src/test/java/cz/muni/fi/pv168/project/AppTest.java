@@ -2,14 +2,17 @@ package cz.muni.fi.pv168.project;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * The example unit tests
  */
-public class AppTest {
+final class AppTest {
+
     @Test
-    public void exampleTest() {
-        assertTrue(true, "This test should always pass");
+    void example() {
+        assertThat(Integer.MAX_VALUE)
+                .as("This test should always pass")
+                .isEqualTo(2_147_483_647);
     }
 }

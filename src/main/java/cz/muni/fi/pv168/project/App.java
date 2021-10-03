@@ -1,11 +1,16 @@
 package cz.muni.fi.pv168.project;
 
 /**
- * Hello world!
+ * The example application
  */
 public class App {
-    // TODO: Replace with your main
+
+    private App() {
+        throw new AssertionError();
+    }
+
     public static void main(String[] args) {
+        // TODO: Replace with your code
         System.out.println("Hello World!");
     }
 }
