@@ -3,9 +3,9 @@ package cz.muni.fi.pv168.project;
 /**
  * The example application
  */
-public class App {
+public class Application {
 
-    private App() {
+    private Application() {
         throw new AssertionError();
     }
 
