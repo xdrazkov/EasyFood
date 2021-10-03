@@ -1,55 +1,33 @@
 # PV168 Project: {{ PROJECT NAME }}
 
+<!--- FIXME: fill in the PROJECT NAME above and include short description of what the project is about -->
 {{ PROJECT DESCRIPTION }}
 
-## Team Members:
+## Team Information
 
-1. Team Lead:  {{ NAME (EMAIL) }}
-2. Member: {{ NAME (EMAIL) }}
-3. Member: {{ NAME (EMAIL) }}
-4. Member: {{ NAME (EMAIL) }}
+| Seminar Group | Team |
+|-------------- | ---- |
+| PV168/0X      | Y    | <!--- FIXME: fill in the seminar group and team identification -->
 
-- Tech lead (Tutor): {{ TECH LEAD (EMAIL) }}
-- Customer: {{ CUSTOMER NAME (EMAIL) }}
+### Members
 
-## Build And Run Instructions
+| Role           | Person               |
+|----------------|----------------------|
+|Team Lead       | [Name Surname](https://is.muni.cz/auth/osoba/UCO) | <!--- FIXME: fill in the name and UCO -->
+|Member          | [Name Surname](https://is.muni.cz/auth/osoba/UCO) | <!--- FIXME: fill in the name and UCO -->
+|Member          | [Name Surname](https://is.muni.cz/auth/osoba/UCO) | <!--- FIXME: fill in the name and UCO -->
+|Member          | [Name Surname](https://is.muni.cz/auth/osoba/UCO) | <!--- FIXME: fill in the name and UCO -->
 
-Clone the repository:
+### Evaluators
 
-```shell
-git clone {{REPO URL}}
-```
+| Role           | Person               |
+|----------------|----------------------|
+|Customer        | [Name Surname](https://is.muni.cz/auth/osoba/UCO) | <!--- FIXME: fill in the name and UCO -->
+|Technical Coach | [Name Surname](https://is.muni.cz/auth/osoba/UCO) | <!--- FIXME: fill in the name and UCO -->
 
-Go to the project directory
+## TODO
 
-```shell
-cd {{PROJECT DIR}}
-```
-
-Run the tests:
-
-```shell
-mvn test
-```
-
-Build the package:
-
-```shell
-mvn package
-```
-
-The built `.jar` file can be found in the `/target` directory,
-you can execute it using:
-
-```shell
-java -cp .\target\pv168-project-1.0-SNAPSHOT.jar cz.muni.fi.pv168.project.App
-```
-
-Of course, the package name and the ``App`` path might be different for your project
-please update this command accordingly
-
-## TODO:
-
-- Update the `README.md` - fill in the project and team details and update the build instructions.
-- Update the `pom.xml` see the `FIXME`
-- Update the `.gitignore` to ignore unnecessary files (for example IDE dependent)
+- Update the [`README.md`](#) - fill in the project and team details (resolve all the `FIXME` comments and remove them).
+- Update the [`pom.xml`](pom.xml) - fill in the project and team details (resolve all the `FIXME` comments and remove them).
+- Update the [`.gitignore`](.gitignore) to ignore unnecessary files (for example IDE dependent)
+- Get rid of this TODO section. :-)
