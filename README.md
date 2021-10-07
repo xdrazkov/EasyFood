@@ -29,6 +29,5 @@
 
 - Update the [`README.md`](#) - fill in the project and team details (resolve all the `FIXME` comments and remove them).
 - Update the [`pom.xml`](pom.xml) - fill in the project and team details (resolve all the `FIXME` comments and remove them).
-- Rename the [`Application.java`](src/main/java/cz/muni/fi/pv168/project/Application.java) to your application name.
-- Update the [`.gitignore`](.gitignore) to ignore unnecessary files (for example IDE dependent)
-- Get rid of this TODO section. :-)
+- Start with [`Main.java`](src/main/java/cz/muni/fi/pv168/project/Main.java) as the _main class_ for your application.
+- Get rid of this TODO section. 😉

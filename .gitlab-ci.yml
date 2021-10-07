@@ -6,4 +6,5 @@ build:
     - shared-fi
   script:
     - mvn dependency:resolve --quiet
-    - mvn package
+    - mvn clean
+    - mvn verify

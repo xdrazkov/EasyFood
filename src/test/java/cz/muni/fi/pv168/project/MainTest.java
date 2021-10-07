@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * The example unit tests
  */
-final class ApplicationTest {
+final class MainTest {
 
     @Test
     void example() {
