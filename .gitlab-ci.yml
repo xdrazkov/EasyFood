@@ -1,10 +1,8 @@
 # Based on https://gitlab.fi.muni.cz/unix/examples/ci-examples/-/blob/java-maven/.gitlab-ci.yml
-image: maven:3-jdk-11
+image: maven:3-openjdk-17
 
 build:
   tags:
     - shared-fi
   script:
-    - mvn -v
-    - mvn --no-transfer-progress clean
-    - mvn -ntp verify
+    - mvn -ntp clean package
