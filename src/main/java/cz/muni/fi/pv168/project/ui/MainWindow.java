@@ -35,9 +35,9 @@ public class MainWindow {
         categories.add(new Category("Category 2", Category.DEFAULT_COLOR));
         categories.add(new Category("Category 3", Category.DEFAULT_COLOR));
         ArrayList<Ingredient> ingredients = new ArrayList<>();
-        ingredients.add(new Ingredient("Ingredient 1"));
-        ingredients.add(new Ingredient("Ingredient 2"));
-        ingredients.add(new Ingredient("Ingredient 3"));
+        ingredients.add(new Ingredient("Ingredient 1", IngredientType.COUNTABLE, 42));
+        ingredients.add(new Ingredient("Ingredient 2", IngredientType.POURABLE, 69));
+        ingredients.add(new Ingredient("Ingredient 3", IngredientType.WEIGHABLE, 420));
         recipes.add(new Recipe("Recipe 1", "Description for Recipe 1", 2, "", 2, categories.get(0), ingredients));
         recipes.add(new Recipe("Recipe 2", "Description for Recipe 2", 2, "", 2, categories.get(1), ingredients));
         recipes.add(new Recipe("Recipe 3", "Description for Recipe 3", 2, "", 2, categories.get(2), ingredients));
