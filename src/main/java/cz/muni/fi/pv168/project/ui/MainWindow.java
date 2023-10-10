@@ -1,5 +1,6 @@
 package cz.muni.fi.pv168.project.ui;
 
+import cz.muni.fi.pv168.project.data.TestDataGenerator;
 import cz.muni.fi.pv168.project.model.*;
 import cz.muni.fi.pv168.project.ui.action.AddAction;
 import cz.muni.fi.pv168.project.ui.action.DeleteAction;
@@ -29,23 +30,12 @@ public class MainWindow {
         frame = createFrame();
 
         // Generate test objects
-        ArrayList<Recipe> recipes = new ArrayList<>();
-        ArrayList<Category> categories = new ArrayList<>();
-        categories.add(new Category("Category 1", Category.DEFAULT_COLOR));
-        categories.add(new Category("Category 2", Category.DEFAULT_COLOR));
-        categories.add(new Category("Category 3", Category.DEFAULT_COLOR));
-        ArrayList<Ingredient> ingredients = new ArrayList<>();
-        ingredients.add(new Ingredient("Ingredient 1", IngredientType.COUNTABLE, 42));
-        ingredients.add(new Ingredient("Ingredient 2", IngredientType.POURABLE, 69));
-        ingredients.add(new Ingredient("Ingredient 3", IngredientType.WEIGHABLE, 420));
-        recipes.add(new Recipe("Recipe 1", "Description for Recipe 1", 2, "", 2, categories.get(0), ingredients));
-        recipes.add(new Recipe("Recipe 2", "Description for Recipe 2", 2, "", 2, categories.get(1), ingredients));
-        recipes.add(new Recipe("Recipe 3", "Description for Recipe 3", 2, "", 2, categories.get(2), ingredients));
 
-        ArrayList<Unit> units = new ArrayList<>();
-        units.add(new Unit("Unit 1", IngredientType.COUNTABLE));
-        units.add(new Unit("Unit 2", IngredientType.POURABLE));
-        units.add(new Unit("Unit 3", IngredientType.WEIGHABLE));
+        var testDataGenerator = new TestDataGenerator();
+        var categories = testDataGenerator.createTestCategories(5);
+        var ingredients = testDataGenerator.createTestIngredients(5);
+        var units = testDataGenerator.createTestUnits(5);
+        var recipes = testDataGenerator.createTestRecipes(10, categories, ingredients, units);
 
         // Create models
         var recipeTableModel = new RecipeTableModel(recipes);
