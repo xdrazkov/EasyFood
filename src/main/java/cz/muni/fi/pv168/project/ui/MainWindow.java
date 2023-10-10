@@ -1,17 +1,25 @@
 package cz.muni.fi.pv168.project.ui;
 
+import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Recipe;
+import cz.muni.fi.pv168.project.model.Unit;
 import cz.muni.fi.pv168.project.ui.action.AddAction;
 import cz.muni.fi.pv168.project.ui.action.DeleteAction;
 import cz.muni.fi.pv168.project.ui.action.EditAction;
 import cz.muni.fi.pv168.project.ui.action.OpenAction;
+import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
+import cz.muni.fi.pv168.project.ui.model.IngredientTableModel;
 import cz.muni.fi.pv168.project.ui.model.RecipeTableModel;
+import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
+import cz.muni.fi.pv168.project.ui.panels.CategoryTablePanel;
+import cz.muni.fi.pv168.project.ui.panels.IngredientTablePanel;
+import cz.muni.fi.pv168.project.ui.panels.RecipeTablePanel;
+import cz.muni.fi.pv168.project.ui.panels.UnitTablePanel;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainWindow {
     private final JFrame frame;
@@ -22,21 +30,60 @@ public class MainWindow {
 
     public MainWindow() {
         frame = createFrame();
+
+        // Generate test objects
         ArrayList<Recipe> recipes = new ArrayList<>();
         recipes.add(new Recipe("Recipe 1", "Description for Recipe 1"));
         recipes.add(new Recipe("Recipe 2", "Description for Recipe 2"));
-        var recipeTable = createRecipeTable(recipes);
-        addAction = new AddAction(recipeTable);
-        deleteAction = new DeleteAction(recipeTable);
+        recipes.add(new Recipe("Recipe 3", "Description for Recipe 3"));
+        ArrayList<Ingredient> ingredients = new ArrayList<>();
+        ingredients.add(new Ingredient("Ingredient 1"));
+        ingredients.add(new Ingredient("Ingredient 2"));
+        ingredients.add(new Ingredient("Ingredient 3"));
+        ArrayList<Unit> units = new ArrayList<>();
+        units.add(new Unit("Unit 1"));
+        units.add(new Unit("Unit 2"));
+        units.add(new Unit("Unit 3"));
+        ArrayList<Category> categories = new ArrayList<>();
+        categories.add(new Category("Category 1"));
+        categories.add(new Category("Category 2"));
+        categories.add(new Category("Category 3"));
+
+        // Create models
+        var recipeTableModel = new RecipeTableModel(recipes);
+        var ingredientTableModel = new IngredientTableModel(ingredients);
+        var categoryTableModel = new CategoryTableModel(categories);
+        var unitTableModel = new UnitTableModel(units);
+
+        // Create panels
+        var recipeTablePanel = new RecipeTablePanel(recipeTableModel, this::changeActionsState);
+        var ingredientTablePanel = new IngredientTablePanel(ingredientTableModel, this::changeActionsState);
+        var categoryTablePanel = new CategoryTablePanel(categoryTableModel, this::changeActionsState);
+        var unitTablePanel = new UnitTablePanel(unitTableModel, this::changeActionsState);
+
+
+        // Set up actions for recipe table
+        addAction = new AddAction(recipeTablePanel.getTable());
+        deleteAction = new DeleteAction(recipeTablePanel.getTable());
         deleteAction.setEnabled(false);
-        editAction = new EditAction(recipeTable);
+        editAction = new EditAction(recipeTablePanel.getTable());
         editAction.setEnabled(false);
-        openAction = new OpenAction(recipeTable);
+        openAction = new OpenAction(recipeTablePanel.getTable());
         openAction.setEnabled(false);
-        recipeTable.setComponentPopupMenu(createRecipeTablePopupMenu());
-        frame.add(new JScrollPane(recipeTable), BorderLayout.CENTER);
+
+        // Add the panels to tabbed pane
+        var tabbedPane = new JTabbedPane();
+        tabbedPane.addTab("Recipes", recipeTablePanel);
+        tabbedPane.addTab("Ingredients", ingredientTablePanel);
+        tabbedPane.addTab("Categories", categoryTablePanel);
+        tabbedPane.addTab("Units", unitTablePanel);
+        frame.add(tabbedPane, BorderLayout.CENTER);
+
+        // Add popup menu, toolbar, menubar
+        recipeTablePanel.getTable().setComponentPopupMenu(createRecipeTablePopupMenu());
         frame.add(createToolbar(), BorderLayout.BEFORE_FIRST_LINE);
         frame.setJMenuBar(createMenuBar());
+
         frame.pack();
     }
 
@@ -50,14 +97,6 @@ public class MainWindow {
         return frame;
     }
 
-    private JTable createRecipeTable(List<Recipe> recipes) {
-        var model = new RecipeTableModel(recipes);
-        var table = new JTable(model);
-        table.setAutoCreateRowSorter(true);
-        table.getSelectionModel().addListSelectionListener(this::rowSelectionChanged);
-
-        return table;
-    }
 
     private JPopupMenu createRecipeTablePopupMenu() {
         var menu = new JPopupMenu();
@@ -89,10 +128,9 @@ public class MainWindow {
         return toolbar;
     }
 
-    private void rowSelectionChanged(ListSelectionEvent listSelectionEvent) {
-        var selectionModel = (ListSelectionModel) listSelectionEvent.getSource();
-        editAction.setEnabled(selectionModel.getSelectedItemsCount() == 1);
-        deleteAction.setEnabled(selectionModel.getSelectedItemsCount() > 0);
-        openAction.setEnabled(selectionModel.getSelectedItemsCount() == 1);
+    private void changeActionsState(int selectedItemsCount) {
+        openAction.setEnabled(selectedItemsCount == 1);
+        editAction.setEnabled(selectedItemsCount == 1);
+        deleteAction.setEnabled(selectedItemsCount >= 1);
     }
 }

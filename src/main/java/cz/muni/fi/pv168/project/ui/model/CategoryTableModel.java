@@ -1,26 +1,26 @@
 package cz.muni.fi.pv168.project.ui.model;
 
-import cz.muni.fi.pv168.project.model.Recipe;
+import cz.muni.fi.pv168.project.model.Category;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecipeTableModel extends AbstractTableModel {
-    private final List<Recipe> recipes;
+public class CategoryTableModel extends AbstractTableModel {
 
-    private final List<Column<Recipe, ?>> columns = List.of(
-            Column.readonly("Title", String.class, Recipe::getTitle),
-            Column.readonly("Description", String.class, Recipe::getDescription)
+    private final List<Category> categories;
+
+    private final List<Column<Category, ?>> columns = List.of(
+            Column.readonly("Name", String.class, Category::getName)
     );
 
-    public RecipeTableModel(List<Recipe> recipes) {
-        this.recipes = new ArrayList<>(recipes);
+    public CategoryTableModel(List<Category> categories) {
+        this.categories = new ArrayList<>(categories);
     }
 
     @Override
     public int getRowCount() {
-        return recipes.size();
+        return categories.size();
     }
 
     @Override
@@ -30,8 +30,8 @@ public class RecipeTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        var recipe = getEntity(rowIndex);
-        return columns.get(columnIndex).getValue(recipe);
+        var category = getEntity(rowIndex);
+        return columns.get(columnIndex).getValue(category);
     }
 
     @Override
@@ -56,22 +56,22 @@ public class RecipeTableModel extends AbstractTableModel {
     }
 
     public void deleteRow(int rowIndex) {
-        recipes.remove(rowIndex);
+        categories.remove(rowIndex);
         fireTableRowsDeleted(rowIndex, rowIndex);
     }
 
-    public void addRow(Recipe recipe) {
-        int newRowIndex = recipes.size();
-        recipes.add(recipe);
+    public void addRow(Category recipe) {
+        int newRowIndex = categories.size();
+        categories.add(recipe);
         fireTableRowsInserted(newRowIndex, newRowIndex);
     }
 
-    public void updateRow(Recipe recipe) {
-        int rowIndex = recipes.indexOf(recipe);
+    public void updateRow(Category recipe) {
+        int rowIndex = categories.indexOf(recipe);
         fireTableRowsUpdated(rowIndex, rowIndex);
     }
 
-    public Recipe getEntity(int rowIndex) {
-        return recipes.get(rowIndex);
+    public Category getEntity(int rowIndex) {
+        return categories.get(rowIndex);
     }
 }
