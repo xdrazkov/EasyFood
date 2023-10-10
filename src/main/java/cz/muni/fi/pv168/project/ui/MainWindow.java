@@ -1,9 +1,6 @@
 package cz.muni.fi.pv168.project.ui;
 
-import cz.muni.fi.pv168.project.model.Category;
-import cz.muni.fi.pv168.project.model.Ingredient;
-import cz.muni.fi.pv168.project.model.Recipe;
-import cz.muni.fi.pv168.project.model.Unit;
+import cz.muni.fi.pv168.project.model.*;
 import cz.muni.fi.pv168.project.ui.action.AddAction;
 import cz.muni.fi.pv168.project.ui.action.DeleteAction;
 import cz.muni.fi.pv168.project.ui.action.EditAction;
@@ -46,9 +43,9 @@ public class MainWindow {
         recipes.add(new Recipe("Recipe 3", "Description for Recipe 3", 2, "", 2, categories.get(2), ingredients));
 
         ArrayList<Unit> units = new ArrayList<>();
-        units.add(new Unit("Unit 1"));
-        units.add(new Unit("Unit 2"));
-        units.add(new Unit("Unit 3"));
+        units.add(new Unit("Unit 1", IngredientType.COUNTABLE));
+        units.add(new Unit("Unit 2", IngredientType.POURABLE));
+        units.add(new Unit("Unit 3", IngredientType.WEIGHABLE));
 
         // Create models
         var recipeTableModel = new RecipeTableModel(recipes);
