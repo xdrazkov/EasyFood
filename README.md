@@ -1,33 +1,25 @@
-# PV168 Project: {{ PROJECT NAME }}
+# PV168 Project: {{ EASY FOOD }}
 
-<!--- FIXME: fill in the PROJECT NAME above and include short description of what the project is about -->
-{{ PROJECT DESCRIPTION }}
+{{ Desktop application (mainly for Windows). Target users: young people who like cooking. Implementation of basic recipe management application. }}
 
 ## Team Information
 
 | Seminar Group | Team |
 |-------------- | ---- |
-| PV168/0X      | Y    | <!--- FIXME: fill in the seminar group and team identification -->
+| PV168/10      | 3    |
 
 ### Members
 
 | Role           | Person               |
 |----------------|----------------------|
-|Team Lead       | [Name Surname](https://is.muni.cz/auth/osoba/UCO) | <!--- FIXME: fill in the name and UCO -->
-|Member          | [Name Surname](https://is.muni.cz/auth/osoba/UCO) | <!--- FIXME: fill in the name and UCO -->
-|Member          | [Name Surname](https://is.muni.cz/auth/osoba/UCO) | <!--- FIXME: fill in the name and UCO -->
-|Member          | [Name Surname](https://is.muni.cz/auth/osoba/UCO) | <!--- FIXME: fill in the name and UCO -->
+|Team Lead       | [Jaroslav Petrisko](https://is.muni.cz/auth/osoba/536611) |
+|Member          | [Peter Dražkovec](https://is.muni.cz/auth/osoba/536633) |
+|Member          | [Timotej Hajzuš](https://is.muni.cz/auth/osoba/536332) |
+|Member          | [Matúš Jakuboc](https://is.muni.cz/auth/osoba/536308) |
 
 ### Evaluators
 
 | Role           | Person               |
 |----------------|----------------------|
-|Customer        | [Name Surname](https://is.muni.cz/auth/osoba/UCO) | <!--- FIXME: fill in the name and UCO -->
-|Technical Coach | [Name Surname](https://is.muni.cz/auth/osoba/UCO) | <!--- FIXME: fill in the name and UCO -->
-
-## TODO
-
-- Update the [`README.md`](#) - fill in the project and team details (resolve all the `FIXME` comments and remove them).
-- Update the [`pom.xml`](pom.xml) - fill in the project and team details (resolve all the `FIXME` comments and remove them).
-- Start with [`Main.java`](src/main/java/cz/muni/fi/pv168/project/Main.java) as the _main class_ for your application.
-- Get rid of this TODO section. 😉
+|PM              | [Michael Koudela](https://is.muni.cz/auth/osoba/485441) |
+|Technical Coach | [Vilém Obrátil](https://is.muni.cz/auth/osoba/408073) |
