@@ -2,10 +2,7 @@ package cz.muni.fi.pv168.project.ui;
 
 import cz.muni.fi.pv168.project.data.TestDataGenerator;
 import cz.muni.fi.pv168.project.model.*;
-import cz.muni.fi.pv168.project.ui.action.AddAction;
-import cz.muni.fi.pv168.project.ui.action.DeleteAction;
-import cz.muni.fi.pv168.project.ui.action.EditAction;
-import cz.muni.fi.pv168.project.ui.action.OpenAction;
+import cz.muni.fi.pv168.project.ui.action.*;
 import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
 import cz.muni.fi.pv168.project.ui.model.IngredientTableModel;
 import cz.muni.fi.pv168.project.ui.model.RecipeTableModel;
@@ -25,6 +22,10 @@ public class MainWindow {
     private final Action deleteAction;
     private final Action editAction;
     private final Action openAction;
+
+    private final Action importAction;
+
+    private final Action exportAction;
 
     public MainWindow() {
         frame = createFrame();
@@ -58,6 +59,9 @@ public class MainWindow {
         editAction.setEnabled(false);
         openAction = new OpenAction(recipeTablePanel.getTable());
         openAction.setEnabled(false);
+        importAction = new ImportAction(recipeTablePanel.getTable());
+        exportAction = new ExportAction(recipeTablePanel.getTable());
+        exportAction.setEnabled(false);
 
         // Add the panels to tabbed pane
         var tabbedPane = new JTabbedPane();
@@ -92,6 +96,8 @@ public class MainWindow {
         menu.add(editAction);
         menu.add(addAction);
         menu.add(deleteAction);
+        menu.addSeparator();
+        menu.add(exportAction);
         return menu;
     }
 
@@ -102,6 +108,9 @@ public class MainWindow {
         editMenu.add(editAction);
         editMenu.add(addAction);
         editMenu.add(deleteAction);
+        editMenu.addSeparator();
+        editMenu.add(importAction);
+        editMenu.add(exportAction);
         editMenu.setMnemonic('e');
         menuBar.add(editMenu);
         return menuBar;
@@ -113,6 +122,9 @@ public class MainWindow {
         toolbar.add(editAction);
         toolbar.add(addAction);
         toolbar.add(deleteAction);
+        toolbar.addSeparator();
+        toolbar.add(importAction);
+        toolbar.add(exportAction);
         return toolbar;
     }
 
@@ -120,5 +132,6 @@ public class MainWindow {
         openAction.setEnabled(selectedItemsCount == 1);
         editAction.setEnabled(selectedItemsCount == 1);
         deleteAction.setEnabled(selectedItemsCount >= 1);
+        exportAction.setEnabled(selectedItemsCount >= 1);
     }
 }
