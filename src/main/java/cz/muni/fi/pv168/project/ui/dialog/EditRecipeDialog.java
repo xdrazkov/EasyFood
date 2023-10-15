@@ -35,7 +35,7 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
         instructions.setText(recipe.getInstructions());
         timeToPrepare.setText(Integer.toString(recipe.getTimeToPrepare()));
         category.setModel(new javax.swing.DefaultComboBoxModel<>(categories.toArray(new Category[categories.size()])));
-        category.getModel().setSelectedItem(recipe.getCategory().getName());
+        category.getModel().setSelectedItem(recipe.getCategory());
         ingredientList.setText(recipe.getIngredientList().toString());
     }
 
