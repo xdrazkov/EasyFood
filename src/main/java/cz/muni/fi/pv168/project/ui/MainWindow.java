@@ -3,6 +3,7 @@ package cz.muni.fi.pv168.project.ui;
 import cz.muni.fi.pv168.project.data.TestDataGenerator;
 import cz.muni.fi.pv168.project.model.*;
 import cz.muni.fi.pv168.project.ui.action.*;
+import cz.muni.fi.pv168.project.ui.model.CategoryListModel;
 import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
 import cz.muni.fi.pv168.project.ui.model.IngredientTableModel;
 import cz.muni.fi.pv168.project.ui.model.RecipeTableModel;
@@ -50,12 +51,11 @@ public class MainWindow {
         var categoryTablePanel = new CategoryTablePanel(categoryTableModel, this::changeActionsState);
         var unitTablePanel = new UnitTablePanel(unitTableModel, this::changeActionsState);
 
-
         // Set up actions for recipe table
         addAction = new AddAction(recipeTablePanel.getTable());
         deleteAction = new DeleteAction(recipeTablePanel.getTable());
         deleteAction.setEnabled(false);
-        editAction = new EditAction(recipeTablePanel.getTable());
+        editAction = new EditAction(recipeTablePanel.getTable(), categories);
         editAction.setEnabled(false);
         openAction = new OpenAction(recipeTablePanel.getTable());
         openAction.setEnabled(false);
