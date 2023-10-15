@@ -6,13 +6,10 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-public final class ExportAction extends AbstractAction {
+public final class ExportAction extends GeneralAction {
 
-    private final JTable recipeTable;
-
-    public ExportAction(JTable recipeTable) {
+    public ExportAction() {
         super("Export", Icons.EXPORT_ICON);
-        this.recipeTable = recipeTable;
         putValue(SHORT_DESCRIPTION, "Exports recipe");
         putValue(MNEMONIC_KEY, KeyEvent.VK_U);
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl U"));
@@ -22,4 +19,5 @@ public final class ExportAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
         // TODO
     }
+
 }

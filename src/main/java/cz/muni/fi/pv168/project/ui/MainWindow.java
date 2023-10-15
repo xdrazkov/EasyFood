@@ -1,9 +1,7 @@
 package cz.muni.fi.pv168.project.ui;
 
 import cz.muni.fi.pv168.project.data.TestDataGenerator;
-import cz.muni.fi.pv168.project.model.*;
 import cz.muni.fi.pv168.project.ui.action.*;
-import cz.muni.fi.pv168.project.ui.model.CategoryListModel;
 import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
 import cz.muni.fi.pv168.project.ui.model.IngredientTableModel;
 import cz.muni.fi.pv168.project.ui.model.RecipeTableModel;
@@ -14,25 +12,27 @@ import cz.muni.fi.pv168.project.ui.panels.RecipeTablePanel;
 import cz.muni.fi.pv168.project.ui.panels.UnitTablePanel;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.List;
 
 public class MainWindow {
     private final JFrame frame;
-    private final Action addAction;
-    private final Action deleteAction;
-    private final Action editAction;
-    private final Action openAction;
+    private final GeneralAction addAction;
+    private final GeneralAction deleteAction;
+    private final GeneralAction editAction;
+    private final GeneralAction openAction;
 
-    private final Action importAction;
+    private final GeneralAction importAction;
 
-    private final Action exportAction;
+    private final GeneralAction exportAction;
+    private List<GeneralAction> actions;
 
     public MainWindow() {
         frame = createFrame();
 
         // Generate test objects
-
         var testDataGenerator = new TestDataGenerator();
         var categories = testDataGenerator.createTestCategories(5);
         var ingredients = testDataGenerator.createTestIngredients(5);
@@ -52,16 +52,17 @@ public class MainWindow {
         var unitTablePanel = new UnitTablePanel(unitTableModel, this::changeActionsState);
 
         // Set up actions for recipe table
-        addAction = new AddAction(recipeTablePanel.getTable());
-        deleteAction = new DeleteAction(recipeTablePanel.getTable());
+        addAction = new AddAction();
+        deleteAction = new DeleteAction();
         deleteAction.setEnabled(false);
-        editAction = new EditAction(recipeTablePanel.getTable(), categories);
+        editAction = new EditAction(categories); // TODO pull somehow categories differently
         editAction.setEnabled(false);
-        openAction = new OpenAction(recipeTablePanel.getTable());
+        openAction = new OpenAction();
         openAction.setEnabled(false);
-        importAction = new ImportAction(recipeTablePanel.getTable());
-        exportAction = new ExportAction(recipeTablePanel.getTable());
+        importAction = new ImportAction();
+        exportAction = new ExportAction();
         exportAction.setEnabled(false);
+        this.actions = List.of(addAction, deleteAction, editAction, openAction, importAction, exportAction);
 
         // Add the panels to tabbed pane
         var tabbedPane = new JTabbedPane();
@@ -70,13 +71,31 @@ public class MainWindow {
         tabbedPane.addTab("Categories", categoryTablePanel);
         tabbedPane.addTab("Units", unitTablePanel);
         frame.add(tabbedPane, BorderLayout.CENTER);
+        setCurrentTableToActions(recipeTablePanel.getTable()); // maps initial table to all actions
 
         // Add popup menu, toolbar, menubar
-        recipeTablePanel.getTable().setComponentPopupMenu(createRecipeTablePopupMenu());
+        recipeTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu());
         frame.add(createToolbar(), BorderLayout.BEFORE_FIRST_LINE);
         frame.setJMenuBar(createMenuBar());
-
         frame.pack();
+
+        tabbedPane.addChangeListener(new ChangeListener() {
+            // when tab changes
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                var currTable = getCurrentTableFromPanel((JTabbedPane) e.getSource());
+                setCurrentTableToActions(currTable);
+
+                // clear all row selections
+                recipeTablePanel.getTable().clearSelection();
+                ingredientTablePanel.getTable().clearSelection();
+                unitTablePanel.getTable().clearSelection();
+                categoryTablePanel.getTable().clearSelection();
+
+                actions.forEach(x -> x.setEnabled(false)); // all actions are disabled
+                addAction.setEnabled(true); // except for add action
+            }
+        });
     }
 
     public void show() {
@@ -90,7 +109,7 @@ public class MainWindow {
     }
 
 
-    private JPopupMenu createRecipeTablePopupMenu() {
+    private JPopupMenu createTablePopupMenu() {
         var menu = new JPopupMenu();
         menu.add(openAction);
         menu.add(editAction);
@@ -133,5 +152,16 @@ public class MainWindow {
         editAction.setEnabled(selectedItemsCount == 1);
         deleteAction.setEnabled(selectedItemsCount >= 1);
         exportAction.setEnabled(selectedItemsCount >= 1);
+    }
+
+    private void setCurrentTableToActions(JTable table) {
+        this.actions.forEach(x -> x.setTable(table));
+    }
+
+    private JTable getCurrentTableFromPanel(JTabbedPane tab) {
+        int currentTab = tab.getSelectedIndex();
+        JPanel panel = (JPanel) tab.getComponentAt(currentTab);
+        JScrollPane scrollPane = (JScrollPane) panel.getComponent(0);
+        return (JTable) scrollPane.getViewport().getView();
     }
 }

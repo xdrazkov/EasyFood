@@ -6,13 +6,10 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-public final class AddAction extends AbstractAction {
+public final class AddAction extends GeneralAction {
 
-    private final JTable recipeTable;
-
-    public AddAction(JTable recipeTable) {
+    public AddAction() {
         super("Add", Icons.ADD_ICON);
-        this.recipeTable = recipeTable;
         putValue(SHORT_DESCRIPTION, "Adds new recipe");
         putValue(MNEMONIC_KEY, KeyEvent.VK_A);
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl N"));
@@ -20,6 +17,5 @@ public final class AddAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // TODO
     }
 }
