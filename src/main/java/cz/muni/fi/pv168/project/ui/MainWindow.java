@@ -27,7 +27,7 @@ public class MainWindow {
     private final GeneralAction importAction;
 
     private final GeneralAction exportAction;
-    private List<GeneralAction> actions;
+    private final List<GeneralAction> actions;
 
     public MainWindow() {
         frame = createFrame();
@@ -54,15 +54,12 @@ public class MainWindow {
         // Set up actions for recipe table
         addAction = new AddAction();
         deleteAction = new DeleteAction();
-        deleteAction.setEnabled(false);
         editAction = new EditAction(categories); // TODO pull somehow categories differently
-        editAction.setEnabled(false);
         openAction = new OpenAction();
-        openAction.setEnabled(false);
         importAction = new ImportAction();
         exportAction = new ExportAction();
-        exportAction.setEnabled(false);
         this.actions = List.of(addAction, deleteAction, editAction, openAction, importAction, exportAction);
+        setToDefaultActionEnablement();
 
         // Add the panels to tabbed pane
         var tabbedPane = new JTabbedPane();
@@ -71,7 +68,6 @@ public class MainWindow {
         tabbedPane.addTab("Categories", categoryTablePanel);
         tabbedPane.addTab("Units", unitTablePanel);
         frame.add(tabbedPane, BorderLayout.CENTER);
-        setCurrentTableToActions(recipeTablePanel.getTable()); // maps initial table to all actions
 
         // Add popup menu, toolbar, menubar
         recipeTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu());
@@ -79,21 +75,21 @@ public class MainWindow {
         frame.setJMenuBar(createMenuBar());
         frame.pack();
 
+        setCurrentTableToActions(getCurrentTableFromPanel(tabbedPane)); // maps starting table to all actions
+
         tabbedPane.addChangeListener(new ChangeListener() {
             // when tab changes
             @Override
             public void stateChanged(ChangeEvent e) {
                 var currTable = getCurrentTableFromPanel((JTabbedPane) e.getSource());
                 setCurrentTableToActions(currTable);
+                setToDefaultActionEnablement();
 
                 // clear all row selections
                 recipeTablePanel.getTable().clearSelection();
                 ingredientTablePanel.getTable().clearSelection();
                 unitTablePanel.getTable().clearSelection();
                 categoryTablePanel.getTable().clearSelection();
-
-                actions.forEach(x -> x.setEnabled(false)); // all actions are disabled
-                addAction.setEnabled(true); // except for add action
             }
         });
     }
@@ -163,5 +159,11 @@ public class MainWindow {
         JPanel panel = (JPanel) tab.getComponentAt(currentTab);
         JScrollPane scrollPane = (JScrollPane) panel.getComponent(0);
         return (JTable) scrollPane.getViewport().getView();
+    }
+
+    private void setToDefaultActionEnablement() {
+        actions.forEach(x -> x.setEnabled(false)); // all actions are disabled
+        addAction.setEnabled(true); // except for add action
+        importAction.setEnabled(true); // and import
     }
 }
