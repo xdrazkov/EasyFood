@@ -10,6 +10,10 @@ import java.util.List;
 
 public class IngredientTableModel extends AbstractTableModel {
 
+    public List<Ingredient> getIngredients() {
+        return ingredients;
+    }
+
     private final List<Ingredient> ingredients;
 
     private final List<Column<Ingredient, ?>> columns = List.of(

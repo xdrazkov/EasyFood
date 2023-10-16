@@ -1,6 +1,8 @@
 package cz.muni.fi.pv168.project.ui;
 
 import cz.muni.fi.pv168.project.data.TestDataGenerator;
+import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.ui.action.*;
 import cz.muni.fi.pv168.project.ui.filters.RecipeTableFilter;
 import cz.muni.fi.pv168.project.ui.filters.values.SpecialFilterCategoryValues;
@@ -13,6 +15,8 @@ import cz.muni.fi.pv168.project.ui.panels.CategoryTablePanel;
 import cz.muni.fi.pv168.project.ui.panels.IngredientTablePanel;
 import cz.muni.fi.pv168.project.ui.panels.RecipeTablePanel;
 import cz.muni.fi.pv168.project.ui.panels.UnitTablePanel;
+import cz.muni.fi.pv168.project.ui.renderers.CategoryRenderer;
+import cz.muni.fi.pv168.project.ui.renderers.IngredientRenderer;
 import cz.muni.fi.pv168.project.ui.renderers.SpecialFilterCategoryValuesRenderer;
 import cz.muni.fi.pv168.project.ui.renderers.SpecialFilterIngredientValuesRenderer;
 import cz.muni.fi.pv168.project.util.Either;
@@ -40,11 +44,12 @@ public class MainWindow {
 
     private final RecipeTableModel recipeTableModel;
 
-    private final CategoryTableModel categoryTableModel;
+    private static CategoryTableModel categoryTableModel;
 
-    private final IngredientTableModel ingredientTableModel;
+    private static IngredientTableModel ingredientTableModel;
 
     private final UnitTableModel unitTableModel;
+
 
     public MainWindow() {
         frame = createFrame();
@@ -58,8 +63,8 @@ public class MainWindow {
 
         // Create models
         this.recipeTableModel = new RecipeTableModel(recipes);
-        this.ingredientTableModel = new IngredientTableModel(ingredients);
-        this.categoryTableModel = new CategoryTableModel(categories);
+        ingredientTableModel = new IngredientTableModel(ingredients);
+        categoryTableModel = new CategoryTableModel(categories);
         this.unitTableModel = new UnitTableModel(units);
 
         // Create panels
@@ -88,13 +93,13 @@ public class MainWindow {
 
         // Add popup menu, toolbar, menubar
         recipeTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu());
-        frame.add(createToolbar(), BorderLayout.BEFORE_FIRST_LINE);
         var rowSorter = new TableRowSorter<>(recipeTableModel);
         var recipeTableFilter = new RecipeTableFilter(rowSorter);
         recipeTablePanel.getTable().setRowSorter(rowSorter);
 
         var categoryFilter = createCategoryFilter(recipeTableFilter);
         var ingredientFilter = createIngredientFilter(recipeTableFilter);
+        frame.add(createToolbar(categoryFilter, ingredientFilter), BorderLayout.BEFORE_FIRST_LINE);
 
         frame.setJMenuBar(createMenuBar());
         frame.pack();
@@ -120,20 +125,20 @@ public class MainWindow {
 
     private static JComboBox<Either<SpecialFilterCategoryValues, Category>> createCategoryFilter(
             RecipeTableFilter recipeTableFilter) {
-        return FilterComboboxBuilder.create(SpecialFilterCategoryValues.class, this.categoryTableModel.get)
+        return FilterComboboxBuilder.create(SpecialFilterCategoryValues.class, categoryTableModel.getCategories().toArray(new Category[0]))
                 .setSelectedItem(SpecialFilterCategoryValues.ALL)
                 .setSpecialValuesRenderer(new SpecialFilterCategoryValuesRenderer())
-//                .setValuesRenderer(new GenderRenderer())
+                .setValuesRenderer(new CategoryRenderer())
                 .setFilter(recipeTableFilter::filterCategory)
                 .build();
     }
 
     private static JComboBox<Either<SpecialFilterIngredientValues, Ingredient>> createIngredientFilter(
             RecipeTableFilter recipeTableFilter) {
-        return FilterComboboxBuilder.create(SpecialFilterIngredientValues.class, IngredientTableModel)
+        return FilterComboboxBuilder.create(SpecialFilterIngredientValues.class, ingredientTableModel.getIngredients().toArray(new Ingredient[0]))
                 .setSelectedItem(SpecialFilterIngredientValues.ALL)
                 .setSpecialValuesRenderer(new SpecialFilterIngredientValuesRenderer())
-//                .setValuesRenderer(new DepartmentRenderer())
+                .setValuesRenderer(new IngredientRenderer())
                 .setFilter(recipeTableFilter::filterIngredient)
                 .build();
     }
