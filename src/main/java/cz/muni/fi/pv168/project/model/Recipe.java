@@ -38,6 +38,8 @@ public class Recipe {
         this.ingredientList = ingredientList;
     }
 
+    public Recipe(){}
+
     public int getPortionCount() {
         return portionCount;
     }
