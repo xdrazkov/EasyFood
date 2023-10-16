@@ -119,6 +119,9 @@ public class MainWindow {
                 ingredientTablePanel.getTable().clearSelection();
                 unitTablePanel.getTable().clearSelection();
                 categoryTablePanel.getTable().clearSelection();
+
+                categoryFilter.setVisible(tabbedPane.getSelectedIndex() == 0); // first is recipe
+                ingredientFilter.setVisible(tabbedPane.getSelectedIndex() == 0);
             }
         });
     }
