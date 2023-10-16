@@ -2,6 +2,9 @@ package cz.muni.fi.pv168.project.ui;
 
 import cz.muni.fi.pv168.project.data.TestDataGenerator;
 import cz.muni.fi.pv168.project.ui.action.*;
+import cz.muni.fi.pv168.project.ui.filters.RecipeTableFilter;
+import cz.muni.fi.pv168.project.ui.filters.values.SpecialFilterCategoryValues;
+import cz.muni.fi.pv168.project.ui.filters.values.SpecialFilterIngredientValues;
 import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
 import cz.muni.fi.pv168.project.ui.model.IngredientTableModel;
 import cz.muni.fi.pv168.project.ui.model.RecipeTableModel;
@@ -10,12 +13,18 @@ import cz.muni.fi.pv168.project.ui.panels.CategoryTablePanel;
 import cz.muni.fi.pv168.project.ui.panels.IngredientTablePanel;
 import cz.muni.fi.pv168.project.ui.panels.RecipeTablePanel;
 import cz.muni.fi.pv168.project.ui.panels.UnitTablePanel;
+import cz.muni.fi.pv168.project.ui.renderers.SpecialFilterCategoryValuesRenderer;
+import cz.muni.fi.pv168.project.ui.renderers.SpecialFilterIngredientValuesRenderer;
+import cz.muni.fi.pv168.project.util.Either;
+import cz.muni.fi.pv168.project.ui.filters.components.FilterComboboxBuilder;
+
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.util.List;
+import javax.swing.table.TableRowSorter;
 
 public class MainWindow {
     private final JFrame frame;
@@ -29,6 +38,14 @@ public class MainWindow {
     private final GeneralAction exportAction;
     private final List<GeneralAction> actions;
 
+    private final RecipeTableModel recipeTableModel;
+
+    private final CategoryTableModel categoryTableModel;
+
+    private final IngredientTableModel ingredientTableModel;
+
+    private final UnitTableModel unitTableModel;
+
     public MainWindow() {
         frame = createFrame();
 
@@ -40,10 +57,10 @@ public class MainWindow {
         var recipes = testDataGenerator.createTestRecipes(10, categories, ingredients, units);
 
         // Create models
-        var recipeTableModel = new RecipeTableModel(recipes);
-        var ingredientTableModel = new IngredientTableModel(ingredients);
-        var categoryTableModel = new CategoryTableModel(categories);
-        var unitTableModel = new UnitTableModel(units);
+        this.recipeTableModel = new RecipeTableModel(recipes);
+        this.ingredientTableModel = new IngredientTableModel(ingredients);
+        this.categoryTableModel = new CategoryTableModel(categories);
+        this.unitTableModel = new UnitTableModel(units);
 
         // Create panels
         var recipeTablePanel = new RecipeTablePanel(recipeTableModel, this::changeActionsState);
@@ -72,6 +89,13 @@ public class MainWindow {
         // Add popup menu, toolbar, menubar
         recipeTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu());
         frame.add(createToolbar(), BorderLayout.BEFORE_FIRST_LINE);
+        var rowSorter = new TableRowSorter<>(recipeTableModel);
+        var recipeTableFilter = new RecipeTableFilter(rowSorter);
+        recipeTablePanel.getTable().setRowSorter(rowSorter);
+
+        var categoryFilter = createCategoryFilter(recipeTableFilter);
+        var ingredientFilter = createIngredientFilter(recipeTableFilter);
+
         frame.setJMenuBar(createMenuBar());
         frame.pack();
 
@@ -92,6 +116,26 @@ public class MainWindow {
                 categoryTablePanel.getTable().clearSelection();
             }
         });
+    }
+
+    private static JComboBox<Either<SpecialFilterCategoryValues, Category>> createCategoryFilter(
+            RecipeTableFilter recipeTableFilter) {
+        return FilterComboboxBuilder.create(SpecialFilterCategoryValues.class, this.categoryTableModel.get)
+                .setSelectedItem(SpecialFilterCategoryValues.ALL)
+                .setSpecialValuesRenderer(new SpecialFilterCategoryValuesRenderer())
+//                .setValuesRenderer(new GenderRenderer())
+                .setFilter(recipeTableFilter::filterCategory)
+                .build();
+    }
+
+    private static JComboBox<Either<SpecialFilterIngredientValues, Ingredient>> createIngredientFilter(
+            RecipeTableFilter recipeTableFilter) {
+        return FilterComboboxBuilder.create(SpecialFilterIngredientValues.class, IngredientTableModel)
+                .setSelectedItem(SpecialFilterIngredientValues.ALL)
+                .setSpecialValuesRenderer(new SpecialFilterIngredientValuesRenderer())
+//                .setValuesRenderer(new DepartmentRenderer())
+                .setFilter(recipeTableFilter::filterIngredient)
+                .build();
     }
 
     public void show() {
@@ -131,7 +175,7 @@ public class MainWindow {
         return menuBar;
     }
 
-    private JToolBar createToolbar() {
+    private JToolBar createToolbar(Component... components) {
         var toolbar = new JToolBar();
         toolbar.add(openAction);
         toolbar.add(editAction);
@@ -140,6 +184,12 @@ public class MainWindow {
         toolbar.addSeparator();
         toolbar.add(importAction);
         toolbar.add(exportAction);
+        toolbar.addSeparator();
+
+        for (var component : components) {
+            toolbar.add(component);
+        }
+
         return toolbar;
     }
 

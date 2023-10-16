@@ -6,6 +6,7 @@ import javax.swing.ListModel;
 import javax.swing.event.ListDataListener;
 import java.util.Objects;
 
+import javax.swing.*;
 /**
  * This class adapts {@link ListModel} to {@link ComboBoxModel}. The purpose is to allow
  * creating multiple {@code ComboBoxModels} with independent {@code selectedItem} backed up

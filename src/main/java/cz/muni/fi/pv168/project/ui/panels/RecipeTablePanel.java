@@ -1,6 +1,8 @@
 package cz.muni.fi.pv168.project.ui.panels;
 
+import cz.muni.fi.pv168.project.model.Recipe;
 import cz.muni.fi.pv168.project.ui.model.RecipeTableModel;
+import cz.muni.fi.pv168.project.ui.renderers.PreparationTimeRenderer;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -18,6 +20,7 @@ public class RecipeTablePanel extends JPanel {
     public RecipeTablePanel(RecipeTableModel recipeTableModel, Consumer<Integer> onSelectionChange) {
         setLayout(new BorderLayout());
         table = setUpTable(recipeTableModel);
+        table.setDefaultRenderer(Recipe.class, new PreparationTimeRenderer());
         add(new JScrollPane(table), BorderLayout.CENTER);
 
         this.onSelectionChange = onSelectionChange;
