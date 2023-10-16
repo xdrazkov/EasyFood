@@ -53,6 +53,8 @@ public class MainWindow {
 
     public MainWindow() {
         frame = createFrame();
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setVisible(true);
 
         // Generate test objects
         var testDataGenerator = new TestDataGenerator();
