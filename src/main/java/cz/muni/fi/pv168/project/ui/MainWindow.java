@@ -74,7 +74,7 @@ public class MainWindow {
         var unitTablePanel = new UnitTablePanel(unitTableModel, this::changeActionsState);
 
         // Set up actions for recipe table
-        addAction = new AddAction(categories); // TODO pull somehow categories differently
+        addAction = new AddAction(categories, unitTableModel); // TODO pull somehow categories differently
         deleteAction = new DeleteAction();
         editAction = new EditAction(categories, ingredients, units); // TODO pull somehow categories differently
         openAction = new OpenAction();

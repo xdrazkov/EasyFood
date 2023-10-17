@@ -60,6 +60,10 @@ public class UnitTableModel extends AbstractTableModel {
         columns.get(columnIndex).setValue(value, recipe);
     }
 
+    public List<Unit> getUnits() {
+        return units;
+    }
+
     public void deleteRow(int rowIndex) {
         units.remove(rowIndex);
         fireTableRowsDeleted(rowIndex, rowIndex);
