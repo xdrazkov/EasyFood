@@ -1,6 +1,9 @@
 package cz.muni.fi.pv168.project.model;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 
 public class Recipe {
@@ -10,7 +13,7 @@ public class Recipe {
     private String instructions;
     private int timeToPrepare; // in minutes; import java.util.concurrent.TimeUnit
     private Category category;
-    private List<Ingredient> ingredientList;
+    private HashMap<Ingredient, Pair<Unit, Integer>> ingredientList;
 
     public String getTitle() {
         return title;
@@ -28,7 +31,7 @@ public class Recipe {
         this.description = description;
     }
 
-    public Recipe(String title, String description, int portionCount, String instructions, int timeToPrepare, Category category, List<Ingredient> ingredientList) {
+    public Recipe(String title, String description, int portionCount, String instructions, int timeToPrepare, Category category, HashMap<Ingredient, Pair<Unit, Integer>> ingredientList) {
         this.title = title;
         this.description = description;
         this.portionCount = portionCount;
@@ -72,11 +75,11 @@ public class Recipe {
         this.category = category;
     }
 
-    public List<Ingredient> getIngredientList() {
+    public HashMap<Ingredient, Pair<Unit, Integer>> getIngredientList() {
         return ingredientList;
     }
 
-    public void setIngredientList(List<Ingredient> ingredientList) {
+    public void setIngredientList(HashMap<Ingredient, Pair<Unit, Integer>> ingredientList) {
         this.ingredientList = ingredientList;
     }
 }

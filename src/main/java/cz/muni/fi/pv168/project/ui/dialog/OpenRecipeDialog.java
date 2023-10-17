@@ -2,9 +2,12 @@ package cz.muni.fi.pv168.project.ui.dialog;
 
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Recipe;
+import cz.muni.fi.pv168.project.model.Unit;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public final class OpenRecipeDialog extends EntityDialog<Recipe> {
@@ -16,13 +19,13 @@ public final class OpenRecipeDialog extends EntityDialog<Recipe> {
     private final JLabel timeToPrepare = new JLabel();
     private final JLabel category = new JLabel();
     private final JLabel ingredientList = new JLabel();
-    //private final JTable ingredients = new J
     private final Recipe recipe;
 
     public OpenRecipeDialog(Recipe recipe) {
         this.recipe = recipe;
         setValues();
         addFields();
+        addIngredients();
     }
 
     private void setValues() {
@@ -33,7 +36,7 @@ public final class OpenRecipeDialog extends EntityDialog<Recipe> {
         instructions.setText(recipe.getInstructions());
         timeToPrepare.setText("Time to prepare: " + recipe.getTimeToPrepare() + " mins");
         category.setText("Category: " + recipe.getCategory().getName());
-        ingredientList.setText("List of ingredients: " + recipe.getIngredientList().stream().map(Ingredient::getName).collect(Collectors.joining(", ")));
+        ingredientList.setText("List of ingredients:");
     }
 
     private void addFields() {
@@ -44,6 +47,14 @@ public final class OpenRecipeDialog extends EntityDialog<Recipe> {
         panel.add(timeToPrepare);
         panel.add(category);
         panel.add(ingredientList);
+    }
+
+    private void addIngredients(){
+        for(Map.Entry<Ingredient, Pair<Unit, Integer>> ingredientPairEntry : recipe.getIngredientList().entrySet()){
+            JLabel ingredient = new JLabel();
+            ingredient.setText(ingredientPairEntry.getKey().toString() + " -> " + ingredientPairEntry.getValue().getValue() + ingredientPairEntry.getValue().getKey().getAbbreviation());
+            panel.add(ingredient);
+        }
     }
 
     @Override

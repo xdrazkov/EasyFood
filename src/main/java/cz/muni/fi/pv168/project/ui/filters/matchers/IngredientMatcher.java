@@ -13,6 +13,6 @@ public class IngredientMatcher extends EntityMatcher<Recipe>{
 
     @Override
     public boolean evaluate(Recipe entity) {
-        return entity.getIngredientList().contains(ingredient);
+        return entity.getIngredientList().containsKey(ingredient);
     }
 }
