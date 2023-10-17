@@ -1,6 +1,8 @@
 package cz.muni.fi.pv168.project.ui.action;
 
 import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.model.Ingredient;
+import cz.muni.fi.pv168.project.model.Unit;
 import cz.muni.fi.pv168.project.ui.dialog.EditRecipeDialog;
 import cz.muni.fi.pv168.project.ui.model.RecipeTableModel;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
@@ -13,10 +15,14 @@ import java.util.List;
 public final class EditAction extends GeneralAction {
 
     private final List<Category> categories;
+    private final List<Ingredient> ingredients;
+    private final List<Unit> units;
 
-    public EditAction(List<Category> categories) {
+    public EditAction(List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
         super("Edit", Icons.EDIT_ICON);
         this.categories = categories;
+        this.ingredients = ingredients;
+        this.units = units;
         putValue(SHORT_DESCRIPTION, "Edit selected");
         putValue(MNEMONIC_KEY, KeyEvent.VK_E);
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl E"));
@@ -36,7 +42,7 @@ public final class EditAction extends GeneralAction {
         if (table.getModel() instanceof RecipeTableModel recipeTableModel) {
             int modelRow = table.convertRowIndexToModel(selectedRows[0]);
             var recipe = recipeTableModel.getEntity(modelRow);
-            var dialog = new EditRecipeDialog(recipe, categories);
+            var dialog = new EditRecipeDialog(recipe, categories, ingredients, units);
             dialog.show(table, "Edit Recipe").ifPresent(recipeTableModel::updateRow);
         } else {
             System.out.println("Editing different class " + table.getModel().getClass());
