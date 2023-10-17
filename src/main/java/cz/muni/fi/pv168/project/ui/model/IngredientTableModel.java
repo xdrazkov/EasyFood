@@ -2,6 +2,7 @@ package cz.muni.fi.pv168.project.ui.model;
 
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Ingredient;
+import cz.muni.fi.pv168.project.model.Unit;
 
 import javax.swing.AbstractListModel;
 import javax.swing.table.AbstractTableModel;
@@ -17,7 +18,9 @@ public class IngredientTableModel extends AbstractTableModel {
     private final List<Ingredient> ingredients;
 
     private final List<Column<Ingredient, ?>> columns = List.of(
-            Column.readonly("Name", String.class, Ingredient::getName)
+            Column.readonly("Name", String.class, Ingredient::getName),
+            Column.readonly("Base unit", Unit.class, Ingredient::getBaseUnit),
+            Column.readonly("Nutritional value (kcal)", Integer.class, Ingredient::getCaloriesPerUnit)
     );
 
     public IngredientTableModel(List<Ingredient> ingredients) {

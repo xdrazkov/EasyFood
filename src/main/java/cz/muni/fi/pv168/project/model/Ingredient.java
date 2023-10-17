@@ -2,12 +2,12 @@ package cz.muni.fi.pv168.project.model;
 
 public class Ingredient {
     private String name;
-    private IngredientType ingredientType;
+    private Unit baseUnit;
     private int caloriesPerUnit;
 
-    public Ingredient(String name, IngredientType ingredientType, int caloriesPerUnit) {
+    public Ingredient(String name, Unit baseUnit, int caloriesPerUnit) {
         this.name = name;
-        this.ingredientType = ingredientType;
+        this.baseUnit = baseUnit;
         this.caloriesPerUnit = caloriesPerUnit;
     }
 
@@ -19,12 +19,12 @@ public class Ingredient {
         this.name = name;
     }
 
-    public IngredientType getIngredientType() {
-        return ingredientType;
+    public Unit getBaseUnit() {
+        return baseUnit;
     }
 
-    public void setIngredientType(IngredientType ingredientType) {
-        this.ingredientType = ingredientType;
+    public void setBaseUnit(Unit baseUnit) {
+        this.baseUnit = baseUnit;
     }
 
     public int getCaloriesPerUnit() {
@@ -33,5 +33,10 @@ public class Ingredient {
 
     public void setCaloriesPerUnit(int caloriesPerUnit) {
         this.caloriesPerUnit = caloriesPerUnit;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

@@ -2,11 +2,15 @@ package cz.muni.fi.pv168.project.model;
 
 public class Unit {
     private String name;
+    private String abbreviation;
     private IngredientType ingredientType;
+    private float conversionRate;
 
-    public Unit(String name, IngredientType ingredientType) {
+    public Unit(String name, String abbreviation, IngredientType ingredientType, float conversionRate) {
         this.name = name;
+        this.abbreviation = abbreviation;
         this.ingredientType = ingredientType;
+        this.conversionRate = conversionRate;
     }
 
     public String getName() {
@@ -23,5 +27,26 @@ public class Unit {
 
     public void setIngredientType(IngredientType ingredientType) {
         this.ingredientType = ingredientType;
+    }
+
+    public String getAbbreviation() {
+        return abbreviation;
+    }
+
+    public void setAbbreviation(String abbreviation) {
+        this.abbreviation = abbreviation;
+    }
+
+    public float getConversionRate() {
+        return conversionRate;
+    }
+
+    public void setConversionRate(float conversionRate) {
+        this.conversionRate = conversionRate;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

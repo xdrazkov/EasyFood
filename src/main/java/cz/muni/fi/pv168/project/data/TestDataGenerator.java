@@ -19,12 +19,12 @@ public final class TestDataGenerator {
 
     public Ingredient createTestIngredient(int index) {
         int pick = random.nextInt(IngredientType.values().length);
-        return new Ingredient("Ingredient " + index, IngredientType.values()[pick], random.nextInt(10, 100));
+        return new Ingredient("Ingredient " + index, createTestUnit(index), random.nextInt(10, 100));
     }
 
     public Unit createTestUnit(int index) {
         int pick = random.nextInt(IngredientType.values().length);
-        return new Unit("Unit " + index, IngredientType.values()[pick]);
+        return new Unit("Unit " + index, "abb " + index,IngredientType.values()[pick], index);
     }
 
     public Recipe createTestRecipe(int index, Category category, List<Ingredient> ingredient, Unit unit) {
