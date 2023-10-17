@@ -93,6 +93,11 @@ public class MainWindow {
 
         // Add popup menu, toolbar, menubar
         recipeTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu());
+        ingredientTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu());
+        categoryTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu());
+        unitTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu());
+
+        // ADD row sorters
         var rowSorter = new TableRowSorter<>(recipeTableModel);
         var recipeTableFilter = new RecipeTableFilter(rowSorter);
         recipeTablePanel.getTable().setRowSorter(rowSorter);
@@ -156,7 +161,6 @@ public class MainWindow {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         return frame;
     }
-
 
     private JPopupMenu createTablePopupMenu() {
         var menu = new JPopupMenu();
