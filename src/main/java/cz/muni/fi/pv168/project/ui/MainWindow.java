@@ -53,8 +53,6 @@ public class MainWindow {
 
     public MainWindow() {
         frame = createFrame();
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setVisible(true);
 
         // Generate test objects
         var testDataGenerator = new TestDataGenerator();
@@ -149,6 +147,7 @@ public class MainWindow {
     }
 
     public void show() {
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // fullscreen
         frame.setVisible(true);
     }
 
