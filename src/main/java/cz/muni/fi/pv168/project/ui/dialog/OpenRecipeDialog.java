@@ -16,6 +16,7 @@ public final class OpenRecipeDialog extends EntityDialog<Recipe> {
     private final JLabel timeToPrepare = new JLabel();
     private final JLabel category = new JLabel();
     private final JLabel ingredientList = new JLabel();
+    //private final JTable ingredients = new J
     private final Recipe recipe;
 
     public OpenRecipeDialog(Recipe recipe) {

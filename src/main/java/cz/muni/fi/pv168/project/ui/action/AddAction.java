@@ -18,7 +18,7 @@ public final class AddAction extends GeneralAction {
     public AddAction(List<Category> categories) {
         super("Add", Icons.ADD_ICON);
         this.categories = categories;
-        putValue(SHORT_DESCRIPTION, "Adds new recipe");
+        putValue(SHORT_DESCRIPTION, "Adds new");
         putValue(MNEMONIC_KEY, KeyEvent.VK_A);
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl N"));
     }

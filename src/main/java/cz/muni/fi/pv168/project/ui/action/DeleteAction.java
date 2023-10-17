@@ -10,7 +10,7 @@ public final class DeleteAction extends GeneralAction {
 
     public DeleteAction() {
         super("Delete", Icons.DELETE_ICON);
-        putValue(SHORT_DESCRIPTION, "Deletes selected recipes");
+        putValue(SHORT_DESCRIPTION, "Delete selected");
         putValue(MNEMONIC_KEY, KeyEvent.VK_D);
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl D"));
     }

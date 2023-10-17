@@ -10,7 +10,7 @@ public final class ExportAction extends GeneralAction {
 
     public ExportAction() {
         super("Export", Icons.EXPORT_ICON);
-        putValue(SHORT_DESCRIPTION, "Exports recipe");
+        putValue(SHORT_DESCRIPTION, "Export Recipe");
         putValue(MNEMONIC_KEY, KeyEvent.VK_U);
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl U"));
     }

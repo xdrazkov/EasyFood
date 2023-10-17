@@ -17,7 +17,7 @@ public final class EditAction extends GeneralAction {
     public EditAction(List<Category> categories) {
         super("Edit", Icons.EDIT_ICON);
         this.categories = categories;
-        putValue(SHORT_DESCRIPTION, "Edits selected recipe");
+        putValue(SHORT_DESCRIPTION, "Edit selected");
         putValue(MNEMONIC_KEY, KeyEvent.VK_E);
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl E"));
     }

@@ -12,7 +12,7 @@ public final class OpenAction extends GeneralAction {
 
     public OpenAction() {
         super("Open", Icons.OPEN_ICON);
-        putValue(SHORT_DESCRIPTION, "Opens recipe");
+        putValue(SHORT_DESCRIPTION, "Open");
         putValue(MNEMONIC_KEY, KeyEvent.VK_O);
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl O"));
     }

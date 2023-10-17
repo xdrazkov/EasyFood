@@ -10,7 +10,7 @@ public final class ImportAction extends GeneralAction {
 
     public ImportAction() {
         super("Import", Icons.IMPORT_ICON);
-        putValue(SHORT_DESCRIPTION, "Imports recipe");
+        putValue(SHORT_DESCRIPTION, "Import recipe");
         putValue(MNEMONIC_KEY, KeyEvent.VK_I);
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl I"));
     }
