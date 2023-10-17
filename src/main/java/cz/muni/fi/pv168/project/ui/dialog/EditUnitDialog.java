@@ -24,6 +24,7 @@ public class EditUnitDialog extends EntityDialog<Unit> {
         abbreviation.setText(unit.getAbbreviation());
         conversionRate.setText(Float.toString(unit.getConversionRate()));
         ingredientType.setModel(new javax.swing.DefaultComboBoxModel<>(IngredientType.values()));
+        ingredientType.getModel().setSelectedItem(unit.getIngredientType());
     }
 
     private void addFields() {

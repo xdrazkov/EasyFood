@@ -76,7 +76,7 @@ public class MainWindow {
         // Set up actions for recipe table
         addAction = new AddAction(categories, unitTableModel); // TODO pull somehow categories differently
         deleteAction = new DeleteAction();
-        editAction = new EditAction(categories, ingredients, units); // TODO pull somehow categories differently
+        editAction = new EditAction(categories, ingredients, units, unitTableModel); // TODO pull somehow categories differently
         openAction = new OpenAction();
         importAction = new ImportAction();
         exportAction = new ExportAction();

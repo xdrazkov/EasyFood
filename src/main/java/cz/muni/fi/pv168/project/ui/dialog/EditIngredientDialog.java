@@ -6,22 +6,25 @@ import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
 
 import javax.swing.*;
 
-public class AddIngredientDialog extends EntityDialog<Ingredient> {
+public class EditIngredientDialog extends EntityDialog<Ingredient> {
     private final JTextField name = new JTextField();
     private final JTextField nutritionalValue = new JTextField();
     private final JComboBox<Unit> baseUnit = new JComboBox<>();
     private final UnitTableModel unitTableModel;
+    private final Ingredient ingredient;
 
-    public AddIngredientDialog(UnitTableModel unitTableModel) {
+    public EditIngredientDialog(Ingredient ingredient, UnitTableModel unitTableModel) {
+        this.ingredient = ingredient;
         this.unitTableModel = unitTableModel;
         setValues();
         addFields();
     }
 
     private void setValues() {
-        name.setText("");
-        nutritionalValue.setText("0");
+        name.setText(ingredient.getName());
+        nutritionalValue.setText(Float.toString(ingredient.getCaloriesPerUnit()));
         baseUnit.setModel(new javax.swing.DefaultComboBoxModel<Unit>(unitTableModel.getUnits().toArray(new Unit[0])));
+        baseUnit.getModel().setSelectedItem(ingredient.getBaseUnit());
     }
 
     private void addFields() {
@@ -32,6 +35,9 @@ public class AddIngredientDialog extends EntityDialog<Ingredient> {
 
     @Override
     Ingredient getEntity() {
-        return new Ingredient(name.getText(), (Unit) baseUnit.getSelectedItem(), Integer.parseInt(nutritionalValue.getText()));
+        ingredient.setName(name.getText());
+        ingredient.setBaseUnit((Unit) baseUnit.getSelectedItem());
+        ingredient.setCaloriesPerUnit(Integer.parseInt(nutritionalValue.getText()));
+        return ingredient;
     }
 }
