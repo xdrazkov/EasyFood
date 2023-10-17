@@ -37,7 +37,7 @@ public final class AddAction extends GeneralAction {
             dialog.show(table, "Add Recipe").ifPresent(recipeTableModel::addRow);
         } else if (table.getModel() instanceof UnitTableModel unitTableModel) {
             var dialog = new AddUnitDialog();
-            dialog.show(table, "Add Recipe").ifPresent(unitTableModel::addRow);
+            dialog.show(table, "Add Unit").ifPresent(unitTableModel::addRow);
         } else {
             System.out.println("Editing different class " + table.getModel().getClass());
         }

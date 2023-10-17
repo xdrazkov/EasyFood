@@ -4,7 +4,9 @@ import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Unit;
 import cz.muni.fi.pv168.project.ui.dialog.EditRecipeDialog;
+import cz.muni.fi.pv168.project.ui.dialog.EditUnitDialog;
 import cz.muni.fi.pv168.project.ui.model.RecipeTableModel;
+import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
 
 import javax.swing.*;
@@ -44,6 +46,11 @@ public final class EditAction extends GeneralAction {
             var recipe = recipeTableModel.getEntity(modelRow);
             var dialog = new EditRecipeDialog(recipe, categories, ingredients, units);
             dialog.show(table, "Edit Recipe").ifPresent(recipeTableModel::updateRow);
+        } else if (table.getModel() instanceof UnitTableModel unitTableModel) {
+            int modelRow = table.convertRowIndexToModel(selectedRows[0]);
+            var unit = unitTableModel.getEntity(modelRow);
+            var dialog = new EditUnitDialog(unit);
+            dialog.show(table, "Edit Unit").ifPresent(unitTableModel::updateRow);
         } else {
             System.out.println("Editing different class " + table.getModel().getClass());
         }
