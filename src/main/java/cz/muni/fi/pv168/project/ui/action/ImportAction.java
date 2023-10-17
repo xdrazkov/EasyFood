@@ -19,4 +19,9 @@ public final class ImportAction extends GeneralAction {
     public void actionPerformed(ActionEvent e) {
         // TODO
     }
+
+    @Override
+    protected void setShortDescription() {
+        putValue(SHORT_DESCRIPTION, "Import " + super.getCurrentTabName());
+    }
 }

@@ -20,4 +20,8 @@ public final class ExportAction extends GeneralAction {
         // TODO
     }
 
+    @Override
+    protected void setShortDescription() {
+        putValue(SHORT_DESCRIPTION, "Export " + super.getCurrentTabName());
+    }
 }

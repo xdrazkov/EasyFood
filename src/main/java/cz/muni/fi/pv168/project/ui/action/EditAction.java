@@ -29,7 +29,6 @@ public final class EditAction extends GeneralAction {
         this.ingredients = ingredients;
         this.units = units;
         this.unitTableModel = unitTableModel;
-        putValue(SHORT_DESCRIPTION, "Edit selected");
         putValue(MNEMONIC_KEY, KeyEvent.VK_E);
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl E"));
     }
@@ -64,5 +63,10 @@ public final class EditAction extends GeneralAction {
             System.out.println("Editing different class " + table.getModel().getClass());
         }
 
+    }
+
+    @Override
+    protected void setShortDescription() {
+        putValue(SHORT_DESCRIPTION, "Edit " + super.getCurrentTabName());
     }
 }

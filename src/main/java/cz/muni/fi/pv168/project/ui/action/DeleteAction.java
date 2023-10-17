@@ -19,4 +19,8 @@ public final class DeleteAction extends GeneralAction {
     public void actionPerformed(ActionEvent e) {
     }
 
+    @Override
+    protected void setShortDescription() {
+        putValue(SHORT_DESCRIPTION, "Delete " + super.getCurrentTabName());
+    }
 }

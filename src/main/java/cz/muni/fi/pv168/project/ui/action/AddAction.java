@@ -48,4 +48,9 @@ public final class AddAction extends GeneralAction {
             System.out.println("Editing different class " + table.getModel().getClass());
         }
     }
+
+    @Override
+    protected void setShortDescription() {
+        putValue(SHORT_DESCRIPTION, "Add " + super.getCurrentTabName());
+    }
 }

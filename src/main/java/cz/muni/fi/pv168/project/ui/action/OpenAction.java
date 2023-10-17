@@ -37,4 +37,8 @@ public final class OpenAction extends GeneralAction {
         }
     }
 
+    @Override
+    protected void setShortDescription() {
+        putValue(SHORT_DESCRIPTION, "Open " + super.getCurrentTabName());
+    }
 }
