@@ -2,8 +2,10 @@ package cz.muni.fi.pv168.project.ui.action;
 
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.ui.dialog.AddRecipeDialog;
+import cz.muni.fi.pv168.project.ui.dialog.AddUnitDialog;
 import cz.muni.fi.pv168.project.ui.dialog.EditRecipeDialog;
 import cz.muni.fi.pv168.project.ui.model.RecipeTableModel;
+import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
 
 import javax.swing.*;
@@ -33,6 +35,9 @@ public final class AddAction extends GeneralAction {
         if (table.getModel() instanceof RecipeTableModel recipeTableModel) {
             var dialog = new AddRecipeDialog(categories);
             dialog.show(table, "Add Recipe").ifPresent(recipeTableModel::addRow);
+        } else if (table.getModel() instanceof UnitTableModel unitTableModel) {
+            var dialog = new AddUnitDialog();
+            dialog.show(table, "Add Recipe").ifPresent(unitTableModel::addRow);
         } else {
             System.out.println("Editing different class " + table.getModel().getClass());
         }
