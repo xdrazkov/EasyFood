@@ -1,9 +1,11 @@
 package cz.muni.fi.pv168.project.ui.action;
 
 import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.ui.dialog.AddCategoryDialog;
 import cz.muni.fi.pv168.project.ui.dialog.AddIngredientDialog;
 import cz.muni.fi.pv168.project.ui.dialog.AddRecipeDialog;
 import cz.muni.fi.pv168.project.ui.dialog.AddUnitDialog;
+import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
 import cz.muni.fi.pv168.project.ui.model.IngredientTableModel;
 import cz.muni.fi.pv168.project.ui.model.RecipeTableModel;
 import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
@@ -41,9 +43,12 @@ public final class AddAction extends GeneralAction {
         } else if (table.getModel() instanceof UnitTableModel unitTable) {
             var dialog = new AddUnitDialog();
             dialog.show(table, "Add Unit").ifPresent(unitTable::addRow);
+        } else if (table.getModel() instanceof CategoryTableModel categoryTableModel) {
+            var dialog = new AddCategoryDialog(categoryTableModel);
+            dialog.show(table, "Add Category").ifPresent(categoryTableModel::addRow);
         } else if (table.getModel() instanceof IngredientTableModel ingredientTableModel) {
-        var dialog = new AddIngredientDialog(unitTableModel);
-        dialog.show(table, "Add Ingredient").ifPresent(ingredientTableModel::addRow);
+            var dialog = new AddIngredientDialog(unitTableModel);
+            dialog.show(table, "Add Ingredient").ifPresent(ingredientTableModel::addRow);
         } else {
             System.out.println("Editing different class " + table.getModel().getClass());
         }
