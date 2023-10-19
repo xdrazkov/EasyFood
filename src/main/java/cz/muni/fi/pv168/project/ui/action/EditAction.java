@@ -3,9 +3,11 @@ package cz.muni.fi.pv168.project.ui.action;
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Unit;
+import cz.muni.fi.pv168.project.ui.dialog.EditCategoryDialog;
 import cz.muni.fi.pv168.project.ui.dialog.EditIngredientDialog;
 import cz.muni.fi.pv168.project.ui.dialog.EditRecipeDialog;
 import cz.muni.fi.pv168.project.ui.dialog.EditUnitDialog;
+import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
 import cz.muni.fi.pv168.project.ui.model.IngredientTableModel;
 import cz.muni.fi.pv168.project.ui.model.RecipeTableModel;
 import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
@@ -54,11 +56,16 @@ public final class EditAction extends GeneralAction {
             var unit = unitTable.getEntity(modelRow);
             var dialog = new EditUnitDialog(unit);
             dialog.show(table, "Edit Unit").ifPresent(unitTable::updateRow);
+        } else if (table.getModel() instanceof CategoryTableModel categoryTableModel) {
+            int modelRow = table.convertRowIndexToModel(selectedRows[0]);
+            var category = categoryTableModel.getEntity(modelRow);
+            var dialog = new EditCategoryDialog(category, categoryTableModel);
+            dialog.show(table, "Edit Category").ifPresent(categoryTableModel::updateRow);
         } else if (table.getModel() instanceof IngredientTableModel ingredientTableModel) {
-        int modelRow = table.convertRowIndexToModel(selectedRows[0]);
-        var ingredient = ingredientTableModel.getEntity(modelRow);
-        var dialog = new EditIngredientDialog(ingredient, unitTableModel);
-        dialog.show(table, "Edit Unit").ifPresent(ingredientTableModel::updateRow);
+            int modelRow = table.convertRowIndexToModel(selectedRows[0]);
+            var ingredient = ingredientTableModel.getEntity(modelRow);
+            var dialog = new EditIngredientDialog(ingredient, unitTableModel);
+            dialog.show(table, "Edit Ingredient").ifPresent(ingredientTableModel::updateRow);
         } else {
             System.out.println("Editing different class " + table.getModel().getClass());
         }
