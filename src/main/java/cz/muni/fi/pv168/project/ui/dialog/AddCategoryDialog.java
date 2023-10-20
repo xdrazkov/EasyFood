@@ -8,7 +8,7 @@ import java.awt.*;
 
 public class AddCategoryDialog extends EntityDialog<Category> {
     private final JTextField name = new JTextField();
-    private final JTextField color = new JTextField(); //TODO
+    private final JColorChooser color = new JColorChooser();
 
     private final CategoryTableModel categoryTableModel;
 
@@ -20,16 +20,16 @@ public class AddCategoryDialog extends EntityDialog<Category> {
 
     private void setValues() {
         name.setText("");
-        color.setText("");//TODO
+        color.setColor(Color.WHITE);
     }
 
     private void addFields() {
         add("Name:", name);
-        add("Color:", color);
+        panel.add(color);
     }
 
     @Override
     Category getEntity() {
-        return new Category(name.getText(), Color.WHITE); //TODO
+        return new Category(name.getText(), color.getColor());
     }
 }

@@ -8,13 +8,11 @@ import java.awt.*;
 
 public class EditCategoryDialog extends EntityDialog<Category> {
     private final JTextField name = new JTextField();
-    private final JTextField color = new JTextField(); // TODO
-    private final CategoryTableModel categoryTableModel;
+    private final JColorChooser color = new JColorChooser();
 
     private final Category category;
     public EditCategoryDialog(Category category, CategoryTableModel categoryTableModel) {
         this.category = category;
-        this.categoryTableModel = categoryTableModel;
         setValues();
         addFields();
     }
@@ -22,16 +20,18 @@ public class EditCategoryDialog extends EntityDialog<Category> {
     private void setValues() {
         panel.setBackground(category.getColor());
         name.setText(category.getName());
+        color.setColor(category.getColor());
     }
 
     private void addFields() {
         add("Name:", name);
+        panel.add(color);
     }
 
     @Override
     Category getEntity() {
         category.setName(name.getText());
-        category.setColor(Color.BLACK); // TODO
+        category.setColor(color.getColor());
         return category;
     }
 }

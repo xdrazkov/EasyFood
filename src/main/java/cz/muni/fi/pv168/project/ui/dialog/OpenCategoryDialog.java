@@ -7,6 +7,7 @@ import javax.swing.*;
 public class OpenCategoryDialog extends EntityDialog<Category> {
 
     private final JLabel name = new JLabel();
+    private final JLabel color = new JLabel();
 
     private final Category category;
 
@@ -17,12 +18,14 @@ public class OpenCategoryDialog extends EntityDialog<Category> {
     }
 
     private void setValues() {
-        panel.setBackground(category.getColor());
         name.setText(category.getName());
+        color.setText("This is the Color of this category.");
+        color.setForeground(category.getColor());
     }
 
     private void addFields() {
         panel.add(name);
+        panel.add(color);
     }
 
     @Override
