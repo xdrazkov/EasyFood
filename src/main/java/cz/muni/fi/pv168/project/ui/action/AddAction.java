@@ -1,6 +1,8 @@
 package cz.muni.fi.pv168.project.ui.action;
 
 import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.model.Ingredient;
+import cz.muni.fi.pv168.project.model.Unit;
 import cz.muni.fi.pv168.project.ui.dialog.AddCategoryDialog;
 import cz.muni.fi.pv168.project.ui.dialog.AddIngredientDialog;
 import cz.muni.fi.pv168.project.ui.dialog.AddRecipeDialog;
@@ -19,11 +21,16 @@ import java.util.List;
 public final class AddAction extends GeneralAction {
 
     private final List<Category> categories;
+
+    private final List<Ingredient> ingredients;
+    private final List<Unit> units;
     private final UnitTableModel unitTableModel;
 
-    public AddAction(List<Category> categories, UnitTableModel unitTableModel) {
+    public AddAction(List<Category> categories, List<Ingredient> ingredients, List<Unit> units, UnitTableModel unitTableModel) {
         super("Add", Icons.ADD_ICON);
         this.categories = categories;
+        this.ingredients = ingredients;
+        this.units = units;
         this.unitTableModel = unitTableModel;
         putValue(SHORT_DESCRIPTION, "Adds new");
         putValue(MNEMONIC_KEY, KeyEvent.VK_A);
@@ -38,7 +45,7 @@ public final class AddAction extends GeneralAction {
         }
 
         if (table.getModel() instanceof RecipeTableModel recipeTableModel) {
-            var dialog = new AddRecipeDialog(categories);
+            var dialog = new AddRecipeDialog(categories, ingredients, units);
             dialog.show(table, "Add Recipe").ifPresent(recipeTableModel::addRow);
         } else if (table.getModel() instanceof UnitTableModel unitTable) {
             var dialog = new AddUnitDialog();
