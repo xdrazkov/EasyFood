@@ -109,7 +109,9 @@ public class MainWindow {
         var categoryFilter = createCategoryFilter(recipeTableFilter);
         var ingredientFilter = createIngredientFilter(recipeTableFilter);
         var preparationTimeSlider = createPreparationTimeSlider(recipeTableFilter);
-        frame.add(createToolbar(categoryFilter, ingredientFilter, preparationTimeSlider), BorderLayout.BEFORE_FIRST_LINE);
+        var nutritionalValuesSlider = createNutritionalValuesSlider(recipeTableFilter);
+        frame.add(createToolbar(categoryFilter, ingredientFilter, preparationTimeSlider,
+                nutritionalValuesSlider), BorderLayout.BEFORE_FIRST_LINE);
 
         frame.setJMenuBar(createMenuBar());
         frame.pack();
@@ -177,6 +179,29 @@ public class MainWindow {
         });
 
         return preparationTimeSlider;
+    }
+
+    private static JSlider createNutritionalValuesSlider(RecipeTableFilter recipeTableFilter) {
+        List<Integer> allNutritionalValues = recipeTableModel.getRecipes().stream()
+                .map(Recipe::getNutritionalValue)
+                .toList();
+
+        int minValue = allNutritionalValues.stream().mapToInt(Integer::intValue).min().orElse(0);
+        int maxValue = allNutritionalValues.stream().mapToInt(Integer::intValue).max().orElse(1000);
+
+        JSlider preparationNutritionalValuesSlider = new JSlider(JSlider.HORIZONTAL, minValue, maxValue, minValue);
+        preparationNutritionalValuesSlider.setMajorTickSpacing(10);
+        preparationNutritionalValuesSlider.setMinorTickSpacing(1);
+        preparationNutritionalValuesSlider.setPaintTicks(true);
+        preparationNutritionalValuesSlider.setPaintLabels(true);
+        preparationNutritionalValuesSlider.setToolTipText("Nutritional Values");
+
+        preparationNutritionalValuesSlider.addChangeListener(e -> {
+            Integer selectedTime = preparationNutritionalValuesSlider.getValue();
+            recipeTableFilter.filterNutritionalValues(Either.right(selectedTime));
+        });
+
+        return preparationNutritionalValuesSlider;
     }
 
     public void show() {

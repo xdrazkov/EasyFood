@@ -6,6 +6,7 @@ import cz.muni.fi.pv168.project.model.Recipe;
 import cz.muni.fi.pv168.project.ui.filters.matchers.*;
 import cz.muni.fi.pv168.project.ui.filters.values.SpecialFilterCategoryValues;
 import cz.muni.fi.pv168.project.ui.filters.values.SpecialFilterIngredientValues;
+import cz.muni.fi.pv168.project.ui.filters.values.SpecialFilterNutritionalValueValues;
 import cz.muni.fi.pv168.project.ui.filters.values.SpecialFilterPreparationTimeValues;
 import cz.muni.fi.pv168.project.ui.model.RecipeTableModel;
 import cz.muni.fi.pv168.project.util.Either;
@@ -45,6 +46,13 @@ public final class RecipeTableFilter {
         );
     }
 
+    public void filterNutritionalValues(Either<SpecialFilterNutritionalValueValues, Integer> selectedItem) {
+        selectedItem.apply(
+                l -> recipeCompoundMatcher.setNutritionalValuesMatcher(l.getMatcher()),
+                r -> recipeCompoundMatcher.setNutritionalValuesMatcher(new NutritionalValuesMatcher(r))
+        );
+    }
+
     private static class RecipeCompoundMatcher extends EntityMatcher<Recipe> {
 
         private final TableRowSorter<RecipeTableModel> rowSorter;
@@ -53,6 +61,8 @@ public final class RecipeTableFilter {
         private EntityMatcher<Recipe> ingredientMatcher = EntityMatchers.all();
 
         private EntityMatcher<Recipe> preparationTimeMatcher = EntityMatchers.all();
+
+        private EntityMatcher<Recipe> nutritionalValuesMatcher = EntityMatchers.all();
 
         private RecipeCompoundMatcher(TableRowSorter<RecipeTableModel> rowSorter) {
             this.rowSorter = rowSorter;
@@ -70,6 +80,11 @@ public final class RecipeTableFilter {
 
         private void setPreparationTimeMatcher(EntityMatcher<Recipe> preparationTimeMatcher) {
             this.preparationTimeMatcher = preparationTimeMatcher;
+            rowSorter.sort();
+        }
+
+        private void setNutritionalValuesMatcher(EntityMatcher<Recipe> nutritionalValuesMatcher) {
+            this.nutritionalValuesMatcher = nutritionalValuesMatcher;
             rowSorter.sort();
         }
 
