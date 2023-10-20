@@ -27,7 +27,9 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.table.TableRowSorter;
 
 public class MainWindow {
@@ -51,6 +53,9 @@ public class MainWindow {
 
     private final UnitTableModel unitTableModel;
 
+    private final Map<GeneralAction, List<Integer>> forbiddenActionsInTabs = new HashMap<>(); // key is list of indices of tabs, where action is not allowed
+
+    private final JTabbedPane tabbedPane;
 
     public MainWindow() {
         frame = createFrame();
@@ -74,6 +79,14 @@ public class MainWindow {
         var categoryTablePanel = new CategoryTablePanel(categoryTableModel, this::changeActionsState);
         var unitTablePanel = new UnitTablePanel(unitTableModel, this::changeActionsState);
 
+        // Add the panels to tabbed pane
+        this.tabbedPane = new JTabbedPane();
+        tabbedPane.addTab("Recipes", recipeTablePanel);
+        tabbedPane.addTab("Ingredients", ingredientTablePanel);
+        tabbedPane.addTab("Categories", categoryTablePanel);
+        tabbedPane.addTab("Units", unitTablePanel);
+        frame.add(tabbedPane, BorderLayout.CENTER);
+
         // Set up actions for recipe table
         addAction = new AddAction(categories, ingredients, units, unitTableModel); // TODO pull somehow categories differently
         deleteAction = new DeleteAction();
@@ -83,22 +96,16 @@ public class MainWindow {
         exportAction = new ExportAction();
         viewStatisticsAction = new ViewStatisticsAction(recipes, ingredients);
         viewAboutAction = new ViewAboutAction();
-        this.actions = List.of(addAction, deleteAction, editAction, openAction, importAction, exportAction, viewStatisticsAction, viewAboutAction);
-        setToDefaultActionEnablement();
+        this.actions = List.of(addAction, deleteAction, editAction, openAction, importAction, exportAction, viewAboutAction, viewStatisticsAction);
+        setForbiddenActionsInTabs();
+        setToDefaultActionEnablement(getCurrentTableIndex(tabbedPane));
 
-        // Add the panels to tabbed pane
-        var tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("Recipes", recipeTablePanel);
-        tabbedPane.addTab("Ingredients", ingredientTablePanel);
-        tabbedPane.addTab("Categories", categoryTablePanel);
-        tabbedPane.addTab("Units", unitTablePanel);
-        frame.add(tabbedPane, BorderLayout.CENTER);
 
         // Add popup menu, toolbar, menubar
-        recipeTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu());
-        ingredientTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu());
-        categoryTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu());
-        unitTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu());
+        recipeTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu(true));
+        ingredientTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu(false));
+        categoryTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu(false));
+        unitTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu(false));
 
         // ADD row sorters
         var rowSorter = new TableRowSorter<>(recipeTableModel);
@@ -107,20 +114,22 @@ public class MainWindow {
 
         var categoryFilter = createCategoryFilter(recipeTableFilter);
         var ingredientFilter = createIngredientFilter(recipeTableFilter);
-        frame.add(createToolbar(categoryFilter, ingredientFilter), BorderLayout.BEFORE_FIRST_LINE);
 
-        frame.setJMenuBar(createMenuBar());
+        var toolbar = createToolbar(categoryFilter, ingredientFilter);
+        frame.add(toolbar, BorderLayout.BEFORE_FIRST_LINE);
+
+        var menubar = createMenuBar();
+        frame.setJMenuBar(menubar);
         frame.pack();
 
         setCurrentTableToActions(getCurrentTableFromPanel(tabbedPane)); // maps starting table to all actions
-
         tabbedPane.addChangeListener(new ChangeListener() {
             // when tab changes
             @Override
             public void stateChanged(ChangeEvent e) {
                 var currTable = getCurrentTableFromPanel((JTabbedPane) e.getSource());
                 setCurrentTableToActions(currTable);
-                setToDefaultActionEnablement();
+                setToDefaultActionEnablement(getCurrentTableIndex(tabbedPane));
 
                 // clear all row selections
                 recipeTablePanel.getTable().clearSelection();
@@ -128,8 +137,9 @@ public class MainWindow {
                 unitTablePanel.getTable().clearSelection();
                 categoryTablePanel.getTable().clearSelection();
 
-                categoryFilter.setVisible(tabbedPane.getSelectedIndex() == 0); // first is recipe
-                ingredientFilter.setVisible(tabbedPane.getSelectedIndex() == 0);
+                int currTabIndex = tabbedPane.getSelectedIndex();
+                categoryFilter.setVisible(currTabIndex == 0); // first is recipe
+                ingredientFilter.setVisible(currTabIndex == 0);
             }
         });
     }
@@ -165,15 +175,19 @@ public class MainWindow {
         return frame;
     }
 
-    private JPopupMenu createTablePopupMenu() {
+    private JPopupMenu createTablePopupMenu(boolean isRecipe) {
         var menu = new JPopupMenu();
         menu.add(openAction);
         menu.add(editAction);
         menu.add(addAction);
         menu.add(deleteAction);
-        menu.addSeparator();
-        menu.add(importAction);
-        menu.add(exportAction);
+
+        if (isRecipe) { // only recipe has export possibility
+            menu.addSeparator();
+           	menu.add(importAction);
+       	 	menu.add(exportAction);
+        }
+
         return menu;
     }
 
@@ -211,28 +225,51 @@ public class MainWindow {
     }
 
     private void changeActionsState(int selectedItemsCount) {
-        openAction.setEnabled(selectedItemsCount == 1);
-        editAction.setEnabled(selectedItemsCount == 1);
-        deleteAction.setEnabled(selectedItemsCount >= 1);
-        exportAction.setEnabled(selectedItemsCount >= 1);
+        int currentTabIndex = getCurrentTableIndex(this.tabbedPane);
+        openAction.setEnabled(selectedItemsCount == 1 && isActionAllowed(openAction, currentTabIndex));
+        editAction.setEnabled(selectedItemsCount == 1 && isActionAllowed(editAction, currentTabIndex));
+        deleteAction.setEnabled(selectedItemsCount >= 1 && isActionAllowed(deleteAction, currentTabIndex));
+        exportAction.setEnabled(selectedItemsCount >= 1 && isActionAllowed(exportAction, currentTabIndex));
     }
 
     private void setCurrentTableToActions(JTable table) {
         this.actions.forEach(x -> x.setTable(table));
     }
 
+    private Integer getCurrentTableIndex(JTabbedPane tab) {
+        return tab.getSelectedIndex();
+    }
     private JTable getCurrentTableFromPanel(JTabbedPane tab) {
-        int currentTab = tab.getSelectedIndex();
-        JPanel panel = (JPanel) tab.getComponentAt(currentTab);
+        JPanel panel = (JPanel) tab.getComponentAt(getCurrentTableIndex(tab));
         JScrollPane scrollPane = (JScrollPane) panel.getComponent(0);
         return (JTable) scrollPane.getViewport().getView();
     }
 
-    private void setToDefaultActionEnablement() {
+    private void setToDefaultActionEnablement(int currentTabIndex) {
         actions.forEach(x -> x.setEnabled(false)); // all actions are disabled
-        addAction.setEnabled(true); // except for add action
-        importAction.setEnabled(true); // and import
+
+        addAction.setEnabled(isActionAllowed(addAction, currentTabIndex)); // except for add action
+        importAction.setEnabled(isActionAllowed(importAction, currentTabIndex)); // and import
         viewStatisticsAction.setEnabled(true); //and views
         viewAboutAction.setEnabled(true);
+
+    }
+
+    /**
+     * sets map, which can forbid, where actions cannot be used
+     */
+    private void setForbiddenActionsInTabs() {
+        for (var action: this.actions) {
+            this.forbiddenActionsInTabs.put(action, List.of());
+        }
+        this.forbiddenActionsInTabs.put(exportAction, List.of(1, 2, 3));
+        this.forbiddenActionsInTabs.put(importAction, List.of(1, 2, 3));
+    }
+
+    /**
+     * checks if action is forbidden in current opened tab
+     */
+    private boolean isActionAllowed(GeneralAction action, int currentTabIndex) {
+        return ! this.forbiddenActionsInTabs.get(action).contains(currentTabIndex);
     }
 }
