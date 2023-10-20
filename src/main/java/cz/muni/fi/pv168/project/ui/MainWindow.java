@@ -16,10 +16,7 @@ import cz.muni.fi.pv168.project.ui.panels.CategoryTablePanel;
 import cz.muni.fi.pv168.project.ui.panels.IngredientTablePanel;
 import cz.muni.fi.pv168.project.ui.panels.RecipeTablePanel;
 import cz.muni.fi.pv168.project.ui.panels.UnitTablePanel;
-import cz.muni.fi.pv168.project.ui.renderers.CategoryRenderer;
-import cz.muni.fi.pv168.project.ui.renderers.IngredientRenderer;
-import cz.muni.fi.pv168.project.ui.renderers.SpecialFilterCategoryValuesRenderer;
-import cz.muni.fi.pv168.project.ui.renderers.SpecialFilterIngredientValuesRenderer;
+import cz.muni.fi.pv168.project.ui.renderers.*;
 import cz.muni.fi.pv168.project.util.Either;
 import cz.muni.fi.pv168.project.ui.filters.components.FilterComboboxBuilder;
 
@@ -31,6 +28,7 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
 public class MainWindow {
@@ -107,6 +105,11 @@ public class MainWindow {
         ingredientTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu(false));
         categoryTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu(false));
         unitTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu(false));
+
+        // paints rows in recipe tab by their category color
+        recipeTablePanel.getTable().setDefaultRenderer(Object.class, new RecipeCategoryRenderer());
+        // Object.class covers Category.class and String.class, but Integer.class DOES NOT
+        recipeTablePanel.getTable().setDefaultRenderer(Integer.class, new RecipeCategoryRenderer());
 
         // ADD row sorters
         var rowSorter = new TableRowSorter<>(recipeTableModel);

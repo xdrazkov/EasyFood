@@ -5,7 +5,7 @@ import java.awt.*;
 public class Category {
     private String name;
     private Color color;
-    public static final Color DEFAULT_COLOR = Color.RED;
+    public static final Color DEFAULT_COLOR = Color.PINK;
     public Category(String name, Color color) {
         this.name = name;
         this.color = color;
