@@ -12,6 +12,8 @@ public final class Icons {
     public static final Icon OPEN_ICON = createIcon("open_action.png");
     public static final Icon IMPORT_ICON = createIcon("import_action.png");
     public static final Icon EXPORT_ICON = createIcon("export_action.png");
+    public static final Icon STATISTICS_ICON = createIcon("statistics_action.png");
+    public static final Icon ABOUT_ICON = createIcon("about_action.png");
 
     private Icons() {
         throw new AssertionError("This class is not instantiable");

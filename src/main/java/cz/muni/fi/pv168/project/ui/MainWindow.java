@@ -36,10 +36,11 @@ public class MainWindow {
     private final GeneralAction deleteAction;
     private final GeneralAction editAction;
     private final GeneralAction openAction;
-
     private final GeneralAction importAction;
-
     private final GeneralAction exportAction;
+    private final GeneralAction viewStatisticsAction;
+    //private final GeneralAction viewAboutAction;
+
     private final List<GeneralAction> actions;
 
     private final RecipeTableModel recipeTableModel;
@@ -80,7 +81,9 @@ public class MainWindow {
         openAction = new OpenAction();
         importAction = new ImportAction();
         exportAction = new ExportAction();
-        this.actions = List.of(addAction, deleteAction, editAction, openAction, importAction, exportAction);
+        viewStatisticsAction = new ViewStatisticsAction(recipes, ingredients);
+        //viewAboutAction = new ViewAboutAction();
+        this.actions = List.of(addAction, deleteAction, editAction, openAction, importAction, exportAction, viewStatisticsAction/*, viewAboutAction*/);
         setToDefaultActionEnablement();
 
         // Add the panels to tabbed pane
@@ -169,22 +172,23 @@ public class MainWindow {
         menu.add(addAction);
         menu.add(deleteAction);
         menu.addSeparator();
+        menu.add(importAction);
         menu.add(exportAction);
         return menu;
     }
 
     private JMenuBar createMenuBar() {
         var menuBar = new JMenuBar();
-        var editMenu = new JMenu("Edit");
-        editMenu.add(openAction);
-        editMenu.add(editAction);
-        editMenu.add(addAction);
-        editMenu.add(deleteAction);
-        editMenu.addSeparator();
-        editMenu.add(importAction);
-        editMenu.add(exportAction);
-        editMenu.setMnemonic('e');
-        menuBar.add(editMenu);
+        var fileMenu = new JMenu("File");
+        fileMenu.add(addAction);
+        fileMenu.add(importAction);
+        fileMenu.setMnemonic('f');
+        menuBar.add(fileMenu);
+        var vievMenu = new JMenu("View");
+        vievMenu.add(viewStatisticsAction);
+        //vievMenu.add(viewAboutAction);
+        vievMenu.setMnemonic('v');
+        menuBar.add(vievMenu);
         return menuBar;
     }
 
@@ -228,5 +232,6 @@ public class MainWindow {
         actions.forEach(x -> x.setEnabled(false)); // all actions are disabled
         addAction.setEnabled(true); // except for add action
         importAction.setEnabled(true); // and import
+        viewStatisticsAction.setEnabled(true); //and views
     }
 }
