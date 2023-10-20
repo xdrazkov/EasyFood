@@ -28,7 +28,6 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
 public class MainWindow {
@@ -149,6 +148,7 @@ public class MainWindow {
                 ingredientFilter.setVisible(currTabIndex == 0);
                 preparationTimeSlider.setVisible(currTabIndex == 0);
                 nutritionalValuesSlider.setVisible(currTabIndex == 0);
+
             }
         });
     }
