@@ -39,7 +39,7 @@ public class MainWindow {
     private final GeneralAction importAction;
     private final GeneralAction exportAction;
     private final GeneralAction viewStatisticsAction;
-    //private final GeneralAction viewAboutAction;
+    private final GeneralAction viewAboutAction;
 
     private final List<GeneralAction> actions;
 
@@ -82,8 +82,8 @@ public class MainWindow {
         importAction = new ImportAction();
         exportAction = new ExportAction();
         viewStatisticsAction = new ViewStatisticsAction(recipes, ingredients);
-        //viewAboutAction = new ViewAboutAction();
-        this.actions = List.of(addAction, deleteAction, editAction, openAction, importAction, exportAction, viewStatisticsAction/*, viewAboutAction*/);
+        viewAboutAction = new ViewAboutAction();
+        this.actions = List.of(addAction, deleteAction, editAction, openAction, importAction, exportAction, viewStatisticsAction, viewAboutAction);
         setToDefaultActionEnablement();
 
         // Add the panels to tabbed pane
@@ -186,7 +186,7 @@ public class MainWindow {
         menuBar.add(fileMenu);
         var vievMenu = new JMenu("View");
         vievMenu.add(viewStatisticsAction);
-        //vievMenu.add(viewAboutAction);
+        vievMenu.add(viewAboutAction);
         vievMenu.setMnemonic('v');
         menuBar.add(vievMenu);
         return menuBar;
@@ -233,5 +233,6 @@ public class MainWindow {
         addAction.setEnabled(true); // except for add action
         importAction.setEnabled(true); // and import
         viewStatisticsAction.setEnabled(true); //and views
+        viewAboutAction.setEnabled(true);
     }
 }
