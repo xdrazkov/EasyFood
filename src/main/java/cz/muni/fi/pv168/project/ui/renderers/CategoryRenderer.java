@@ -15,6 +15,8 @@ public class CategoryRenderer extends AbstractRenderer<Category> {
     protected void updateLabel(JLabel label, Category category) {
         if (category != null) {
             label.setText(category.getName());
+            //label.setForeground(category.getColor());
+            //label.setBackground(category.getColor());
         }
     }
 }

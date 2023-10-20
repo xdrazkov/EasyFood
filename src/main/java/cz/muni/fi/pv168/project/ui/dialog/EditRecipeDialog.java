@@ -44,7 +44,7 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
     }
 
     private void setValues() {
-        panel.setBackground(recipe.getCategory().getColor());
+        //panel.setBackground(recipe.getCategory().getColor());
         title.setText(recipe.getTitle());
         description.setText(recipe.getDescription());
         portionCount.setText(Integer.toString(recipe.getPortionCount()));

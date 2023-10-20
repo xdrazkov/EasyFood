@@ -29,13 +29,14 @@ public final class OpenRecipeDialog extends EntityDialog<Recipe> {
     }
 
     private void setValues() {
-        panel.setBackground(recipe.getCategory().getColor());
+        //panel.setBackground(recipe.getCategory().getColor());
         title.setText(recipe.getTitle());
         description.setText(recipe.getDescription());
         portionCount.setText("Count of portions: " + recipe.getPortionCount());
         instructions.setText(recipe.getInstructions());
         timeToPrepare.setText("Time to prepare: " + recipe.getTimeToPrepare() + " mins");
         category.setText("Category: " + recipe.getCategory().getName());
+        category.setForeground(recipe.getCategory().getColor());
         ingredientList.setText("List of ingredients:");
     }
 

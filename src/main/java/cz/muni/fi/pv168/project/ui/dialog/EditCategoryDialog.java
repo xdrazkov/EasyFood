@@ -18,7 +18,6 @@ public class EditCategoryDialog extends EntityDialog<Category> {
     }
 
     private void setValues() {
-        panel.setBackground(category.getColor());
         name.setText(category.getName());
         color.setColor(category.getColor());
     }
