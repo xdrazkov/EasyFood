@@ -12,6 +12,7 @@ public class Recipe {
     private int portionCount;
     private String instructions;
     private int timeToPrepare; // in minutes; import java.util.concurrent.TimeUnit
+    private int nutritionalValue; //todo math
     private Category category;
     private HashMap<Ingredient, Pair<Unit, Integer>> ingredientList;
 
@@ -39,6 +40,7 @@ public class Recipe {
         this.timeToPrepare = timeToPrepare;
         this.category = category;
         this.ingredientList = ingredientList;
+        this.nutritionalValue = 0; // TODO math
     }
 
     public Recipe(){}
@@ -65,6 +67,14 @@ public class Recipe {
 
     public void setTimeToPrepare(int timeToPrepare) {
         this.timeToPrepare = timeToPrepare;
+    }
+
+    public int getNutritionalValue() {
+        return nutritionalValue;
+    }
+
+    public void setNutritionalValue(int nutritionalValue) {
+        this.nutritionalValue = nutritionalValue;
     }
 
     public Category getCategory() {

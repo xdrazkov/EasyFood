@@ -1,5 +1,6 @@
 package cz.muni.fi.pv168.project.ui.model;
 
+import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Recipe;
 
 import javax.swing.table.AbstractTableModel;
@@ -12,7 +13,9 @@ public class RecipeTableModel extends AbstractTableModel implements EntityTableM
     private final List<Column<Recipe, ?>> columns = List.of(
             Column.readonly("Title", String.class, Recipe::getTitle),
             Column.readonly("Description", String.class, Recipe::getDescription),
-            Column.readonly("Preparation time ( min. )", Integer.class, Recipe::getTimeToPrepare)
+            Column.readonly("Category", Category.class, Recipe::getCategory),
+            Column.readonly("Preparation time (min)", Integer.class, Recipe::getTimeToPrepare),
+            Column.readonly("Nutritional value (kcal)", Integer.class, Recipe::getNutritionalValue)
     );
 
     public RecipeTableModel(List<Recipe> recipes) {
