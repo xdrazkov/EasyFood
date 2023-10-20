@@ -121,10 +121,8 @@ public class MainWindow {
 
         var preparationTimeSlider = createPreparationTimeSlider(recipeTableFilter);
         var nutritionalValuesSlider = createNutritionalValuesSlider(recipeTableFilter);
-        frame.add(createToolbar(categoryFilter, ingredientFilter, preparationTimeSlider,
-                nutritionalValuesSlider), BorderLayout.BEFORE_FIRST_LINE);
 
-        var toolbar = createToolbar(categoryFilter, ingredientFilter);
+        var toolbar = createToolbar(categoryFilter, ingredientFilter, preparationTimeSlider, nutritionalValuesSlider);
         frame.add(toolbar, BorderLayout.BEFORE_FIRST_LINE);
 
         var menubar = createMenuBar();
