@@ -3,6 +3,7 @@ package cz.muni.fi.pv168.project.ui;
 import cz.muni.fi.pv168.project.data.TestDataGenerator;
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Ingredient;
+import cz.muni.fi.pv168.project.model.Recipe;
 import cz.muni.fi.pv168.project.ui.action.*;
 import cz.muni.fi.pv168.project.ui.filters.RecipeTableFilter;
 import cz.muni.fi.pv168.project.ui.filters.values.SpecialFilterCategoryValues;
@@ -43,7 +44,7 @@ public class MainWindow {
 
     private final List<GeneralAction> actions;
 
-    private final RecipeTableModel recipeTableModel;
+    private static RecipeTableModel recipeTableModel;
 
     private static CategoryTableModel categoryTableModel;
 
@@ -63,7 +64,7 @@ public class MainWindow {
         var recipes = testDataGenerator.createTestRecipes(10, categories, ingredients, units);
 
         // Create models
-        this.recipeTableModel = new RecipeTableModel(recipes);
+        recipeTableModel = new RecipeTableModel(recipes);
         ingredientTableModel = new IngredientTableModel(ingredients);
         categoryTableModel = new CategoryTableModel(categories);
         this.unitTableModel = new UnitTableModel(units);
@@ -107,7 +108,8 @@ public class MainWindow {
 
         var categoryFilter = createCategoryFilter(recipeTableFilter);
         var ingredientFilter = createIngredientFilter(recipeTableFilter);
-        frame.add(createToolbar(categoryFilter, ingredientFilter), BorderLayout.BEFORE_FIRST_LINE);
+        var preparationTimeSlider = createPreparationTimeSlider(recipeTableFilter);
+        frame.add(createToolbar(categoryFilter, ingredientFilter, preparationTimeSlider), BorderLayout.BEFORE_FIRST_LINE);
 
         frame.setJMenuBar(createMenuBar());
         frame.pack();
@@ -152,6 +154,29 @@ public class MainWindow {
                 .setValuesRenderer(new IngredientRenderer())
                 .setFilter(recipeTableFilter::filterIngredient)
                 .build();
+    }
+
+    private static JSlider createPreparationTimeSlider(RecipeTableFilter recipeTableFilter) {
+        List<Integer> allTimes = recipeTableModel.getRecipes().stream()
+                .map(Recipe::getTimeToPrepare)
+                .toList();
+
+        int minTime = allTimes.stream().mapToInt(Integer::intValue).min().orElse(0);
+        int maxTime = allTimes.stream().mapToInt(Integer::intValue).max().orElse(60);
+
+        JSlider preparationTimeSlider = new JSlider(JSlider.HORIZONTAL, minTime, maxTime, minTime);
+        preparationTimeSlider.setMajorTickSpacing(10);
+        preparationTimeSlider.setMinorTickSpacing(1);
+        preparationTimeSlider.setPaintTicks(true);
+        preparationTimeSlider.setPaintLabels(true);
+        preparationTimeSlider.setToolTipText("Preparation time (min)");
+
+        preparationTimeSlider.addChangeListener(e -> {
+            Integer selectedTime = preparationTimeSlider.getValue();
+            recipeTableFilter.filterPreparationTime(Either.right(selectedTime));
+        });
+
+        return preparationTimeSlider;
     }
 
     public void show() {

@@ -3,12 +3,10 @@ package cz.muni.fi.pv168.project.ui.filters;
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Recipe;
-import cz.muni.fi.pv168.project.ui.filters.matchers.CategoryMatcher;
-import cz.muni.fi.pv168.project.ui.filters.matchers.EntityMatcher;
-import cz.muni.fi.pv168.project.ui.filters.matchers.EntityMatchers;
-import cz.muni.fi.pv168.project.ui.filters.matchers.IngredientMatcher;
+import cz.muni.fi.pv168.project.ui.filters.matchers.*;
 import cz.muni.fi.pv168.project.ui.filters.values.SpecialFilterCategoryValues;
 import cz.muni.fi.pv168.project.ui.filters.values.SpecialFilterIngredientValues;
+import cz.muni.fi.pv168.project.ui.filters.values.SpecialFilterPreparationTimeValues;
 import cz.muni.fi.pv168.project.ui.model.RecipeTableModel;
 import cz.muni.fi.pv168.project.util.Either;
 
@@ -40,12 +38,21 @@ public final class RecipeTableFilter {
         );
     }
 
+    public void filterPreparationTime(Either<SpecialFilterPreparationTimeValues, Integer> selectedItem) {
+        selectedItem.apply(
+                l -> recipeCompoundMatcher.setPreparationTimeMatcher(l.getMatcher()),
+                r -> recipeCompoundMatcher.setPreparationTimeMatcher(new PreparationTimeMatcher(r))
+        );
+    }
+
     private static class RecipeCompoundMatcher extends EntityMatcher<Recipe> {
 
         private final TableRowSorter<RecipeTableModel> rowSorter;
         private EntityMatcher<Recipe> categoryMatcher = EntityMatchers.all();
 
         private EntityMatcher<Recipe> ingredientMatcher = EntityMatchers.all();
+
+        private EntityMatcher<Recipe> preparationTimeMatcher = EntityMatchers.all();
 
         private RecipeCompoundMatcher(TableRowSorter<RecipeTableModel> rowSorter) {
             this.rowSorter = rowSorter;
@@ -61,9 +68,14 @@ public final class RecipeTableFilter {
             rowSorter.sort();
         }
 
+        private void setPreparationTimeMatcher(EntityMatcher<Recipe> preparationTimeMatcher) {
+            this.preparationTimeMatcher = preparationTimeMatcher;
+            rowSorter.sort();
+        }
+
         @Override
         public boolean evaluate(Recipe recipe) {
-            return Stream.of(categoryMatcher, ingredientMatcher)
+            return Stream.of(categoryMatcher, ingredientMatcher, preparationTimeMatcher)
                     .allMatch(m -> m.evaluate(recipe)) ;
         }
     }

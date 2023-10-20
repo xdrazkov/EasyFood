@@ -22,6 +22,10 @@ public class RecipeTableModel extends AbstractTableModel implements EntityTableM
         this.recipes = new ArrayList<>(recipes);
     }
 
+    public List<Recipe> getRecipes() {
+        return recipes;
+    }
+
     @Override
     public int getRowCount() {
         return recipes.size();
