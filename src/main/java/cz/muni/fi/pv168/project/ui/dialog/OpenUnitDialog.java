@@ -7,7 +7,6 @@ import javax.swing.*;
 public class OpenUnitDialog extends EntityDialog<Unit> {
 
     private final JLabel name = new JLabel();
-    private final JLabel abbreviation =  new JLabel();
     private final JLabel conversionRate =  new JLabel();
     private final JLabel ingredientType =  new JLabel();
 
@@ -20,8 +19,7 @@ public class OpenUnitDialog extends EntityDialog<Unit> {
     }
 
     private void setValues() {
-        name.setText(unit.getName());
-        abbreviation.setText("Abbreviation: " + unit.getAbbreviation());
+        name.setText(unit.getName() + " (" + unit.getAbbreviation() + ")");
         conversionRate.setText("Conversion rate to base unit (g/ml/pcs): " + unit.getConversionRate());
         ingredientType.setText(String.valueOf(unit.getIngredientType()));
 
@@ -29,7 +27,6 @@ public class OpenUnitDialog extends EntityDialog<Unit> {
 
     private void addFields() {
         panel.add(name);
-        panel.add(abbreviation);
         panel.add(conversionRate);
         panel.add(ingredientType);
     }
