@@ -147,6 +147,8 @@ public class MainWindow {
                 int currTabIndex = tabbedPane.getSelectedIndex();
                 categoryFilter.setVisible(currTabIndex == 0); // first is recipe
                 ingredientFilter.setVisible(currTabIndex == 0);
+                preparationTimeSlider.setVisible(currTabIndex == 0);
+                nutritionalValuesSlider.setVisible(currTabIndex == 0);
             }
         });
     }
