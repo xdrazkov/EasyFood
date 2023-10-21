@@ -30,4 +30,11 @@ public class Category {
     public String toString() {
         return name;
     }
+
+    /**
+     *     substitution for getClass, see usage
+     */
+    public Category getItself() {
+        return this;
+    }
 }
