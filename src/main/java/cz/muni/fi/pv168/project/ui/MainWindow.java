@@ -110,8 +110,12 @@ public class MainWindow {
         // ADD row sorters
         var recipeRowSorter = new TableRowSorter<>(recipeTableModel);
         var categoryRowSorter = new TableRowSorter<>(categoryTableModel);
+        var ingredientRowSorter = new TableRowSorter<>(ingredientTableModel);
+        var unitRowSorter = new TableRowSorter<>(unitTableModel);
         recipeTablePanel.getTable().setRowSorter(recipeRowSorter);
         categoryTablePanel.getTable().setRowSorter(categoryRowSorter);
+        ingredientTablePanel.getTable().setRowSorter(ingredientRowSorter);
+        unitTablePanel.getTable().setRowSorter(unitRowSorter);
 
         var recipeTableFilter = new RecipeTableFilter(recipeRowSorter);
         var categoryFilter = createCategoryFilter(recipeTableFilter);
