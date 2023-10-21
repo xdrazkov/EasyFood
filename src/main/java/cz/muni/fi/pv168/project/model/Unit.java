@@ -4,7 +4,7 @@ public class Unit {
     private String name;
     private String abbreviation;
     private IngredientType ingredientType;
-    private float conversionRate;
+    private float conversionRate; // quantity * rate = quantity_base_unit
 
     public Unit(String name, String abbreviation, IngredientType ingredientType, float conversionRate) {
         this.name = name;

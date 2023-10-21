@@ -200,9 +200,9 @@ public class MainWindow {
         RangeSlider preparationNutritionalValuesSlider = getRangeSlider(allNutritionalValues ,"Nutritional Values");
 
         preparationNutritionalValuesSlider.addChangeListener(e -> {
-            Integer selectedLowerTime = preparationNutritionalValuesSlider.getValue();
-            Integer selectedUpperTime = preparationNutritionalValuesSlider.getUpperValue();
-            recipeTableFilter.filterNutritionalValues(Either.right(Pair.of(selectedLowerTime, selectedUpperTime)));
+            Integer selectedLowerVal = preparationNutritionalValuesSlider.getValue();
+            Integer selectedUpperVal = preparationNutritionalValuesSlider.getUpperValue();
+            recipeTableFilter.filterNutritionalValues(Either.right(Pair.of(selectedLowerVal, selectedUpperVal)));
         });
 
         return preparationNutritionalValuesSlider;
@@ -210,15 +210,20 @@ public class MainWindow {
     private static RangeSlider getRangeSlider(List<Integer> values, String description) {
         int minValue = values.stream().mapToInt(Integer::intValue).min().orElse(0);
         int maxValue = values.stream().mapToInt(Integer::intValue).max().orElse(0);
-        RangeSlider preparationTimeSlider = new RangeSlider(minValue, maxValue);
-        preparationTimeSlider.setMajorTickSpacing((maxValue - minValue) / 10);
-        preparationTimeSlider.setMinorTickSpacing((maxValue - minValue) / 20);
-        preparationTimeSlider.setPaintTicks(true);
-        preparationTimeSlider.setPaintLabels(true);
-        preparationTimeSlider.setToolTipText(description);
-        preparationTimeSlider.setValue(minValue);
-        preparationTimeSlider.setUpperValue(maxValue);
-        return preparationTimeSlider;
+
+        RangeSlider slider = new RangeSlider(minValue, maxValue);
+
+        slider.setMajorTickSpacing((maxValue - minValue) / 10);
+        slider.setMinorTickSpacing((maxValue - minValue) / 20);
+
+        slider.setPaintTicks(true);
+        slider.setPaintLabels(true);
+
+        slider.setToolTipText(description);
+        slider.setValue(minValue);
+        slider.setUpperValue(maxValue);
+
+        return slider;
     }
 
     public void show() {

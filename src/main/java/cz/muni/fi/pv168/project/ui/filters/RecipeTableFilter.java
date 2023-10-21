@@ -91,7 +91,7 @@ public final class RecipeTableFilter {
 
         @Override
         public boolean evaluate(Recipe recipe) {
-            return Stream.of(categoryMatcher, ingredientMatcher, preparationTimeMatcher)
+            return Stream.of(categoryMatcher, ingredientMatcher, preparationTimeMatcher, nutritionalValuesMatcher)
                     .allMatch(m -> m.evaluate(recipe)) ;
         }
     }

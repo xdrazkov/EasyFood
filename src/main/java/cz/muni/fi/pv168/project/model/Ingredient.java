@@ -31,6 +31,11 @@ public class Ingredient {
         return caloriesPerUnit;
     }
 
+    public int getTotalCalories(Unit anyUnit, int amount) { // TODO distinguish type: eg. WEIGHABLE per 100g, COUNTABLE per 1pc
+        float countBase = anyUnit.getConversionRate() * amount;
+        return (int) (countBase * caloriesPerUnit);
+    }
+
     public void setCaloriesPerUnit(int caloriesPerUnit) {
         this.caloriesPerUnit = caloriesPerUnit;
     }

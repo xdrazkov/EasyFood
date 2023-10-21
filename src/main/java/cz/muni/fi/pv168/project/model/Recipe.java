@@ -5,6 +5,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Recipe {
     private String title;
@@ -12,9 +13,25 @@ public class Recipe {
     private int portionCount;
     private String instructions;
     private int timeToPrepare; // in minutes; import java.util.concurrent.TimeUnit
-    private int nutritionalValue; //todo math
+    private int nutritionalValue;
     private Category category;
     private HashMap<Ingredient, Pair<Unit, Integer>> ingredientList;
+
+    public Recipe(String title, String description, int portionCount, String instructions, int timeToPrepare, Category category, HashMap<Ingredient, Pair<Unit, Integer>> ingredientList) {
+        this.title = title;
+        this.description = description;
+        this.portionCount = portionCount;
+        this.instructions = instructions;
+        this.timeToPrepare = timeToPrepare;
+        this.category = category;
+        this.ingredientList = ingredientList;
+        for (Map.Entry<Ingredient, Pair<Unit, Integer>> entry: ingredientList.entrySet()) {
+            Unit unit = entry.getValue().getLeft();
+            int amount = entry.getValue().getRight();
+            Ingredient ingredient = entry.getKey();
+            this.nutritionalValue += ingredient.getTotalCalories(unit, amount);
+        }
+    }
 
     public String getTitle() {
         return title;
@@ -30,17 +47,6 @@ public class Recipe {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Recipe(String title, String description, int portionCount, String instructions, int timeToPrepare, Category category, HashMap<Ingredient, Pair<Unit, Integer>> ingredientList) {
-        this.title = title;
-        this.description = description;
-        this.portionCount = portionCount;
-        this.instructions = instructions;
-        this.timeToPrepare = timeToPrepare;
-        this.category = category;
-        this.ingredientList = ingredientList;
-        this.nutritionalValue = 0; // TODO math
     }
 
     public Recipe(){}
