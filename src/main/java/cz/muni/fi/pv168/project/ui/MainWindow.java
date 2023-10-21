@@ -16,9 +16,11 @@ import cz.muni.fi.pv168.project.ui.panels.CategoryTablePanel;
 import cz.muni.fi.pv168.project.ui.panels.IngredientTablePanel;
 import cz.muni.fi.pv168.project.ui.panels.RecipeTablePanel;
 import cz.muni.fi.pv168.project.ui.panels.UnitTablePanel;
+import cz.muni.fi.pv168.project.ui.rangeSlider.RangeSlider;
 import cz.muni.fi.pv168.project.ui.renderers.*;
 import cz.muni.fi.pv168.project.util.Either;
 import cz.muni.fi.pv168.project.ui.filters.components.FilterComboboxBuilder;
+import org.apache.commons.lang3.tuple.Pair;
 
 
 import javax.swing.*;
@@ -63,7 +65,7 @@ public class MainWindow {
         var categories = testDataGenerator.createTestCategories(5);
         var ingredients = testDataGenerator.createTestIngredients(5);
         var units = testDataGenerator.createTestUnits(5);
-        var recipes = testDataGenerator.createTestRecipes(10, categories, ingredients, units);
+        var recipes = testDataGenerator.createTestRecipes(20, categories, ingredients, units);
 
         // Create models
         recipeTableModel = new RecipeTableModel(recipes);
@@ -180,20 +182,12 @@ public class MainWindow {
         List<Integer> allTimes = recipeTableModel.getRecipes().stream()
                 .map(Recipe::getTimeToPrepare)
                 .toList();
-
-        int minTime = allTimes.stream().mapToInt(Integer::intValue).min().orElse(0);
-        int maxTime = allTimes.stream().mapToInt(Integer::intValue).max().orElse(60);
-
-        JSlider preparationTimeSlider = new JSlider(JSlider.HORIZONTAL, minTime, maxTime, minTime);
-        preparationTimeSlider.setMajorTickSpacing(10);
-        preparationTimeSlider.setMinorTickSpacing(1);
-        preparationTimeSlider.setPaintTicks(true);
-        preparationTimeSlider.setPaintLabels(true);
-        preparationTimeSlider.setToolTipText("Preparation time (min)");
+        RangeSlider preparationTimeSlider = getRangeSlider(allTimes, "Preparation time (min)");
 
         preparationTimeSlider.addChangeListener(e -> {
-            Integer selectedTime = preparationTimeSlider.getValue();
-            recipeTableFilter.filterPreparationTime(Either.right(selectedTime));
+            Integer selectedLowerTime = preparationTimeSlider.getValue();
+            Integer selectedUpperTime = preparationTimeSlider.getUpperValue();
+            recipeTableFilter.filterPreparationTime(Either.right(Pair.of(selectedLowerTime, selectedUpperTime)));
         });
 
         return preparationTimeSlider;
@@ -203,23 +197,28 @@ public class MainWindow {
         List<Integer> allNutritionalValues = recipeTableModel.getRecipes().stream()
                 .map(Recipe::getNutritionalValue)
                 .toList();
-
-        int minValue = allNutritionalValues.stream().mapToInt(Integer::intValue).min().orElse(0);
-        int maxValue = allNutritionalValues.stream().mapToInt(Integer::intValue).max().orElse(1000);
-
-        JSlider preparationNutritionalValuesSlider = new JSlider(JSlider.HORIZONTAL, minValue, maxValue, minValue);
-        preparationNutritionalValuesSlider.setMajorTickSpacing(10);
-        preparationNutritionalValuesSlider.setMinorTickSpacing(1);
-        preparationNutritionalValuesSlider.setPaintTicks(true);
-        preparationNutritionalValuesSlider.setPaintLabels(true);
-        preparationNutritionalValuesSlider.setToolTipText("Nutritional Values");
+        RangeSlider preparationNutritionalValuesSlider = getRangeSlider(allNutritionalValues ,"Nutritional Values");
 
         preparationNutritionalValuesSlider.addChangeListener(e -> {
-            Integer selectedTime = preparationNutritionalValuesSlider.getValue();
-            recipeTableFilter.filterNutritionalValues(Either.right(selectedTime));
+            Integer selectedLowerTime = preparationNutritionalValuesSlider.getValue();
+            Integer selectedUpperTime = preparationNutritionalValuesSlider.getUpperValue();
+            recipeTableFilter.filterNutritionalValues(Either.right(Pair.of(selectedLowerTime, selectedUpperTime)));
         });
 
         return preparationNutritionalValuesSlider;
+    }
+    private static RangeSlider getRangeSlider(List<Integer> values, String description) {
+        int minValue = values.stream().mapToInt(Integer::intValue).min().orElse(0);
+        int maxValue = values.stream().mapToInt(Integer::intValue).max().orElse(0);
+        RangeSlider preparationTimeSlider = new RangeSlider(minValue, maxValue);
+        preparationTimeSlider.setMajorTickSpacing((maxValue - minValue) / 10);
+        preparationTimeSlider.setMinorTickSpacing((maxValue - minValue) / 20);
+        preparationTimeSlider.setPaintTicks(true);
+        preparationTimeSlider.setPaintLabels(true);
+        preparationTimeSlider.setToolTipText(description);
+        preparationTimeSlider.setValue(minValue);
+        preparationTimeSlider.setUpperValue(maxValue);
+        return preparationTimeSlider;
     }
 
     public void show() {

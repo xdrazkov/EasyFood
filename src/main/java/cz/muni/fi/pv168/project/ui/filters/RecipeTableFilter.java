@@ -10,6 +10,7 @@ import cz.muni.fi.pv168.project.ui.filters.values.SpecialFilterNutritionalValueV
 import cz.muni.fi.pv168.project.ui.filters.values.SpecialFilterPreparationTimeValues;
 import cz.muni.fi.pv168.project.ui.model.RecipeTableModel;
 import cz.muni.fi.pv168.project.util.Either;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.swing.table.TableRowSorter;
 import java.util.stream.Stream;
@@ -39,14 +40,14 @@ public final class RecipeTableFilter {
         );
     }
 
-    public void filterPreparationTime(Either<SpecialFilterPreparationTimeValues, Integer> selectedItem) {
+    public void filterPreparationTime(Either<SpecialFilterPreparationTimeValues, Pair<Integer, Integer>> selectedItem) {
         selectedItem.apply(
                 l -> recipeCompoundMatcher.setPreparationTimeMatcher(l.getMatcher()),
                 r -> recipeCompoundMatcher.setPreparationTimeMatcher(new PreparationTimeMatcher(r))
         );
     }
 
-    public void filterNutritionalValues(Either<SpecialFilterNutritionalValueValues, Integer> selectedItem) {
+    public void filterNutritionalValues(Either<SpecialFilterNutritionalValueValues, Pair<Integer, Integer>> selectedItem) {
         selectedItem.apply(
                 l -> recipeCompoundMatcher.setNutritionalValuesMatcher(l.getMatcher()),
                 r -> recipeCompoundMatcher.setNutritionalValuesMatcher(new NutritionalValuesMatcher(r))
