@@ -11,7 +11,7 @@ public class CategoryTableModel extends AbstractTableModel {
     private final List<Category> categories;
 
     private final List<Column<Category, ?>> columns = List.of(
-            Column.readonly("Name", String.class, Category::getName)
+            Column.readonly("Name", Category.class, Category::getItself)
     );
 
     public CategoryTableModel(List<Category> categories) {

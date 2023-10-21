@@ -105,21 +105,24 @@ public class MainWindow {
         categoryTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu(false));
         unitTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu(false));
 
-        // paints rows in recipe tab by their category color
-        recipeTablePanel.getTable().setDefaultRenderer(Object.class, new RecipeCategoryRenderer());
-        // Object.class covers Category.class and String.class, but Integer.class DOES NOT
-        recipeTablePanel.getTable().setDefaultRenderer(Integer.class, new RecipeCategoryRenderer());
-
         // ADD row sorters
-        var rowSorter = new TableRowSorter<>(recipeTableModel);
-        var recipeTableFilter = new RecipeTableFilter(rowSorter);
-        recipeTablePanel.getTable().setRowSorter(rowSorter);
+        var recipeRowSorter = new TableRowSorter<>(recipeTableModel);
+        var categoryRowSorter = new TableRowSorter<>(categoryTableModel);
+        recipeTablePanel.getTable().setRowSorter(recipeRowSorter);
+        categoryTablePanel.getTable().setRowSorter(categoryRowSorter);
 
+        var recipeTableFilter = new RecipeTableFilter(recipeRowSorter);
         var categoryFilter = createCategoryFilter(recipeTableFilter);
         var ingredientFilter = createIngredientFilter(recipeTableFilter);
 
         var preparationTimeSlider = createPreparationTimeSlider(recipeTableFilter);
         var nutritionalValuesSlider = createNutritionalValuesSlider(recipeTableFilter);
+
+        // paints rows in recipe and category tab by their category color
+        var recipeRowColorRenderer = new RecipeCategoryRenderer(2);
+        recipeTablePanel.getTable().setDefaultRenderer(Object.class, recipeRowColorRenderer);
+        recipeTablePanel.getTable().setDefaultRenderer(Integer.class, recipeRowColorRenderer);
+        categoryTablePanel.getTable().setDefaultRenderer(Object.class, new RecipeCategoryRenderer(0));
 
         var toolbar = createToolbar(categoryFilter, ingredientFilter, preparationTimeSlider, nutritionalValuesSlider);
         frame.add(toolbar, BorderLayout.BEFORE_FIRST_LINE);
