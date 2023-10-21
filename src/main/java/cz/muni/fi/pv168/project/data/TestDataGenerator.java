@@ -5,6 +5,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +20,7 @@ public final class TestDataGenerator {
 
 
     public Category createTestCategory(int index) {
-        return new Category("Category " + index, Category.DEFAULT_COLOR);
+        return new Category("Category " + index, Color.PINK);
     }
 
     public Ingredient createTestIngredient(int index) {
