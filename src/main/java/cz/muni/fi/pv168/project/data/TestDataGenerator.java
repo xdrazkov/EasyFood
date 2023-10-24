@@ -1,26 +1,28 @@
 package cz.muni.fi.pv168.project.data;
 
+import com.formdev.flatlaf.util.HSLColor;
 import cz.muni.fi.pv168.project.model.*;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
-import org.apache.commons.lang3.tuple.Pair;
 
 public final class TestDataGenerator {
     private final Random random = new Random();
 
 
     public Category createTestCategory(int index) {
-        return new Category("Category " + index, Color.PINK);
+        // HSL color range for generating pastel colors
+        float h = random.nextFloat(0, 360);
+        float s = random.nextFloat(0.3f * 100, 0.7f * 100);
+        float l = random.nextFloat(0.7f * 100, 0.9f * 100);
+        HSLColor hslColor = new HSLColor(h, s, l);
+        return new Category("Category " + index, hslColor.getRGB());
     }
 
     public Ingredient createTestIngredient(int index) {
