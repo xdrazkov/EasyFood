@@ -17,7 +17,7 @@ import java.awt.geom.Ellipse2D;
 class RangeSliderUI extends BasicSliderUI {
 
     /** Color of selected range. */
-    private Color rangeColor = Color.WHITE;
+    private Color rangeColor = Color.BLACK;
 
     /** Location and size of thumb for upper value. */
     private Rectangle upperThumbRect;
