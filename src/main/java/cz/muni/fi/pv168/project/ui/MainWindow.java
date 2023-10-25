@@ -130,8 +130,12 @@ public class MainWindow {
         recipeTablePanel.getTable().setDefaultRenderer(Integer.class, recipeRowColorRenderer);
         categoryTablePanel.getTable().setDefaultRenderer(Object.class, new RecipeCategoryRenderer(0));
 
-        var toolbar = createToolbar(categoryFilter, ingredientFilter, preparationTimeSlider, nutritionalValuesSlider);
-        frame.add(toolbar, BorderLayout.BEFORE_FIRST_LINE);
+        JPanel toolbarPanel = new JPanel(new GridLayout(2, 1));
+        var toolbar = createToolbar();
+        var filtersToolbar = createToolbar(categoryFilter, ingredientFilter, preparationTimeSlider, nutritionalValuesSlider);
+        toolbarPanel.add(toolbar);
+        toolbarPanel.add(filtersToolbar);
+        frame.add(toolbarPanel, BorderLayout.BEFORE_FIRST_LINE);
 
         var menubar = createMenuBar();
         frame.setJMenuBar(menubar);
@@ -272,7 +276,7 @@ public class MainWindow {
         return menuBar;
     }
 
-    private JToolBar createToolbar(Component... components) {
+    private JToolBar createToolbar() {
         var toolbar = new JToolBar();
         toolbar.add(openAction);
         toolbar.add(editAction);
@@ -283,13 +287,17 @@ public class MainWindow {
         toolbar.add(exportAction);
         toolbar.addSeparator();
 
+        return toolbar;
+    }
+
+    private JToolBar createToolbar(Component... components) {
+        var toolbar = new JToolBar();
         for (var component : components) {
             toolbar.add(component);
         }
 
         return toolbar;
     }
-
     private void changeActionsState(int selectedItemsCount) {
         int currentTabIndex = getCurrentTableIndex(this.tabbedPane);
         openAction.setEnabled(selectedItemsCount == 1 && isActionAllowed(openAction, currentTabIndex));
