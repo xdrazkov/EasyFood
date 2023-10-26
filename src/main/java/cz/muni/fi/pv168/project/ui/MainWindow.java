@@ -90,7 +90,7 @@ public class MainWindow {
 
         // Set up actions for recipe table
         addAction = new AddAction(categories, ingredients, units, unitTableModel); // TODO pull somehow categories differently
-        deleteAction = new DeleteAction();
+        deleteAction = new DeleteAction(recipeTablePanel.getTable(), ingredientTablePanel.getTable(), categoryTablePanel.getTable(), unitTablePanel.getTable());
         editAction = new EditAction(categories, ingredients, units, unitTableModel); // TODO pull somehow categories differently
         openAction = new OpenAction();
         importAction = new ImportAction();
