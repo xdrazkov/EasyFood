@@ -243,7 +243,7 @@ public class MainWindow {
     }
 
     private JFrame createFrame() {
-        var frame = new JFrame("Recipes");
+        var frame = new JFrame("Easy Food");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         return frame;
     }
