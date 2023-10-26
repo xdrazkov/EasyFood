@@ -24,6 +24,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
@@ -101,11 +102,13 @@ public class MainWindow {
         setToDefaultActionEnablement(getCurrentTableIndex(tabbedPane));
 
 
-        // Add popup menu, toolbar, menubar
+        // Add popup menu, toolbar, menubar, status bar
         recipeTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu(true));
         ingredientTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu(false));
         categoryTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu(false));
         unitTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu(false));
+        JLabel statusBarLabel = createStatusBar();
+        statusBarLabel.setText("   Showing x of y recipes");
 
         // ADD row sorters
         var recipeRowSorter = new TableRowSorter<>(recipeTableModel);
@@ -298,6 +301,19 @@ public class MainWindow {
 
         return toolbar;
     }
+
+    private JLabel createStatusBar() {
+        JPanel statusPanel = new JPanel();
+        statusPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        frame.add(statusPanel, BorderLayout.SOUTH);
+        statusPanel.setPreferredSize(new Dimension(frame.getWidth(), 35));
+        statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.X_AXIS));
+        JLabel statusLabel = new JLabel("");
+        statusLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        statusPanel.add(statusLabel);
+        return statusLabel;
+    }
+
     private void changeActionsState(int selectedItemsCount) {
         int currentTabIndex = getCurrentTableIndex(this.tabbedPane);
         openAction.setEnabled(selectedItemsCount == 1 && isActionAllowed(openAction, currentTabIndex));
