@@ -97,7 +97,7 @@ public class MainWindow {
         exportAction = new ExportAction();
         viewStatisticsAction = new ViewStatisticsAction(recipes, ingredients);
         viewAboutAction = new ViewAboutAction();
-        this.actions = List.of(addAction, deleteAction, editAction, openAction, importAction, exportAction, viewAboutAction, viewStatisticsAction);
+        this.actions = List.of(addAction, editAction, deleteAction, openAction, importAction, exportAction, viewAboutAction, viewStatisticsAction);
         setForbiddenActionsInTabs();
         setToDefaultActionEnablement(getCurrentTableIndex(tabbedPane));
 
@@ -250,10 +250,10 @@ public class MainWindow {
 
     private JPopupMenu createTablePopupMenu(boolean isRecipe) {
         var menu = new JPopupMenu();
-        menu.add(openAction);
-        menu.add(editAction);
         menu.add(addAction);
+        menu.add(editAction);
         menu.add(deleteAction);
+        menu.add(openAction);
 
         if (isRecipe) { // only recipe has export possibility
             menu.addSeparator();
@@ -281,10 +281,10 @@ public class MainWindow {
 
     private JToolBar createToolbar() {
         var toolbar = new JToolBar();
-        toolbar.add(openAction);
-        toolbar.add(editAction);
         toolbar.add(addAction);
+        toolbar.add(editAction);
         toolbar.add(deleteAction);
+        toolbar.add(openAction);
         toolbar.addSeparator();
         toolbar.add(importAction);
         toolbar.add(exportAction);
