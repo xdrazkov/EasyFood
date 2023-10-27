@@ -25,6 +25,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
@@ -57,6 +58,8 @@ public class MainWindow {
     private final Map<GeneralAction, List<Integer>> forbiddenActionsInTabs = new HashMap<>(); // key is list of indices of tabs, where action is not allowed
 
     private final JTabbedPane tabbedPane;
+
+    private final JLabel statusBar;
 
     public MainWindow() {
         frame = createFrame();
@@ -107,8 +110,9 @@ public class MainWindow {
         ingredientTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu(false));
         categoryTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu(false));
         unitTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu(false));
-        JLabel statusBarLabel = createStatusBar();
-        statusBarLabel.setText("   Showing x of y recipes");
+        this.statusBar = createStatusBar();
+        this.statusBar.setBorder(new EmptyBorder(0, 10, 0, 10));
+        setStatusBarName(0);
 
         // ADD row sorters
         var recipeRowSorter = new TableRowSorter<>(recipeTableModel);
@@ -149,7 +153,10 @@ public class MainWindow {
             // when tab changes
             @Override
             public void stateChanged(ChangeEvent e) {
-                var currTable = getCurrentTableFromPanel((JTabbedPane) e.getSource());
+                JTabbedPane tabPanel = (JTabbedPane) e.getSource();
+                String currTabTitle = tabPanel.getTitleAt(tabPanel.getSelectedIndex());
+
+                var currTable = getCurrentTableFromPanel(tabPanel);
                 setCurrentTableToActions(currTable);
                 setToDefaultActionEnablement(getCurrentTableIndex(tabbedPane));
 
@@ -165,6 +172,7 @@ public class MainWindow {
                 preparationTimeSlider.setVisible(currTabIndex == 0);
                 nutritionalValuesSlider.setVisible(currTabIndex == 0);
 
+                setStatusBarName(0);
             }
         });
     }
@@ -320,6 +328,8 @@ public class MainWindow {
         editAction.setEnabled(selectedItemsCount == 1 && isActionAllowed(editAction, currentTabIndex));
         deleteAction.setEnabled(selectedItemsCount >= 1 && isActionAllowed(deleteAction, currentTabIndex));
         exportAction.setEnabled(selectedItemsCount >= 1 && isActionAllowed(exportAction, currentTabIndex));
+
+        setStatusBarName(selectedItemsCount);
     }
 
     private void setCurrentTableToActions(JTable table) {
@@ -361,5 +371,11 @@ public class MainWindow {
      */
     private boolean isActionAllowed(GeneralAction action, int currentTabIndex) {
         return ! this.forbiddenActionsInTabs.get(action).contains(currentTabIndex);
+    }
+
+    private void setStatusBarName(Integer selected) {
+        String currTabTitle = this.tabbedPane.getTitleAt(getCurrentTableIndex(this.tabbedPane));
+        Integer all = getCurrentTableFromPanel(this.tabbedPane).getModel().getRowCount();
+        this.statusBar.setText(String.join(" ", "Showing records", selected.toString(), "of", all.toString(), currTabTitle));
     }
 }
