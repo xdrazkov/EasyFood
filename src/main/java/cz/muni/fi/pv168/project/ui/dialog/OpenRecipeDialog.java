@@ -3,12 +3,12 @@ package cz.muni.fi.pv168.project.ui.dialog;
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Recipe;
 import cz.muni.fi.pv168.project.model.Unit;
+import cz.muni.fi.pv168.project.ui.ColoredCircle;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public final class OpenRecipeDialog extends EntityDialog<Recipe> {
 
@@ -35,8 +35,7 @@ public final class OpenRecipeDialog extends EntityDialog<Recipe> {
         portionCount.setText("Count of portions: " + recipe.getPortionCount());
         instructions.setText(recipe.getInstructions());
         timeToPrepare.setText("Time to prepare: " + recipe.getTimeToPrepare() + " mins");
-        category.setText("Category: " + recipe.getCategory().getName());
-        category.setForeground(recipe.getCategory().getColor());
+        category.setText("Category: " + recipe.getCategory().getName() + " ");
         ingredientList.setText("List of ingredients:");
     }
 
@@ -46,7 +45,11 @@ public final class OpenRecipeDialog extends EntityDialog<Recipe> {
         panel.add(portionCount);
         panel.add(instructions);
         panel.add(timeToPrepare);
-        panel.add(category);
+        var categoryPanel = new JPanel();
+        categoryPanel.setLayout(new GridBagLayout());
+        categoryPanel.add(category);
+        categoryPanel.add(new ColoredCircle(recipe.getCategory().getColor()));
+        panel.add(categoryPanel);
         panel.add(ingredientList);
     }
 
