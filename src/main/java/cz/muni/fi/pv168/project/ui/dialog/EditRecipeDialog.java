@@ -4,7 +4,6 @@ import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Recipe;
 import cz.muni.fi.pv168.project.model.Unit;
-import cz.muni.fi.pv168.project.ui.model.ComboBoxModelAdapter;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -16,9 +15,9 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
 
     private final JTextField title = new JTextField();
     private final JTextField description = new JTextField();
-    private final JTextField portionCount = new JTextField();
+    private final JFormattedTextField portionCount = FieldMaker.makeIntField();
     private final JTextField instructions = new JTextField();
-    private final JTextField timeToPrepare = new JTextField();
+    private final JTextField timeToPrepare = FieldMaker.makeIntField();
     private final JComboBox<Category> category = new JComboBox<>();
     private final JLabel ingredientList = new JLabel();
 
@@ -87,9 +86,9 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
     Recipe getEntity() {
         recipe.setTitle(title.getText());
         recipe.setDescription(description.getText());
-        recipe.setPortionCount(Integer.parseInt(portionCount.getText()));
+        recipe.setPortionCount(Integer.parseInt(portionCount.getText().replaceAll(" ", "")));
         recipe.setInstructions(instructions.getText());
-        recipe.setTimeToPrepare(Integer.parseInt(timeToPrepare.getText()));
+        recipe.setTimeToPrepare(Integer.parseInt(timeToPrepare.getText().replaceAll(" ", "")));
         recipe.setCategory((Category) category.getSelectedItem());
         return recipe;
     }
