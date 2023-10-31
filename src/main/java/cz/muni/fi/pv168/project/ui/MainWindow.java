@@ -63,6 +63,7 @@ public class MainWindow {
 
     public MainWindow() {
         frame = createFrame();
+        frame.setMinimumSize(new Dimension(800, 800));
 
         // Generate test objects
         var testDataGenerator = new TestDataGenerator();
