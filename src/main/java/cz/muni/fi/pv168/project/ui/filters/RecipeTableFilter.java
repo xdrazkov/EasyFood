@@ -13,6 +13,8 @@ import cz.muni.fi.pv168.project.util.Either;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.swing.table.TableRowSorter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 /**
@@ -33,12 +35,21 @@ public final class RecipeTableFilter {
         );
     }
 
-    public void filterIngredient(Either<SpecialFilterIngredientValues, Ingredient> selectedItem) {
-        selectedItem.apply(
-                l -> recipeCompoundMatcher.setIngredientMatcher(l.getMatcher()),
-                r -> recipeCompoundMatcher.setIngredientMatcher(new IngredientMatcher(r))
-        );
+    public void filterIngredient(List<Either<SpecialFilterIngredientValues, Ingredient>> selectedItems) {
+        List<EntityMatcher<Recipe>> matchers = new ArrayList<>();
+        selectedItems.forEach(either -> either.apply(
+                l -> matchers.add(l.getMatcher()),
+                r -> matchers.add(new IngredientsMatcher(r))
+        ));
+        recipeCompoundMatcher.setIngredientMatcher(new IngredientsCompoundMatcher(matchers));
     }
+
+//    public void filterIngredient(Either<SpecialFilterIngredientValues, List<Ingredient>> selectedItem) {
+//        selectedItem.apply(
+//                l -> recipeCompoundMatcher.setIngredientMatcher(l.getMatcher()),
+//                r -> recipeCompoundMatcher.setIngredientMatcher(new IngredientMatcher(r))
+//        );
+//    }
 
     public void filterPreparationTime(Either<SpecialFilterPreparationTimeValues, Pair<Integer, Integer>> selectedItem) {
         selectedItem.apply(

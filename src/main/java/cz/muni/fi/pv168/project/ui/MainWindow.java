@@ -6,6 +6,7 @@ import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Recipe;
 import cz.muni.fi.pv168.project.ui.action.*;
 import cz.muni.fi.pv168.project.ui.filters.RecipeTableFilter;
+import cz.muni.fi.pv168.project.ui.filters.components.FilterListModelBuilder;
 import cz.muni.fi.pv168.project.ui.filters.values.SpecialFilterCategoryValues;
 import cz.muni.fi.pv168.project.ui.filters.values.SpecialFilterIngredientValues;
 import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
@@ -32,6 +33,7 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.event.ListDataListener;
 import javax.swing.table.TableRowSorter;
 
 public class MainWindow {
@@ -127,7 +129,7 @@ public class MainWindow {
 
         var recipeTableFilter = new RecipeTableFilter(recipeRowSorter);
         var categoryFilter = createCategoryFilter(recipeTableFilter);
-        var ingredientFilter = createIngredientFilter(recipeTableFilter);
+        var ingredientFilter = new JScrollPane(createIngredientFilter(recipeTableFilter, ingredientTableModel));
 
         var preparationTimeSlider = createPreparationTimeSlider(recipeTableFilter);
         var nutritionalValuesSlider = createNutritionalValuesSlider(recipeTableFilter);
@@ -188,15 +190,39 @@ public class MainWindow {
                 .build();
     }
 
-    private static JComboBox<Either<SpecialFilterIngredientValues, Ingredient>> createIngredientFilter(
-            RecipeTableFilter recipeTableFilter) {
-        return FilterComboboxBuilder.create(SpecialFilterIngredientValues.class, ingredientTableModel.getIngredients().toArray(new Ingredient[0]))
-                .setSelectedItem(SpecialFilterIngredientValues.ALL)
+    private static JList<Either<SpecialFilterIngredientValues, Ingredient>> createIngredientFilter(
+            RecipeTableFilter recipeTableFilter, IngredientTableModel ingredientTableModel) {
+
+        ListModel<Ingredient> listModel = new ListModel<>() {
+            @Override
+            public int getSize() {
+                return ingredientTableModel.getIngredients().size();
+            }
+
+            @Override
+            public Ingredient getElementAt(int index) {
+                return ingredientTableModel.getIngredients().get(index);
+            }
+
+            @Override
+            public void addListDataListener(ListDataListener l) {
+
+            }
+
+            @Override
+            public void removeListDataListener(ListDataListener l) {
+
+            }
+        };
+        return FilterListModelBuilder.create(SpecialFilterIngredientValues.class, listModel)
+                .setSelectedIndex(0)
+                .setVisibleRowsCount(3)
                 .setSpecialValuesRenderer(new SpecialFilterIngredientValuesRenderer())
                 .setValuesRenderer(new IngredientRenderer())
                 .setFilter(recipeTableFilter::filterIngredient)
                 .build();
     }
+
 
     private static JSlider createPreparationTimeSlider(RecipeTableFilter recipeTableFilter) {
         List<Integer> allTimes = recipeTableModel.getRecipes().stream()
