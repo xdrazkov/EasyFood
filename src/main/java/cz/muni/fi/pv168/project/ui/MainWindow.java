@@ -44,22 +44,12 @@ public class MainWindow {
     private final GeneralAction exportAction;
     private final GeneralAction viewStatisticsAction;
     private final GeneralAction viewAboutAction;
-
     private final List<GeneralAction> actions;
 
-    private static RecipeTableModel recipeTableModel;
-
-    private static CategoryTableModel categoryTableModel;
-
-    private static IngredientTableModel ingredientTableModel;
-
-    private final UnitTableModel unitTableModel;
-
-    private final Map<GeneralAction, List<Integer>> forbiddenActionsInTabs = new HashMap<>(); // key is list of indices of tabs, where action is not allowed
+    // key is list of indices of tabs, where action is not allowed
+    private final Map<GeneralAction, List<Integer>> forbiddenActionsInTabs = new HashMap<>();
 
     private final JTabbedPane tabbedPane;
-
-    private final JLabel statusBar;
 
     public MainWindow() {
         frame = createFrame();
@@ -73,10 +63,10 @@ public class MainWindow {
         var recipes = testDataGenerator.createTestRecipes(20, categories, ingredients, units);
 
         // Create models
-        recipeTableModel = new RecipeTableModel(recipes);
-        ingredientTableModel = new IngredientTableModel(ingredients);
-        categoryTableModel = new CategoryTableModel(categories);
-        this.unitTableModel = new UnitTableModel(units);
+        RecipeTableModel recipeTableModel = new RecipeTableModel(recipes);
+        IngredientTableModel ingredientTableModel = new IngredientTableModel(ingredients);
+        CategoryTableModel categoryTableModel = new CategoryTableModel(categories);
+        UnitTableModel unitTableModel = new UnitTableModel(units);
 
         // Create panels
         var recipeTablePanel = new RecipeTablePanel(recipeTableModel, this::changeActionsState);
@@ -111,9 +101,8 @@ public class MainWindow {
         ingredientTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu(false));
         categoryTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu(false));
         unitTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu(false));
-        this.statusBar = createStatusBar();
-        this.statusBar.setBorder(new EmptyBorder(0, 10, 0, 10));
-        setStatusBarName();
+        JLabel statusBar = createStatusBar();
+        setStatusBarName(statusBar);
 
         // ADD row sorters
         var recipeRowSorter = new TableRowSorter<>(recipeTableModel);
@@ -126,14 +115,14 @@ public class MainWindow {
         unitTablePanel.getTable().setRowSorter(unitRowSorter);
 
         // adding listener to change text of status bar when filtering rows
-        recipeRowSorter.addRowSorterListener(e -> setStatusBarName());
+        recipeRowSorter.addRowSorterListener(e -> setStatusBarName(statusBar));
 
         var recipeTableFilter = new RecipeTableFilter(recipeRowSorter);
-        var categoryFilter = createCategoryFilter(recipeTableFilter);
+        var categoryFilter = createCategoryFilter(recipeTableFilter, categoryTableModel);
         var ingredientFilter = new JScrollPane(createIngredientFilter(recipeTableFilter, ingredientTableModel));
 
-        var preparationTimeSlider = createPreparationTimeSlider(recipeTableFilter);
-        var nutritionalValuesSlider = createNutritionalValuesSlider(recipeTableFilter);
+        var preparationTimeSlider = createPreparationTimeSlider(recipeTableFilter, recipeTableModel);
+        var nutritionalValuesSlider = createNutritionalValuesSlider(recipeTableFilter, recipeTableModel);
 
         // paints rows in recipe and category tab by their category color
         var recipeRowColorRenderer = new RecipeCategoryRenderer(2);
@@ -158,7 +147,6 @@ public class MainWindow {
             @Override
             public void stateChanged(ChangeEvent e) {
                 JTabbedPane tabPanel = (JTabbedPane) e.getSource();
-                String currTabTitle = tabPanel.getTitleAt(tabPanel.getSelectedIndex());
 
                 var currTable = getCurrentTableFromPanel(tabPanel);
                 setCurrentTableToActions(currTable);
@@ -176,13 +164,13 @@ public class MainWindow {
                 preparationTimeSlider.setVisible(currTabIndex == 0);
                 nutritionalValuesSlider.setVisible(currTabIndex == 0);
 
-                setStatusBarName();
+                setStatusBarName(statusBar);
             }
         });
     }
 
     private static JComboBox<Either<SpecialFilterCategoryValues, Category>> createCategoryFilter(
-            RecipeTableFilter recipeTableFilter) {
+            RecipeTableFilter recipeTableFilter, CategoryTableModel categoryTableModel) {
         return FilterComboboxBuilder.create(SpecialFilterCategoryValues.class, categoryTableModel.getCategories().toArray(new Category[0]))
                 .setSelectedItem(SpecialFilterCategoryValues.ALL)
                 .setSpecialValuesRenderer(new SpecialFilterCategoryValuesRenderer())
@@ -193,8 +181,7 @@ public class MainWindow {
 
     private static JList<Either<SpecialFilterIngredientValues, Ingredient>> createIngredientFilter(
             RecipeTableFilter recipeTableFilter, IngredientTableModel ingredientTableModel) {
-
-        ListModel<Ingredient> listModel = new ListModel<>() {
+        ListModel<Ingredient> listModel = new AbstractListModel<>() {
             @Override
             public int getSize() {
                 return ingredientTableModel.getIngredients().size();
@@ -204,17 +191,8 @@ public class MainWindow {
             public Ingredient getElementAt(int index) {
                 return ingredientTableModel.getIngredients().get(index);
             }
-
-            @Override
-            public void addListDataListener(ListDataListener l) {
-
-            }
-
-            @Override
-            public void removeListDataListener(ListDataListener l) {
-
-            }
         };
+
         return FilterListModelBuilder.create(SpecialFilterIngredientValues.class, listModel)
                 .setSelectedIndex(0)
                 .setVisibleRowsCount(3)
@@ -225,7 +203,7 @@ public class MainWindow {
     }
 
 
-    private static JSlider createPreparationTimeSlider(RecipeTableFilter recipeTableFilter) {
+    private static JSlider createPreparationTimeSlider(RecipeTableFilter recipeTableFilter, RecipeTableModel recipeTableModel) {
         List<Integer> allTimes = recipeTableModel.getRecipes().stream()
                 .map(Recipe::getTimeToPrepare)
                 .toList();
@@ -240,7 +218,7 @@ public class MainWindow {
         return preparationTimeSlider;
     }
 
-    private static JSlider createNutritionalValuesSlider(RecipeTableFilter recipeTableFilter) {
+    private static JSlider createNutritionalValuesSlider(RecipeTableFilter recipeTableFilter, RecipeTableModel recipeTableModel) {
         List<Integer> allNutritionalValues = recipeTableModel.getRecipes().stream()
                 .map(Recipe::getNutritionalValue)
                 .toList();
@@ -307,11 +285,11 @@ public class MainWindow {
         fileMenu.add(importAction);
         fileMenu.setMnemonic('f');
         menuBar.add(fileMenu);
-        var vievMenu = new JMenu("View");
-        vievMenu.add(viewStatisticsAction);
-        vievMenu.add(viewAboutAction);
-        vievMenu.setMnemonic('v');
-        menuBar.add(vievMenu);
+        var viewMenu = new JMenu("View");
+        viewMenu.add(viewStatisticsAction);
+        viewMenu.add(viewAboutAction);
+        viewMenu.setMnemonic('v');
+        menuBar.add(viewMenu);
         return menuBar;
     }
 
@@ -399,11 +377,17 @@ public class MainWindow {
         return ! this.forbiddenActionsInTabs.get(action).contains(currentTabIndex);
     }
 
-    private void setStatusBarName() {
+    private void setStatusBarName(JLabel statusBar) {
         String currTabTitle = this.tabbedPane.getTitleAt(getCurrentTableIndex(this.tabbedPane));
         JTable currTabPanel = getCurrentTableFromPanel(this.tabbedPane);
-        Integer selected = currTabPanel.getRowCount();
-        Integer all = currTabPanel.getModel().getRowCount();
-        this.statusBar.setText(String.join(" ", "Showing records", selected.toString(), "of", all.toString(), currTabTitle));
+        int selected = currTabPanel.getRowCount();
+        int all = currTabPanel.getModel().getRowCount();
+        statusBar.setText(String.join(" ", "Showing records",
+                Integer.toString(selected),
+                "of",
+                Integer.toString(all),
+                currTabTitle
+        ));
+        statusBar.setBorder(new EmptyBorder(0, 10, 0, 10));
     }
 }
