@@ -27,13 +27,11 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.event.*;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.event.ListDataListener;
 import javax.swing.table.TableRowSorter;
 
 public class MainWindow {
@@ -115,7 +113,7 @@ public class MainWindow {
         unitTablePanel.getTable().setComponentPopupMenu(createTablePopupMenu(false));
         this.statusBar = createStatusBar();
         this.statusBar.setBorder(new EmptyBorder(0, 10, 0, 10));
-        setStatusBarName(0);
+        setStatusBarName();
 
         // ADD row sorters
         var recipeRowSorter = new TableRowSorter<>(recipeTableModel);
@@ -126,6 +124,9 @@ public class MainWindow {
         categoryTablePanel.getTable().setRowSorter(categoryRowSorter);
         ingredientTablePanel.getTable().setRowSorter(ingredientRowSorter);
         unitTablePanel.getTable().setRowSorter(unitRowSorter);
+
+        // adding listener to change text of status bar when filtering rows
+        recipeRowSorter.addRowSorterListener(e -> setStatusBarName());
 
         var recipeTableFilter = new RecipeTableFilter(recipeRowSorter);
         var categoryFilter = createCategoryFilter(recipeTableFilter);
@@ -175,7 +176,7 @@ public class MainWindow {
                 preparationTimeSlider.setVisible(currTabIndex == 0);
                 nutritionalValuesSlider.setVisible(currTabIndex == 0);
 
-                setStatusBarName(0);
+                setStatusBarName();
             }
         });
     }
@@ -355,8 +356,6 @@ public class MainWindow {
         editAction.setEnabled(selectedItemsCount == 1 && isActionAllowed(editAction, currentTabIndex));
         deleteAction.setEnabled(selectedItemsCount >= 1 && isActionAllowed(deleteAction, currentTabIndex));
         exportAction.setEnabled(selectedItemsCount >= 1 && isActionAllowed(exportAction, currentTabIndex));
-
-        setStatusBarName(selectedItemsCount);
     }
 
     private void setCurrentTableToActions(JTable table) {
@@ -400,9 +399,11 @@ public class MainWindow {
         return ! this.forbiddenActionsInTabs.get(action).contains(currentTabIndex);
     }
 
-    private void setStatusBarName(Integer selected) {
+    private void setStatusBarName() {
         String currTabTitle = this.tabbedPane.getTitleAt(getCurrentTableIndex(this.tabbedPane));
-        Integer all = getCurrentTableFromPanel(this.tabbedPane).getModel().getRowCount();
+        JTable currTabPanel = getCurrentTableFromPanel(this.tabbedPane);
+        Integer selected = currTabPanel.getRowCount();
+        Integer all = currTabPanel.getModel().getRowCount();
         this.statusBar.setText(String.join(" ", "Showing records", selected.toString(), "of", all.toString(), currTabTitle));
     }
 }
