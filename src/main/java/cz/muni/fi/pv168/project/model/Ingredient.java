@@ -44,4 +44,17 @@ public class Ingredient {
     public String toString() {
         return name;
     }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (! (obj instanceof Ingredient theirs)) {
+            return false;
+        }
+        return this.name.equals(theirs.name) && this.baseUnit.equals(theirs.baseUnit);
+    }
 }

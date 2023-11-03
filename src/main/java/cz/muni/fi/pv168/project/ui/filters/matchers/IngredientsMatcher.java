@@ -21,7 +21,7 @@ public class IngredientsMatcher extends EntityMatcher<Recipe>{
     public boolean evaluate(Recipe recipe) {
 
         for (Ingredient ingredient : selectedIngredients.toArray(new Ingredient[0])) {
-            if (recipe.getIngredientList().containsKey(ingredient)) {
+            if (recipe.getIngredients().containsKey(ingredient)) {
                 return true;
             }
         }

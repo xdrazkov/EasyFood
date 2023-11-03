@@ -54,7 +54,7 @@ public final class OpenRecipeDialog extends EntityDialog<Recipe> {
     }
 
     private void addIngredients(){
-        for(Map.Entry<Ingredient, Pair<Unit, Integer>> ingredientPairEntry : recipe.getIngredientList().entrySet()){
+        for(Map.Entry<Ingredient, Pair<Unit, Integer>> ingredientPairEntry : recipe.getIngredients().entrySet()){
             JLabel ingredient = new JLabel();
             ingredient.setText(ingredientPairEntry.getKey().toString() + " -> " + ingredientPairEntry.getValue().getValue() + ingredientPairEntry.getValue().getKey().getAbbreviation());
             panel.add(ingredient);

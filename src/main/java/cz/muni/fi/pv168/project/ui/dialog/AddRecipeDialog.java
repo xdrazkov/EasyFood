@@ -4,12 +4,10 @@ import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Recipe;
 import cz.muni.fi.pv168.project.model.Unit;
-import cz.muni.fi.pv168.project.ui.model.ComboBoxModelAdapter;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.swing.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,7 +90,7 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
         recipe.setInstructions(instructions.getText());
         recipe.setTimeToPrepare(Integer.parseInt(timeToPrepare.getText().replaceAll(" ", "")));
         recipe.setCategory((Category) category.getSelectedItem());
-        recipe.setIngredientList(usedIngredients);
+        recipe.setIngredients(usedIngredients);
         return recipe;
     }
 }

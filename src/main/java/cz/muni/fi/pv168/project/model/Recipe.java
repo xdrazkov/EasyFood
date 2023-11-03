@@ -2,9 +2,7 @@ package cz.muni.fi.pv168.project.model;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Recipe {
@@ -15,8 +13,10 @@ public class Recipe {
     private int timeToPrepare; // in minutes; import java.util.concurrent.TimeUnit
     private int nutritionalValue;
     private Category category;
-    private HashMap<Ingredient, Pair<Unit, Integer>> ingredientList;
+    /** when modifying, please call {@link Recipe#calculateNutritionalValue()}**/
+    private HashMap<Ingredient, Pair<Unit, Integer>> ingredients;
 
+    public Recipe(){}
     public Recipe(String title, String description, int portionCount, String instructions, int timeToPrepare, Category category, HashMap<Ingredient, Pair<Unit, Integer>> ingredientList) {
         this.title = title;
         this.description = description;
@@ -24,13 +24,8 @@ public class Recipe {
         this.instructions = instructions;
         this.timeToPrepare = timeToPrepare;
         this.category = category;
-        this.ingredientList = ingredientList;
-        for (Map.Entry<Ingredient, Pair<Unit, Integer>> entry: ingredientList.entrySet()) {
-            Unit unit = entry.getValue().getLeft();
-            int amount = entry.getValue().getRight();
-            Ingredient ingredient = entry.getKey();
-            this.nutritionalValue += ingredient.getTotalCalories(unit, amount);
-        }
+        this.ingredients = ingredientList;
+        calculateNutritionalValue();
     }
 
     public String getTitle() {
@@ -48,8 +43,6 @@ public class Recipe {
     public void setDescription(String description) {
         this.description = description;
     }
-
-    public Recipe(){}
 
     public int getPortionCount() {
         return portionCount;
@@ -91,11 +84,34 @@ public class Recipe {
         this.category = category;
     }
 
-    public HashMap<Ingredient, Pair<Unit, Integer>> getIngredientList() {
-        return ingredientList;
+    public HashMap<Ingredient, Pair<Unit, Integer>> getIngredients() {
+        return ingredients;
     }
 
-    public void setIngredientList(HashMap<Ingredient, Pair<Unit, Integer>> ingredientList) {
-        this.ingredientList = ingredientList;
+    public void setIngredients(HashMap<Ingredient, Pair<Unit, Integer>> ingredients) {
+        this.ingredients = ingredients;
+        calculateNutritionalValue();
+    }
+    private void calculateNutritionalValue() {
+        for (Map.Entry<Ingredient, Pair<Unit, Integer>> entry: ingredients.entrySet()) {
+            Unit unit = entry.getValue().getLeft();
+            int amount = entry.getValue().getRight();
+            Ingredient ingredient = entry.getKey();
+            this.nutritionalValue += ingredient.getTotalCalories(unit, amount);
+        }
+    }
+
+    public void addIngredient(Ingredient ingredient, Unit unit, int amount) {
+        this.ingredients.putIfAbsent(ingredient, Pair.of(unit, amount));
+        calculateNutritionalValue();
+    }
+
+    /**
+     * @return true if ingredient found
+     */
+    public boolean deleteIngredient(Ingredient ingredient) {
+        var deletedRecord = this.ingredients.remove(ingredient);
+        calculateNutritionalValue();
+        return deletedRecord != null;
     }
 }
