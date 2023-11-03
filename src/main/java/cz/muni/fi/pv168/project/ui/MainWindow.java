@@ -20,11 +20,13 @@ import cz.muni.fi.pv168.project.ui.panels.UnitTablePanel;
 import cz.muni.fi.pv168.project.ui.rangeSlider.RangeSlider;
 import cz.muni.fi.pv168.project.ui.rangeSlider.RecipeRangeSliderChangeListener;
 import cz.muni.fi.pv168.project.ui.renderers.*;
+import cz.muni.fi.pv168.project.ui.resources.Icons;
 import cz.muni.fi.pv168.project.util.Either;
 import cz.muni.fi.pv168.project.ui.filters.components.FilterComboboxBuilder;
 import org.apache.commons.lang3.tuple.Pair;
 
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
@@ -32,6 +34,7 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +62,7 @@ public class MainWindow {
     public MainWindow() {
         frame = createFrame();
         frame.setMinimumSize(new Dimension(800, 800));
+        frame.setIconImage(Icons.APP_ICON);
 
         // Generate test objects
         var testDataGenerator = new TestDataGenerator();
