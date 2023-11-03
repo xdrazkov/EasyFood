@@ -18,6 +18,7 @@ import cz.muni.fi.pv168.project.ui.panels.IngredientTablePanel;
 import cz.muni.fi.pv168.project.ui.panels.RecipeTablePanel;
 import cz.muni.fi.pv168.project.ui.panels.UnitTablePanel;
 import cz.muni.fi.pv168.project.ui.rangeSlider.RangeSlider;
+import cz.muni.fi.pv168.project.ui.rangeSlider.RecipeRangeSliderChangeListener;
 import cz.muni.fi.pv168.project.ui.renderers.*;
 import cz.muni.fi.pv168.project.util.Either;
 import cz.muni.fi.pv168.project.ui.filters.components.FilterComboboxBuilder;
@@ -32,6 +33,8 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import javax.swing.table.TableRowSorter;
 
 public class MainWindow {
@@ -121,8 +124,14 @@ public class MainWindow {
         var categoryFilter = createCategoryFilter(recipeTableFilter, categoryTableModel);
         var ingredientFilter = new JScrollPane(createIngredientFilter(recipeTableFilter, ingredientTableModel));
 
-        var preparationTimeSlider = createPreparationTimeSlider(recipeTableFilter, recipeTableModel);
-        var nutritionalValuesSlider = createNutritionalValuesSlider(recipeTableFilter, recipeTableModel);
+        var preparationTimeSlider =
+                getRangeSlider(recipeTableModel, recipeTableFilter::filterPreparationTime,
+                        Recipe::getTimeToPrepare, "Preparation time (min)");
+
+        var nutritionalValuesSlider =
+                getRangeSlider(recipeTableModel, recipeTableFilter::filterNutritionalValues,
+                        Recipe::getNutritionalValue, "Nutritional values (kcal)");
+
 
         // paints rows in recipe and category tab by their category color
         var recipeRowColorRenderer = new RecipeCategoryRenderer(2);
@@ -202,37 +211,14 @@ public class MainWindow {
                 .build();
     }
 
-
-    private static JSlider createPreparationTimeSlider(RecipeTableFilter recipeTableFilter, RecipeTableModel recipeTableModel) {
-        List<Integer> allTimes = recipeTableModel.getRecipes().stream()
-                .map(Recipe::getTimeToPrepare)
+    private static <T>RangeSlider getRangeSlider(RecipeTableModel recipeTableModel,
+                                                  Consumer<Either<T, Pair<Integer, Integer>>> filterFunction,
+                                                  Function<Recipe,Integer> mapperFunction,
+                                                  String description) {
+        List<Integer> values = recipeTableModel.getRecipes().stream()
+                .map(mapperFunction)
                 .toList();
-        RangeSlider preparationTimeSlider = getRangeSlider(allTimes, "Preparation time (min)");
 
-        preparationTimeSlider.addChangeListener(e -> {
-            Integer selectedLowerTime = preparationTimeSlider.getValue();
-            Integer selectedUpperTime = preparationTimeSlider.getUpperValue();
-            recipeTableFilter.filterPreparationTime(Either.right(Pair.of(selectedLowerTime, selectedUpperTime)));
-        });
-
-        return preparationTimeSlider;
-    }
-
-    private static JSlider createNutritionalValuesSlider(RecipeTableFilter recipeTableFilter, RecipeTableModel recipeTableModel) {
-        List<Integer> allNutritionalValues = recipeTableModel.getRecipes().stream()
-                .map(Recipe::getNutritionalValue)
-                .toList();
-        RangeSlider preparationNutritionalValuesSlider = getRangeSlider(allNutritionalValues ,"Nutritional Values");
-
-        preparationNutritionalValuesSlider.addChangeListener(e -> {
-            Integer selectedLowerVal = preparationNutritionalValuesSlider.getValue();
-            Integer selectedUpperVal = preparationNutritionalValuesSlider.getUpperValue();
-            recipeTableFilter.filterNutritionalValues(Either.right(Pair.of(selectedLowerVal, selectedUpperVal)));
-        });
-
-        return preparationNutritionalValuesSlider;
-    }
-    private static RangeSlider getRangeSlider(List<Integer> values, String description) {
         int minValue = values.stream().mapToInt(Integer::intValue).min().orElse(0);
         int maxValue = values.stream().mapToInt(Integer::intValue).max().orElse(0);
 
@@ -247,6 +233,8 @@ public class MainWindow {
         slider.setToolTipText(description);
         slider.setValue(minValue);
         slider.setUpperValue(maxValue);
+
+        slider.addChangeListener(new RecipeRangeSliderChangeListener<>(filterFunction));
 
         return slider;
     }
