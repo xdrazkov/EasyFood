@@ -30,6 +30,8 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -132,7 +134,6 @@ public class MainWindow {
                 getRangeSlider(recipeTableModel, recipeTableFilter::filterNutritionalValues,
                         Recipe::getNutritionalValue, "Nutritional values (kcal)");
 
-
         // paints rows in recipe and category tab by their category color
         var recipeRowColorRenderer = new RecipeCategoryRenderer(2);
         recipeTablePanel.getTable().setDefaultRenderer(Object.class, recipeRowColorRenderer);
@@ -140,8 +141,10 @@ public class MainWindow {
         categoryTablePanel.getTable().setDefaultRenderer(Object.class, new RecipeCategoryRenderer(0));
 
         JPanel toolbarPanel = new JPanel(new GridLayout(2, 1));
+        JPanel preparationPanel = createSliderPanel(nutritionalValuesSlider);
+        JPanel nutritionalPanel = createSliderPanel(preparationTimeSlider);
         var toolbar = createToolbar();
-        var filtersToolbar = createToolbar(categoryFilter, ingredientFilter, preparationTimeSlider, nutritionalValuesSlider);
+        var filtersToolbar = createToolbar(categoryFilter, ingredientFilter, preparationPanel, nutritionalPanel);
         toolbarPanel.add(toolbar);
         toolbarPanel.add(filtersToolbar);
         frame.add(toolbarPanel, BorderLayout.BEFORE_FIRST_LINE);
@@ -159,7 +162,7 @@ public class MainWindow {
 
                 var currTable = getCurrentTableFromPanel(tabPanel);
                 setCurrentTableToActions(currTable);
-                setToDefaultActionEnablement(getCurrentTableIndex(tabbedPane));
+                setToDefaultActionEnablement(getCurrentTableIndex(tabPanel));
 
                 // clear all row selections
                 recipeTablePanel.getTable().clearSelection();
@@ -167,11 +170,8 @@ public class MainWindow {
                 unitTablePanel.getTable().clearSelection();
                 categoryTablePanel.getTable().clearSelection();
 
-                int currTabIndex = tabbedPane.getSelectedIndex();
-                categoryFilter.setVisible(currTabIndex == 0); // first is recipe
-                ingredientFilter.setVisible(currTabIndex == 0);
-                preparationTimeSlider.setVisible(currTabIndex == 0);
-                nutritionalValuesSlider.setVisible(currTabIndex == 0);
+                int currTabIndex = tabPanel.getSelectedIndex();
+                filtersToolbar.setVisible(currTabIndex == 0); // first is recipe
 
                 setStatusBarName(statusBar);
             }
@@ -377,5 +377,27 @@ public class MainWindow {
                 currTabTitle
         ));
         statusBar.setBorder(new EmptyBorder(0, 10, 0, 10));
+    }
+
+    private static JPanel createSliderPanel(RangeSlider slider) {
+        Button resetButton = new Button("Reset slider");
+        resetButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                slider.setValue(slider.getMinimum());
+                slider.setUpperValue(slider.getMaximum());
+
+            }
+        });
+        JPanel buttonTextPanel = new JPanel(new GridLayout(1, 2));
+        buttonTextPanel.add(resetButton);
+        buttonTextPanel.add(new JLabel(slider.getToolTipText(), SwingConstants.CENTER));
+
+        JPanel finalPanel = new JPanel(new GridLayout(2, 1));
+        finalPanel.add(slider);
+        finalPanel.add(buttonTextPanel);
+
+        finalPanel.setBorder(new EmptyBorder(0, 10, 0, 10));
+        return finalPanel;
     }
 }

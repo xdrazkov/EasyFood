@@ -93,6 +93,7 @@ public class Recipe {
         calculateNutritionalValue();
     }
     private void calculateNutritionalValue() {
+        this.nutritionalValue = 0;
         for (Map.Entry<Ingredient, Pair<Unit, Integer>> entry: ingredients.entrySet()) {
             Unit unit = entry.getValue().getLeft();
             int amount = entry.getValue().getRight();
