@@ -25,6 +25,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 import java.awt.*;
@@ -55,6 +56,7 @@ public class MainWindow {
     private final Map<GeneralAction, List<Integer>> forbiddenActionsInTabs = new HashMap<>();
 
     private final JTabbedPane tabbedPane;
+    private final Border padding = new EmptyBorder(0, 5, 0, 5);
 
     public MainWindow() {
         frame = createFrame();
@@ -93,6 +95,7 @@ public class MainWindow {
         tabbedPane.addTab("Ingredients", ingredientTablePanel);
         tabbedPane.addTab("Categories", categoryTablePanel);
         tabbedPane.addTab("Units", unitTablePanel);
+        tabbedPane.setBorder(padding);
         frame.add(tabbedPane, BorderLayout.CENTER);
 
         // Set up actions for recipe table
@@ -155,6 +158,7 @@ public class MainWindow {
         var filtersToolbar = createToolbar(categoryFilter, ingredientFilter, preparationPanel, nutritionalPanel);
         toolbarPanel.add(toolbar);
         toolbarPanel.add(filtersToolbar);
+        toolbarPanel.setBorder(padding);
         frame.add(toolbarPanel, BorderLayout.BEFORE_FIRST_LINE);
 
         var menubar = createMenuBar();
@@ -218,9 +222,9 @@ public class MainWindow {
     }
 
     private static <T>RangeSlider getRangeSlider(RecipeTableModel recipeTableModel,
-                                                  Consumer<Either<T, Pair<Integer, Integer>>> filterFunction,
-                                                  Function<Recipe,Integer> mapperFunction,
-                                                  String description) {
+                                                 Consumer<Either<T, Pair<Integer, Integer>>> filterFunction,
+                                                 Function<Recipe,Integer> mapperFunction,
+                                                 String description) {
         List<Integer> values = recipeTableModel.getRecipes().stream()
                 .map(mapperFunction)
                 .toList();
@@ -266,8 +270,8 @@ public class MainWindow {
         // only recipe has export possibility
         if (tablePanelType == TablePanelType.RECIPE) {
             menu.addSeparator();
-           	menu.add(importAction);
-       	 	menu.add(exportAction);
+            menu.add(importAction);
+            menu.add(exportAction);
         }
 
         return menu;
@@ -285,6 +289,7 @@ public class MainWindow {
         viewMenu.add(viewAboutAction);
         viewMenu.setMnemonic('v');
         menuBar.add(viewMenu);
+        menuBar.setBorder(padding);
         return menuBar;
     }
 
@@ -314,6 +319,7 @@ public class MainWindow {
     private JLabel createStatusBar() {
         JPanel statusPanel = new JPanel();
         statusPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        statusPanel.setBorder(padding);
         frame.add(statusPanel, BorderLayout.SOUTH);
         statusPanel.setPreferredSize(new Dimension(frame.getWidth(), 35));
         statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.X_AXIS));
