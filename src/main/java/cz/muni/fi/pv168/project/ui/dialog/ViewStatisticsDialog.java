@@ -45,19 +45,9 @@ public class ViewStatisticsDialog extends EntityDialog<String>  {
             ingredientLabel.setFont(ingredientLabel.getFont().deriveFont(Font.BOLD, 14f));
             ingredientPanel.add(ingredientLabel);
             JLabel ingredientLabel2 = new JLabel();
-            ingredientLabel2.setText("is used in " + countInstances(ingredient) + " recipes");
+            ingredientLabel2.setText("is used in " + ingredient.countInstances(recipes) + " recipes");
             ingredientPanel.add(ingredientLabel2);
         }
-    }
-
-    public int countInstances(Ingredient ingredient){
-        int count = 0;
-        for(Recipe recipe : recipes){
-            if(recipe.getIngredients().containsKey(ingredient)){
-                count++;
-            }
-        }
-        return count;
     }
 
     @Override

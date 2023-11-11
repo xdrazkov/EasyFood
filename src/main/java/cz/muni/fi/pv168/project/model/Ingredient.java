@@ -1,5 +1,7 @@
 package cz.muni.fi.pv168.project.model;
 
+import java.util.List;
+
 public class Ingredient {
     private String name;
     private Unit baseUnit;
@@ -34,6 +36,16 @@ public class Ingredient {
     public int getTotalCalories(Unit anyUnit, int amount) { // TODO distinguish type: eg. WEIGHABLE per 100g, COUNTABLE per 1pc
         float countBase = anyUnit.getConversionRate() * amount;
         return (int) (countBase * caloriesPerUnit);
+    }
+
+    public int countInstances(List<Recipe> recipes){
+        int count = 0;
+        for(Recipe recipe : recipes){
+            if(recipe.getIngredients().containsKey(this)){
+                count++;
+            }
+        }
+        return count;
     }
 
     public void setCaloriesPerUnit(int caloriesPerUnit) {
