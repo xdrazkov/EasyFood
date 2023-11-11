@@ -19,7 +19,7 @@ public class ViewAboutDialog extends EntityDialog<String> {
     }
 
     private void setValues() {
-        authors.setText("Peter Dražkovec    Timotej Hajzu   Matúš Jakuboc   Jaroslav Petrisko");
+        authors.setText("Peter Dražkovec    Timotej Hajzuš   Matúš Jakuboc   Jaroslav Petrisko");
         description.setText("Application made as a project for PV168 at FI MUNI.");
         copyright.setText("©2023");
     }
