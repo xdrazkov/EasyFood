@@ -99,13 +99,13 @@ public class MainWindow {
         frame.add(tabbedPane, BorderLayout.CENTER);
 
         // Set up actions for recipe table
-        addAction = new AddAction(categories, ingredients, units, unitTableModel); // TODO pull somehow categories differently
+        addAction = new AddAction(categoryTableModel.getCategories(), ingredientTableModel.getIngredients(), unitTableModel.getUnits(), unitTableModel);
         deleteAction = new DeleteAction(recipeTablePanel.getTable(), ingredientTablePanel.getTable(), categoryTablePanel.getTable(), unitTablePanel.getTable());
-        editAction = new EditAction(categories, ingredients, units, unitTableModel); // TODO pull somehow categories differently
+        editAction = new EditAction(categoryTableModel.getCategories(), ingredientTableModel.getIngredients(), unitTableModel.getUnits(), unitTableModel);
         openAction = new OpenAction();
         importAction = new ImportAction();
         exportAction = new ExportAction();
-        viewStatisticsAction = new ViewStatisticsAction(recipes, ingredientTableModel.getIngredients());
+        viewStatisticsAction = new ViewStatisticsAction(recipeTableModel.getRecipes(), ingredientTableModel.getIngredients());
         viewAboutAction = new ViewAboutAction();
         this.actions = List.of(addAction, editAction, deleteAction, openAction, importAction, exportAction, viewAboutAction, viewStatisticsAction);
         setForbiddenActionsInTabs();
