@@ -105,7 +105,7 @@ public class MainWindow {
         openAction = new OpenAction();
         importAction = new ImportAction();
         exportAction = new ExportAction();
-        viewStatisticsAction = new ViewStatisticsAction(recipes, ingredients);
+        viewStatisticsAction = new ViewStatisticsAction(recipes, ingredientTableModel.getIngredients());
         viewAboutAction = new ViewAboutAction();
         this.actions = List.of(addAction, editAction, deleteAction, openAction, importAction, exportAction, viewAboutAction, viewStatisticsAction);
         setForbiddenActionsInTabs();
