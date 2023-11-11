@@ -4,12 +4,12 @@ import java.util.List;
 
 public class Ingredient {
     private String name;
-    private Unit baseUnit;
+    private Unit defaulUnit;
     private int caloriesPerUnit;
 
-    public Ingredient(String name, Unit baseUnit, int caloriesPerUnit) {
+    public Ingredient(String name, Unit defaulUnit, int caloriesPerUnit) {
         this.name = name;
-        this.baseUnit = baseUnit;
+        this.defaulUnit = defaulUnit;
         this.caloriesPerUnit = caloriesPerUnit;
     }
 
@@ -21,12 +21,12 @@ public class Ingredient {
         this.name = name;
     }
 
-    public Unit getBaseUnit() {
-        return baseUnit;
+    public Unit getDefaultUnit() {
+        return defaulUnit;
     }
 
-    public void setBaseUnit(Unit baseUnit) {
-        this.baseUnit = baseUnit;
+    public void setDefaulUnit(Unit defaulUnit) {
+        this.defaulUnit = defaulUnit;
     }
 
     public int getCaloriesPerUnit() {
@@ -67,6 +67,6 @@ public class Ingredient {
         if (! (obj instanceof Ingredient theirs)) {
             return false;
         }
-        return this.name.equals(theirs.name) && this.baseUnit.equals(theirs.baseUnit);
+        return this.name.equals(theirs.name) && this.defaulUnit.equals(theirs.defaulUnit);
     }
 }

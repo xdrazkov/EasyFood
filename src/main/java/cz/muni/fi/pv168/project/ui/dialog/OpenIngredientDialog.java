@@ -20,8 +20,8 @@ public class OpenIngredientDialog extends EntityDialog<Ingredient> {
 
     private void setValues() {
         name.setText(ingredient.getName());
-        baseUnit.setText("Base unit is " + ingredient.getBaseUnit().toString());
-        nutritionalValue.setText(Integer.toString(ingredient.getCaloriesPerUnit()) + "kcal per base unit");
+        baseUnit.setText("Default unit is " + ingredient.getDefaultUnit().toString());
+        nutritionalValue.setText(ingredient.getCaloriesPerUnit() + "kcal per base unit");
     }
 
     private void addFields() {

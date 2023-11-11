@@ -19,7 +19,7 @@ public class IngredientTableModel extends AbstractTableModel {
 
     private final List<Column<Ingredient, ?>> columns = List.of(
             Column.readonly("Name", String.class, Ingredient::getName),
-            Column.readonly("Base unit", Unit.class, Ingredient::getBaseUnit),
+            Column.readonly("Default unit", Unit.class, Ingredient::getDefaultUnit),
             Column.readonly("Nutritional value (kcal)", Integer.class, Ingredient::getCaloriesPerUnit)
     );
 
