@@ -63,7 +63,7 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
         add("Description:", description);
         add("Portions:", portionCount);
         add("Instructions:", instructions);
-        add("Time to prepare:", timeToPrepare);
+        add("Time to prepare(min):", timeToPrepare);
         add("Category:", category);
         panel.add(ingredientList);
         panel.add(newIngredient);
