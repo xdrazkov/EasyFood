@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public final class TestDataGenerator {
+    private static final UuidGuidProvider guidProvider = new UuidGuidProvider();
+
     private final Random random = new Random();
 
 
@@ -36,7 +38,7 @@ public final class TestDataGenerator {
     }
 
     public Recipe createTestRecipe(int index, Category category, HashMap<Ingredient, Pair<Unit, Integer>> ingredient, Unit unit) {
-        return new Recipe("Recipe " + index,
+        return new Recipe( guidProvider.newGuid(),"Recipe " + index,
                 "Description for " + index,
                 random.nextInt(1, 10),
                 "Instruction for Recipe "+ index,

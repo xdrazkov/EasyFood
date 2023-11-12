@@ -1,5 +1,7 @@
 package cz.muni.fi.pv168.project.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.awt.*;
 
 public class Category {
@@ -18,6 +20,7 @@ public class Category {
         this.name = name;
     }
 
+    @JsonIgnore
     public Color getColor() {
         return color;
     }
@@ -34,6 +37,7 @@ public class Category {
     /**
      *     substitution for getClass, see usage
      */
+    @JsonIgnore
     public Category getItself() {
         return this;
     }
