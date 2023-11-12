@@ -31,7 +31,6 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
     private final List<Category> categories;
     private final List<Ingredient> ingredients;
     private final List<Unit> units;
-    private HashMap<Ingredient, Pair<Unit, Integer>> usedIngredients;
 
 
 
@@ -39,7 +38,6 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
         this.categories = categories;
         this.ingredients = ingredients;
         this.units = units;
-        this.usedIngredients = new HashMap<>();
         setValues();
         addFields();
         addIngredients();
@@ -146,7 +144,7 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
     }
 
     public Unit[] filterUnits(JComboBox<Ingredient> source){
-        Ingredient selectedIngredient = (Ingredient)source.getSelectedItem();
+        Ingredient selectedIngredient = (Ingredient)source.getSelectedItem();;
         ArrayList<Unit> filteredUnits = new ArrayList<>();
         for(Unit unit : units){
             if (selectedIngredient != null && selectedIngredient.getDefaultUnit().getIngredientType() == unit.getIngredientType()){

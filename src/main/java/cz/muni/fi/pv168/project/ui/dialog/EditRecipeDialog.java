@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,8 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
         setValues();
         addFields();
         addIngredients();
+        panel.revalidate();
+        panel.repaint();
     }
 
     private void setValues() {
@@ -73,19 +76,23 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
 
    private void addIngredients() {
        for (Map.Entry<Ingredient, Pair<Unit, Integer>> ingredientPairEntry : recipe.getIngredients().entrySet()) {
-           addIngredient(ingredientPairEntry.getKey(), ingredientPairEntry.getValue().getValue().toString(), ingredientPairEntry.getValue().getKey());
+           addIngredient(ingredientPairEntry.getKey(), Integer.toString(ingredientPairEntry.getValue().getValue()), ingredientPairEntry.getValue().getKey());
        }
    }
 
-    public void addIngredient(Object selectedIngredient, String count, Object selectedUnit){
+    public void addIngredient(Ingredient selectedIngredient, String count, Unit selectedUnit){
         JPanel newIngredient = new JPanel();
         newIngredient.setLayout(new MigLayout("wrap 4"));
 
         JComboBox<Ingredient> ingredient = new JComboBox<>();
-        ingredient.setModel(new javax.swing.DefaultComboBoxModel<>(ingredients.toArray(new Ingredient[ingredients.size()])));
+        ingredient.setModel(new DefaultComboBoxModel<>(ingredients.toArray(new Ingredient[ingredients.size()])));
         if (selectedIngredient != null){
+            System.out.println(selectedIngredient.toString());
             ingredient.setSelectedItem(selectedIngredient);
+        } else {
+            ingredient.setSelectedIndex(-1);
         }
+        ingredient.addActionListener(new FilterUnits());
         newIngredient.add(ingredient);
 
         JTextField quantity = new JTextField();
@@ -93,8 +100,12 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
         newIngredient.add(quantity);
 
         JComboBox<Unit> unit = new JComboBox<>();
-        unit.setModel(new javax.swing.DefaultComboBoxModel<>(units.toArray(new Unit[units.size()])));
+        Unit[] filteredUnits = filterUnits(ingredient);
+        unit.setModel(new DefaultComboBoxModel<>(filteredUnits));
+        System.out.println("should select " + selectedIngredient.getDefaultUnit() + " from " + unit.getModel().getSize());
+
         if (selectedUnit != null){
+            System.out.println("selected " + selectedUnit.toString());
             unit.setSelectedItem(selectedUnit);
         }
         newIngredient.add(unit);
@@ -142,6 +153,24 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
         return newIgredients;
     }
 
+    public Unit[] filterUnits(JComboBox<Ingredient> source){
+        System.out.println("start");
+        Ingredient selectedIngredient = (Ingredient)source.getSelectedItem();
+        System.out.println(selectedIngredient.toString());
+        System.out.println(selectedIngredient.getDefaultUnit().getIngredientType());
+        ArrayList<Unit> filteredUnits = new ArrayList<>();
+        System.out.println("-");
+        for(Unit unit : units){
+            System.out.println(unit.toString() + " -> " + unit.getIngredientType());
+            if (selectedIngredient != null && selectedIngredient.getDefaultUnit().getIngredientType() == unit.getIngredientType()){
+                System.out.println("added");
+                filteredUnits.add(unit);
+            }
+        }
+        System.out.println("end");
+        return filteredUnits.toArray(new Unit[filteredUnits.size()]);
+    }
+
     public class AddIngredient implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent event) {
@@ -155,6 +184,22 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
         @Override
         public void actionPerformed(ActionEvent event) {
             deleteIngredient((JButton)event.getSource());
+            panel.revalidate();
+            panel.repaint();
+        }
+    }
+
+    public class FilterUnits implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent event) {
+            JComboBox<Ingredient> source = (JComboBox<Ingredient>)event.getSource();
+
+            System.out.println("Source has selected " + source.getSelectedItem().toString() + " which has default unit " + ((Ingredient)source.getSelectedItem()).getDefaultUnit() + " which is of " + ((Unit)((Ingredient)source.getSelectedItem()).getDefaultUnit()).getIngredientType() + " type");
+
+            Unit[] filteredUnits = filterUnits(source);
+            JComboBox<Unit> unitBox = (JComboBox<Unit>)(((JPanel)(source.getParent()))).getComponent(2);
+            unitBox.setModel(new javax.swing.DefaultComboBoxModel<>(filteredUnits));
+            unitBox.setSelectedItem(((Ingredient)source.getSelectedItem()).getDefaultUnit());
             panel.revalidate();
             panel.repaint();
         }

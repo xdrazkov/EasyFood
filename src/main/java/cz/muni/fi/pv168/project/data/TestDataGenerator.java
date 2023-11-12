@@ -78,7 +78,7 @@ public final class TestDataGenerator {
         for (int i = 0; i < nextSize; i++) {
             Ingredient selected = selectRandom(data);
             if (!sublist.containsKey(selected))
-                sublist.put(selected, new MutablePair<>(units.get(i), i));
+                sublist.put(selected, new MutablePair<>(selected.getDefaultUnit(), i));
         }
         return sublist;
     }
