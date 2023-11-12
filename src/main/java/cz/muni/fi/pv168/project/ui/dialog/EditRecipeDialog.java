@@ -11,7 +11,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,15 +25,13 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
     private final JComboBox<Category> category = new JComboBox<>();
     private final JLabel ingredientsLabel = new JLabel();
     private final JButton newButton = new JButton();
+    private JScrollPane scroll;
+    private final JPanel test = new JPanel();
 
     private final Recipe recipe;
     private final List<Category> categories;
     private final List<Ingredient> ingredients;
     private final List<Unit> units;
-
-    private JScrollPane scroll;
-
-    private final JPanel test = new JPanel();
 
     public EditRecipeDialog(Recipe recipe, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
         this.recipe = recipe;
