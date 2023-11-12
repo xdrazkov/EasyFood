@@ -35,7 +35,7 @@ public final class DeleteAction extends GeneralAction {
     public void actionPerformed(ActionEvent e) {
         int dialogButton = JOptionPane.YES_NO_OPTION;
         int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure you want to delete selected item(s)?","Warning",dialogButton);
-        if (dialogResult == JOptionPane.NO_OPTION){
+        if (dialogResult != JOptionPane.YES_OPTION){
             return;
         }
 
