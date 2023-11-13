@@ -33,7 +33,14 @@ public final class AddUnitDialog extends EntityDialog<Unit> {
 
     @Override
     Unit getEntity() {
-        return new Unit(name.getText(), abbreviation.getText(), (IngredientType) ingredientType.getSelectedItem(), Float.parseFloat(conversionRate.getText()));
+        float conversionRateFloat;
+        try {
+            conversionRateFloat = Float.parseFloat(conversionRate.getText().replace(',', '.'));
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(panel, "Conversion rate must be a decimal number", "Error", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+        return new Unit(name.getText(), abbreviation.getText(), (IngredientType) ingredientType.getSelectedItem(), conversionRateFloat);
     }
 }
 
