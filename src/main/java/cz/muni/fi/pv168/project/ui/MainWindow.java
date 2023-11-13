@@ -66,8 +66,8 @@ public class MainWindow {
         // Generate test objects
         var testDataGenerator = new TestDataGenerator();
         var categories = testDataGenerator.createTestCategories(5);
-        var ingredients = testDataGenerator.createTestIngredients(5);
         var units = testDataGenerator.createTestUnits(5);
+        var ingredients = testDataGenerator.createTestIngredients(5, units);
         var recipes = testDataGenerator.createTestRecipes(20, categories, ingredients, units);
 
         // Create models

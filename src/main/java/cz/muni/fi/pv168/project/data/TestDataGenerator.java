@@ -25,9 +25,9 @@ public final class TestDataGenerator {
         return new Category("Category " + index, hslColor.getRGB());
     }
 
-    public Ingredient createTestIngredient(int index) {
-        int pick = random.nextInt(IngredientType.values().length);
-        return new Ingredient("Ingredient " + index, createTestUnit(index), random.nextInt(10, 100));
+    public Ingredient createTestIngredient(int index, List<Unit> units) {
+        int pick = random.nextInt(units.toArray().length);
+        return new Ingredient("Ingredient " + index, units.get(pick), random.nextInt(10, 100));
     }
 
     public Unit createTestUnit(int index) {
@@ -52,10 +52,12 @@ public final class TestDataGenerator {
                 .collect(Collectors.toList());
     }
 
-    public List<Ingredient> createTestIngredients(int count){
-        return IntStream.range(0, count)
-                .mapToObj(this::createTestIngredient)
-                .collect(Collectors.toList());
+    public List<Ingredient> createTestIngredients(int count, List<Unit> units){
+        List<Ingredient> ingredients = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            ingredients.add(createTestIngredient(i, units));
+        }
+        return ingredients;
     }
 
     public List<Unit> createTestUnits(int count){
