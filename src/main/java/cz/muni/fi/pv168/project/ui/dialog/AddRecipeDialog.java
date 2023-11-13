@@ -44,6 +44,7 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
     }
 
     private void setValues() {
+        panel.setPreferredSize(new Dimension(330, 560));
         title.setText("");
         description.setText("");
         portionCount.setText("1");
@@ -60,7 +61,9 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
         add("Title:", title);
         add("Description:", description);
         add("Portions:", portionCount);
-        add("Instructions:", instructions);
+        JScrollPane scrollInstructions = new JScrollPane(instructions);
+        scrollInstructions.setMinimumSize(new Dimension(300,100));
+        add("Instructions:", scrollInstructions);
         add("Time to prepare(min):", timeToPrepare);
         add("Category:", category);
         panel.add(ingredientsLabel);
@@ -68,8 +71,6 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
         scroll = new JScrollPane(test);
         scroll.setMinimumSize(new Dimension(300,150));
         panel.add(scroll);
-
-        panel.setPreferredSize(new Dimension(330, 500));
     }
 
     private void addIngredients() {
