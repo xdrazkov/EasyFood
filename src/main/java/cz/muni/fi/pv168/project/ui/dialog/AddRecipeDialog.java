@@ -20,7 +20,7 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
     private final JTextField title = new JTextField();
     private final JTextField description = new JTextField();
     private final JTextField portionCount = FieldMaker.makeIntField();
-    private final JTextField instructions = new JTextField();
+    private final JTextArea instructions = new JTextArea();
     private final JTextField timeToPrepare = FieldMaker.makeIntField();
     private final JComboBox<Category> category = new JComboBox<>();
     private final JLabel ingredientsLabel = new JLabel();
@@ -68,6 +68,8 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
         scroll = new JScrollPane(test);
         scroll.setMinimumSize(new Dimension(300,150));
         panel.add(scroll);
+
+        panel.setPreferredSize(new Dimension(330, 500));
     }
 
     private void addIngredients() {
