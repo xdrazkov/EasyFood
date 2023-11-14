@@ -132,7 +132,6 @@ public class MainWindow {
 
         exportAction = new ExportAction(recipeTablePanel, exportService);
         importAction = new ImportAction();
-        exportAction = new ExportAction();
         viewStatisticsAction = new ViewStatisticsAction(recipeTableModel.getRecipes(), ingredientTableModel.getIngredients());
         viewAboutAction = new ViewAboutAction();
         this.actions = List.of(addAction, editAction, deleteAction, openAction, importAction, exportAction, viewAboutAction, viewStatisticsAction);
