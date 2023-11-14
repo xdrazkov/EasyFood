@@ -5,7 +5,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Recipe {
+public class Recipe extends Entity {
     private String title;
     private String description;
     private int portionCount;
@@ -17,7 +17,8 @@ public class Recipe {
     private HashMap<Ingredient, Pair<Unit, Integer>> ingredients;
 
     public Recipe(){}
-    public Recipe(String title, String description, int portionCount, String instructions, int timeToPrepare, Category category, HashMap<Ingredient, Pair<Unit, Integer>> ingredientList) {
+    public Recipe(String guid, String title, String description, int portionCount, String instructions, int timeToPrepare, Category category, HashMap<Ingredient, Pair<Unit, Integer>> ingredientList) {
+        super(guid);
         this.title = title;
         this.description = description;
         this.portionCount = portionCount;

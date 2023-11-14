@@ -1,9 +1,16 @@
 package cz.muni.fi.pv168.project.ui;
 
 import cz.muni.fi.pv168.project.data.TestDataGenerator;
+import cz.muni.fi.pv168.project.export.json.BatchJsonExporter;
+import cz.muni.fi.pv168.project.export.pdf.BatchPdfExporter;
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Recipe;
+import cz.muni.fi.pv168.project.model.UuidGuidProvider;
+import cz.muni.fi.pv168.project.service.crud.RecipeCrudService;
+import cz.muni.fi.pv168.project.service.export.GenericExportService;
+import cz.muni.fi.pv168.project.service.validation.RecipeValidator;
+import cz.muni.fi.pv168.project.storage.InMemoryRepository;
 import cz.muni.fi.pv168.project.ui.action.*;
 import cz.muni.fi.pv168.project.ui.filters.RecipeTableFilter;
 import cz.muni.fi.pv168.project.ui.filters.components.FilterListModelBuilder;
@@ -70,6 +77,14 @@ public class MainWindow {
         var ingredients = testDataGenerator.createTestIngredients(5, units);
         var recipes = testDataGenerator.createTestRecipes(20, categories, ingredients, units);
 
+        var recipeValidator = new RecipeValidator();
+
+        var guidProvider = new UuidGuidProvider();
+
+        var recipeRepository = new InMemoryRepository<>(recipes);
+
+        var recipeCrudService = new RecipeCrudService(recipeRepository, recipeValidator, guidProvider);
+
         // Create models
         RecipeTableModel recipeTableModel = new RecipeTableModel(recipes);
         IngredientTableModel ingredientTableModel = new IngredientTableModel(ingredients);
@@ -103,8 +118,20 @@ public class MainWindow {
         deleteAction = new DeleteAction(recipeTablePanel.getTable(), ingredientTablePanel.getTable(), categoryTablePanel.getTable(), unitTablePanel.getTable());
         editAction = new EditAction(categoryTableModel.getCategories(), ingredientTableModel.getIngredients(), unitTableModel.getUnits(), unitTableModel);
         openAction = new OpenAction();
+
+        // Add row sorters
+        var recipeRowSorter = new TableRowSorter<>(recipeTableModel);
+        var categoryRowSorter = new TableRowSorter<>(categoryTableModel);
+        var ingredientRowSorter = new TableRowSorter<>(ingredientTableModel);
+        var unitRowSorter = new TableRowSorter<>(unitTableModel);
+
+        var exportService = new GenericExportService(recipeRowSorter, recipeTablePanel , List.of(new BatchJsonExporter(), new BatchPdfExporter()));
+//        var importService = new GenericImportService(tableContext, List.of(new BatchJsonImporter(), new BatchXmlImporter()));
+
+        // create import/export actions
+
+        exportAction = new ExportAction(recipeTablePanel, exportService);
         importAction = new ImportAction();
-        exportAction = new ExportAction();
         viewStatisticsAction = new ViewStatisticsAction(recipeTableModel.getRecipes(), ingredientTableModel.getIngredients());
         viewAboutAction = new ViewAboutAction();
         this.actions = List.of(addAction, editAction, deleteAction, openAction, importAction, exportAction, viewAboutAction, viewStatisticsAction);
@@ -117,12 +144,6 @@ public class MainWindow {
                 r -> r.getTable().setComponentPopupMenu(createTablePopupMenu(r.getTablePanelType())));
         JLabel statusBar = createStatusBar();
         setStatusBarName(statusBar);
-
-        // Add row sorters
-        var recipeRowSorter = new TableRowSorter<>(recipeTableModel);
-        var categoryRowSorter = new TableRowSorter<>(categoryTableModel);
-        var ingredientRowSorter = new TableRowSorter<>(ingredientTableModel);
-        var unitRowSorter = new TableRowSorter<>(unitTableModel);
 
         // set all row sorters
         recipeTablePanel.getTable().setRowSorter(recipeRowSorter);
@@ -195,6 +216,10 @@ public class MainWindow {
                 preparationTimeSlider.resetSlider();
             }
         });
+    }
+
+    private void refresh() {
+//        recipeTableModel.refresh();
     }
 
     private static JComboBox<Either<SpecialFilterCategoryValues, Category>> createCategoryFilter(
