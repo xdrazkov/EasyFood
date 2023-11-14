@@ -135,7 +135,7 @@ public class MainWindow {
 
         var recipeTableFilter = new RecipeTableFilter(recipeRowSorter);
         var categoryFilter = createCategoryFilter(recipeTableFilter, categoryTableModel);
-        var ingredientFilter = new JScrollPane(createIngredientFilter(recipeTableFilter, ingredientTableModel));
+        var ingredientFilter = createIngredientFilter(recipeTableFilter, ingredientTableModel);
 
         var preparationTimeSlider =
                 getRangeSlider(recipeTableModel, recipeTableFilter::filterPreparationTime,
@@ -155,7 +155,7 @@ public class MainWindow {
         JPanel preparationPanel = createSliderPanel(nutritionalValuesSlider);
         JPanel nutritionalPanel = createSliderPanel(preparationTimeSlider);
         var toolbar = createToolbar();
-        var filtersToolbar = createToolbar(categoryFilter, ingredientFilter, preparationPanel, nutritionalPanel);
+        var filtersToolbar = createToolbar(categoryFilter, new JScrollPane(ingredientFilter), preparationPanel, nutritionalPanel);
         toolbarPanel.add(toolbar);
         toolbarPanel.add(filtersToolbar);
         toolbarPanel.setBorder(padding);
@@ -180,10 +180,19 @@ public class MainWindow {
                 // clear all row selections
                 tablePanels.forEach(r -> r.getTable().clearSelection());
 
+                // filters visible only on recipe tab
                 int currTabIndex = tabPanel.getSelectedIndex();
-                filtersToolbar.setVisible(currTabIndex == TablePanelType.RECIPE.ordinal()); // first is recipe
+                filtersToolbar.setVisible(currTabIndex == TablePanelType.RECIPE.ordinal());
 
                 setStatusBarName(statusBar);
+
+                // reset filter selection
+                categoryFilter.setSelectedIndex(0);
+                ingredientFilter.setSelectedIndex(0);
+
+                // reset sliders
+                nutritionalValuesSlider.resetSlider();
+                preparationTimeSlider.resetSlider();
             }
         });
     }
@@ -401,9 +410,7 @@ public class MainWindow {
         resetButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                slider.setValue(slider.getMinimum());
-                slider.setUpperValue(slider.getMaximum());
-
+                slider.resetSlider();
             }
         });
         JPanel buttonTextPanel = new JPanel(new GridLayout(1, 2));
