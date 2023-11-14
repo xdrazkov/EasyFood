@@ -1,8 +1,10 @@
 package cz.muni.fi.pv168.project.ui.dialog;
 
 import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.ui.ColoredCircle;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class OpenCategoryDialog extends EntityDialog<Category> {
 
@@ -19,13 +21,16 @@ public class OpenCategoryDialog extends EntityDialog<Category> {
 
     private void setValues() {
         name.setText(category.getName());
-        color.setText("This is the Color of this category.");
-        color.setForeground(category.getColor());
+        color.setText("Color -> ");
     }
 
     private void addFields() {
         panel.add(name);
-        panel.add(color);
+        var colorPanel = new JPanel();
+        colorPanel.setLayout(new GridBagLayout());
+        colorPanel.add(color);
+        colorPanel.add(new ColoredCircle(category.getColor()));
+        panel.add(colorPanel);
     }
 
     @Override

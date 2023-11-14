@@ -9,7 +9,7 @@ import javax.swing.*;
 public class AddIngredientDialog extends EntityDialog<Ingredient> {
     private final JTextField name = new JTextField();
     private final JTextField nutritionalValue = FieldMaker.makeIntField();
-    private final JComboBox<Unit> baseUnit = new JComboBox<>();
+    private final JComboBox<Unit> defaultUnit = new JComboBox<>();
     private final UnitTableModel unitTableModel;
 
     public AddIngredientDialog(UnitTableModel unitTableModel) {
@@ -21,17 +21,17 @@ public class AddIngredientDialog extends EntityDialog<Ingredient> {
     private void setValues() {
         name.setText("");
         nutritionalValue.setText("0");
-        baseUnit.setModel(new javax.swing.DefaultComboBoxModel<Unit>(unitTableModel.getBaseUnitsMap().values().toArray(new Unit[0])));
+        defaultUnit.setModel(new javax.swing.DefaultComboBoxModel<Unit>(unitTableModel.getUnits().toArray(new Unit[0])));
     }
 
     private void addFields() {
         add("Name:", name);
-        add("Base Unit:", baseUnit);
-        add("Nutritional value per base unit:", nutritionalValue);
+        add("Default Unit:", defaultUnit);
+        add("Nutritional value per default unit:", nutritionalValue);
     }
 
     @Override
     Ingredient getEntity() {
-        return new Ingredient(name.getText(), (Unit) baseUnit.getSelectedItem(), Integer.parseInt(nutritionalValue.getText().replaceAll(" ", "")));
+        return new Ingredient(name.getText(), (Unit) defaultUnit.getSelectedItem(), Integer.parseInt(nutritionalValue.getText().replaceAll(" ", "")));
     }
 }

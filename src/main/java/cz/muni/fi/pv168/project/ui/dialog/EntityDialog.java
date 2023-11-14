@@ -32,7 +32,7 @@ abstract class EntityDialog<E> {
     public Optional<E> show(JComponent parentComponent, String title) {
         int result = JOptionPane.showOptionDialog(parentComponent, panel, title,
                 OK_CANCEL_OPTION, PLAIN_MESSAGE, null, null, null);
-        if (result == OK_OPTION) {
+        if (result == OK_OPTION && getEntity() != null) {
             return Optional.of(getEntity());
         } else {
             return Optional.empty();
