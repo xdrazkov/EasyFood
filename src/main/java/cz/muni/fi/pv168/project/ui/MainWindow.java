@@ -66,8 +66,8 @@ public class MainWindow {
         // Generate test objects
         var testDataGenerator = new TestDataGenerator();
         var categories = testDataGenerator.createTestCategories(5);
-        var ingredients = testDataGenerator.createTestIngredients(5);
         var units = testDataGenerator.createTestUnits(5);
+        var ingredients = testDataGenerator.createTestIngredients(5, units);
         var recipes = testDataGenerator.createTestRecipes(20, categories, ingredients, units);
 
         // Create models
@@ -99,13 +99,13 @@ public class MainWindow {
         frame.add(tabbedPane, BorderLayout.CENTER);
 
         // Set up actions for recipe table
-        addAction = new AddAction(categories, ingredients, units, unitTableModel); // TODO pull somehow categories differently
+        addAction = new AddAction(categoryTableModel.getCategories(), ingredientTableModel.getIngredients(), unitTableModel.getUnits(), unitTableModel);
         deleteAction = new DeleteAction(recipeTablePanel.getTable(), ingredientTablePanel.getTable(), categoryTablePanel.getTable(), unitTablePanel.getTable());
-        editAction = new EditAction(categories, ingredients, units, unitTableModel); // TODO pull somehow categories differently
+        editAction = new EditAction(categoryTableModel.getCategories(), ingredientTableModel.getIngredients(), unitTableModel.getUnits(), unitTableModel);
         openAction = new OpenAction();
         importAction = new ImportAction();
         exportAction = new ExportAction();
-        viewStatisticsAction = new ViewStatisticsAction(recipes, ingredients);
+        viewStatisticsAction = new ViewStatisticsAction(recipeTableModel.getRecipes(), ingredientTableModel.getIngredients());
         viewAboutAction = new ViewAboutAction();
         this.actions = List.of(addAction, editAction, deleteAction, openAction, importAction, exportAction, viewAboutAction, viewStatisticsAction);
         setForbiddenActionsInTabs();
@@ -135,7 +135,7 @@ public class MainWindow {
 
         var recipeTableFilter = new RecipeTableFilter(recipeRowSorter);
         var categoryFilter = createCategoryFilter(recipeTableFilter, categoryTableModel);
-        var ingredientFilter = new JScrollPane(createIngredientFilter(recipeTableFilter, ingredientTableModel));
+        var ingredientFilter = createIngredientFilter(recipeTableFilter, ingredientTableModel);
 
         var preparationTimeSlider =
                 getRangeSlider(recipeTableModel, recipeTableFilter::filterPreparationTime,
@@ -155,7 +155,7 @@ public class MainWindow {
         JPanel preparationPanel = createSliderPanel(nutritionalValuesSlider);
         JPanel nutritionalPanel = createSliderPanel(preparationTimeSlider);
         var toolbar = createToolbar();
-        var filtersToolbar = createToolbar(categoryFilter, ingredientFilter, preparationPanel, nutritionalPanel);
+        var filtersToolbar = createToolbar(categoryFilter, new JScrollPane(ingredientFilter), preparationPanel, nutritionalPanel);
         toolbarPanel.add(toolbar);
         toolbarPanel.add(filtersToolbar);
         toolbarPanel.setBorder(padding);
@@ -180,10 +180,19 @@ public class MainWindow {
                 // clear all row selections
                 tablePanels.forEach(r -> r.getTable().clearSelection());
 
+                // filters visible only on recipe tab
                 int currTabIndex = tabPanel.getSelectedIndex();
-                filtersToolbar.setVisible(currTabIndex == TablePanelType.RECIPE.ordinal()); // first is recipe
+                filtersToolbar.setVisible(currTabIndex == TablePanelType.RECIPE.ordinal());
 
                 setStatusBarName(statusBar);
+
+                // reset filter selection
+                categoryFilter.setSelectedIndex(0);
+                ingredientFilter.setSelectedIndex(0);
+
+                // reset sliders
+                nutritionalValuesSlider.resetSlider();
+                preparationTimeSlider.resetSlider();
             }
         });
     }
@@ -401,9 +410,7 @@ public class MainWindow {
         resetButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                slider.setValue(slider.getMinimum());
-                slider.setUpperValue(slider.getMaximum());
-
+                slider.resetSlider();
             }
         });
         JPanel buttonTextPanel = new JPanel(new GridLayout(1, 2));

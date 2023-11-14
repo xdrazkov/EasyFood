@@ -15,7 +15,7 @@ public final class OpenRecipeDialog extends EntityDialog<Recipe> {
     private final JLabel title = new JLabel();
     private final JLabel description = new JLabel();
     private final JLabel portionCount = new JLabel();
-    private final JLabel instructions = new JLabel();
+    private final JTextArea instructions = new JTextArea();
     private final JLabel timeToPrepare = new JLabel();
     private final JLabel category = new JLabel();
     private final JLabel ingredientList = new JLabel();
@@ -29,11 +29,17 @@ public final class OpenRecipeDialog extends EntityDialog<Recipe> {
     }
 
     private void setValues() {
-        //panel.setBackground(recipe.getCategory().getColor());
+        panel.setPreferredSize(new Dimension(330, 560));
         title.setText(recipe.getTitle());
         description.setText(recipe.getDescription());
         portionCount.setText("Count of portions: " + recipe.getPortionCount());
         instructions.setText(recipe.getInstructions());
+        instructions.setEditable(false);
+        instructions.setCursor(null);
+        instructions.setOpaque(false);
+        //instructions.setFocusable(true);
+
+
         timeToPrepare.setText("Time to prepare: " + recipe.getTimeToPrepare() + " mins");
         category.setText("Category: " + recipe.getCategory().getName() + " ");
         ingredientList.setText("List of ingredients:");
