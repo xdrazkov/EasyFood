@@ -67,7 +67,7 @@ public class MainWindow {
 
     public MainWindow() {
         frame = createFrame();
-        frame.setMinimumSize(new Dimension(800, 800));
+        frame.setMinimumSize(new Dimension(1400, 800));
         frame.setIconImage(Icons.APP_ICON);
 
         // Generate test objects
