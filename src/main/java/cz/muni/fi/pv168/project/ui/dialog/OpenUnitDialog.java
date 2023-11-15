@@ -16,7 +16,7 @@ public class OpenUnitDialog extends EntityDialog<Unit> {
 
     public OpenUnitDialog(Unit unit, UnitTableModel unitTableModel) {
         this.unit = unit;
-        this.unitTableModel = unitTableModel;
+        this.unitTableModel = unitTableModel; // TODO: implement through Repository/CRUDService
         setValues();
         addFields();
     }
