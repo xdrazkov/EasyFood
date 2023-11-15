@@ -63,7 +63,7 @@ public class MainWindow {
     private final Map<GeneralAction, List<Integer>> forbiddenActionsInTabs = new HashMap<>();
 
     private final JTabbedPane tabbedPane;
-    private final Border padding = new EmptyBorder(0, 5, 0, 5);
+    private final Border padding = new EmptyBorder(0, 20, 0, 20);
 
     public MainWindow() {
         frame = createFrame();
