@@ -49,6 +49,7 @@ public final class OpenRecipeDialog extends EntityDialog<Recipe> {
         panel.add(title);
         panel.add(description);
         panel.add(portionCount);
+        panel.add(new JLabel("Instructions:"));
         panel.add(instructions);
         panel.add(timeToPrepare);
         var categoryPanel = new JPanel();
