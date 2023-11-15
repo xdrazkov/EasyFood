@@ -48,7 +48,7 @@ public final class OpenAction extends GeneralAction {
         }  else if (table.getModel() instanceof UnitTableModel unitTableModel) {
             int modelRow = table.convertRowIndexToModel(selectedRows[0]);
             var unit = unitTableModel.getEntity(modelRow);
-            var dialog = new OpenUnitDialog(unit);
+            var dialog = new OpenUnitDialog(unit, unitTableModel);
             dialog.show(table, "Open Unit").ifPresent(unitTableModel::updateRow);
         }
         else {
