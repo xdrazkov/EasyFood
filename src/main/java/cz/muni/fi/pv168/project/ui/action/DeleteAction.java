@@ -54,6 +54,19 @@ public final class DeleteAction extends GeneralAction {
             return;
         }
 
+        int[] selectedRows = table.getSelectedRows();
+        int[] convertedRows = new int[selectedRows.length];
+        for (int i = 0; i < selectedRows.length; i++) {
+            convertedRows[i] = table.convertRowIndexToModel(selectedRows[i]);
+            if (table.getModel() instanceof UnitTableModel unitTableModel) {
+                String unitToDelete = (String) unitTableModel.getValueAt(convertedRows[i], 0);
+                if (unitToDelete.equals("grams") || unitToDelete.equals("milliliters") || unitToDelete.equals("pieces")) {
+                    JOptionPane.showMessageDialog(table, "Cannot delete base units", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+        }
+
         Arrays.stream(table.getSelectedRows())
         .map(table::convertRowIndexToModel)
         .boxed()
