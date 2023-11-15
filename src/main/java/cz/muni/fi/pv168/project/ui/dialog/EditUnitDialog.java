@@ -37,7 +37,8 @@ public class EditUnitDialog extends EntityDialog<Unit> {
 
     @Override
     Unit getEntity() {
-        if (Objects.equals(unit.getName(), "gram") || Objects.equals(unit.getName(), "milliliter") || Objects.equals(unit.getName(), "piece")) {
+        System.out.println(unit.getName());
+        if (Objects.equals(unit.getName(), "grams") || Objects.equals(unit.getName(), "milliliters") || Objects.equals(unit.getName(), "pieces")) {
             JOptionPane.showMessageDialog(panel, "Cannot edit base units", "Error", JOptionPane.ERROR_MESSAGE);
             return null;
         }
