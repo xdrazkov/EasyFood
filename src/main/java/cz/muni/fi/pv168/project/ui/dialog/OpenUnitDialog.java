@@ -22,9 +22,9 @@ public class OpenUnitDialog extends EntityDialog<Unit> {
     }
 
     private void setValues() {
-        name.setText(unit.getName() + " (" + unit.getAbbreviation() + ")");
-        conversionRate.setText("Conversion rate: 1 " + unit.getAbbreviation() + " = " + unit.getConversionRate() + " " + unit.getIngredientType().getBaseUnit(unitTableModel).getAbbreviation());
-        ingredientType.setText(String.valueOf(unit.getIngredientType()));
+        name.setText("<html>" + "<B>" + unit.getName() + " (" + unit.getAbbreviation() + ")" + "</B>" + "</html>");
+        conversionRate.setText("<html>" + "<B>" + "Conversion rate: " + "</B>" + "1 " + unit.getAbbreviation() + " = " + unit.getConversionRate() + " " + unit.getIngredientType().getBaseUnit(unitTableModel).getAbbreviation() + "</html>");
+        ingredientType.setText("<html>" + "<B>" + "Unit type: " + "</B>" + String.valueOf(unit.getIngredientType()) + "</html>");
     }
 
     private void addFields() {
