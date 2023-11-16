@@ -265,8 +265,8 @@ public class MainWindow {
 
         RangeSlider slider = new RangeSlider(minValue, maxValue);
 
-        slider.setMajorTickSpacing((maxValue - minValue) / 10);
-        slider.setMinorTickSpacing((maxValue - minValue) / 20);
+        slider.setMajorTickSpacing((maxValue - minValue) / 5);
+        slider.setMinorTickSpacing((maxValue - minValue) / 10);
 
         slider.setPaintTicks(true);
         slider.setPaintLabels(true);
