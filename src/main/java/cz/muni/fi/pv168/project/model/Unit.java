@@ -1,6 +1,6 @@
 package cz.muni.fi.pv168.project.model;
 
-public class Unit {
+public class Unit extends Entity {
     private String name;
     private String abbreviation;
     private IngredientType ingredientType;

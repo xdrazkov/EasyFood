@@ -84,9 +84,9 @@ public class MainWindow {
 
         var guidProvider = new UuidGuidProvider();
 
-//        var recipeRepository = new InMemoryRepository<>(recipes);
+        var recipeRepository = new InMemoryRepository<>(recipes);
 
-//        var recipeCrudService = new RecipeCrudService(recipeRepository, recipeValidator, guidProvider);
+        var recipeCrudService = new RecipeCrudService(recipeRepository, recipeValidator, guidProvider);
 
         // Create models
         RecipeTableModel recipeTableModel = new RecipeTableModel(recipes);

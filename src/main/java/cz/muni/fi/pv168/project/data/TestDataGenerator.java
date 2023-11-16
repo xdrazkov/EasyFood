@@ -34,18 +34,18 @@ public final class TestDataGenerator {
             new Category("Appetizers and snacks", getRandomColor())
     );
     private final List<Ingredient> ingredients = List.of(
-            new Ingredient("Flour", units.get(0), random.nextInt(2)+ 1),
-            new Ingredient("Water", units.get(2), random.nextInt(2)+ 1),
-            new Ingredient("Sugar", units.get(3), random.nextInt(2)+ 1),
-            new Ingredient("Salt", units.get(0), random.nextInt(2)+ 1),
-            new Ingredient("Eggs", units.get(4), random.nextInt(2)+ 1),
-            new Ingredient("Yeast", units.get(1), random.nextInt(2)+ 1),
-            new Ingredient("Butter", units.get(0), random.nextInt(2)+ 1),
-            new Ingredient("Milk", units.get(2), random.nextInt(2)+ 1),
-            new Ingredient("Tomatoes", units.get(0), random.nextInt(2)+ 1),
-            new Ingredient("Cheese", units.get(0), random.nextInt(2)+ 1),
-            new Ingredient("Chicken", units.get(0), random.nextInt(2)+ 1),
-            new Ingredient("Onions", units.get(0), random.nextInt(2)+ 1)
+            new Ingredient("Flour", getRandomUnit(), random.nextInt(2)+ 1),
+            new Ingredient("Water", getRandomUnit(), getRandomNutValue()),
+            new Ingredient("Sugar", getRandomUnit(), getRandomNutValue()),
+            new Ingredient("Salt", getRandomUnit(), getRandomNutValue()),
+            new Ingredient("Eggs", getRandomUnit(), getRandomNutValue()),
+            new Ingredient("Yeast", getRandomUnit(), getRandomNutValue()),
+            new Ingredient("Butter", getRandomUnit(), getRandomNutValue()),
+            new Ingredient("Milk", getRandomUnit(), getRandomNutValue()),
+            new Ingredient("Tomatoes", getRandomUnit(), getRandomNutValue()),
+            new Ingredient("Cheese", getRandomUnit(), getRandomNutValue()),
+            new Ingredient("Chicken", getRandomUnit(), getRandomNutValue()),
+            new Ingredient("Onions", getRandomUnit(), getRandomNutValue())
     );
 
     // Create a list of recipes
@@ -99,13 +99,20 @@ public final class TestDataGenerator {
         return new HSLColor(h, s, l).getRGB();
     }
 
-    private static HashMap<Ingredient, Pair<Unit, Integer>> createIngredientList(List<Ingredient> ingredients, List<Unit> units) {
+    private Unit getRandomUnit() {
+        return units.get(random.nextInt(units.size()));
+    }
+
+    private int getRandomNutValue() {
+        return random.nextInt(2)+ 1;
+    }
+    private HashMap<Ingredient, Pair<Unit, Integer>> createIngredientList(List<Ingredient> ingredients, List<Unit> units) {
         HashMap<Ingredient, Pair<Unit, Integer>> ingredientList = new HashMap<>();
-        Random random = new Random();
 
         for (Ingredient ingredient : ingredients) {
             // For simplicity, assume a random unit and amount for each ingredient
-            Unit randomUnit = units.get(random.nextInt(units.size()));
+            List<Unit> randomUnits = units.stream().filter(r -> r.getIngredientType() == ingredient.getDefaultUnit().getIngredientType()).toList();
+            Unit randomUnit = randomUnits.get(random.nextInt(randomUnits.size()));
             int randomAmount = random.nextInt(100) + 1; // Random amount between 1 and 100
             ingredientList.put(ingredient, Pair.of(randomUnit, randomAmount));
         }
@@ -127,5 +134,16 @@ public final class TestDataGenerator {
 
     public List<Recipe> getRecipes() {
         return recipes;
+    }
+
+    public void setGuid(List<? extends Entity> entityList) {
+        entityList.forEach(r ->  r.setGuid(guidProvider.newGuid()));
+    }
+
+    public TestDataGenerator() {
+        setGuid(units);
+        setGuid(categories);
+        setGuid(ingredients);
+        setGuid(recipes);
     }
 }

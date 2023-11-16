@@ -2,7 +2,7 @@ package cz.muni.fi.pv168.project.model;
 
 import java.util.List;
 
-public class Ingredient {
+public class Ingredient extends Entity {
     private String name;
     private Unit defaultUnit;
     private int caloriesPerUnit;
