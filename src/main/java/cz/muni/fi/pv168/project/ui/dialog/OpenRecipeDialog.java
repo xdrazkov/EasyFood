@@ -30,9 +30,9 @@ public final class OpenRecipeDialog extends EntityDialog<Recipe> {
 
     private void setValues() {
         panel.setPreferredSize(new Dimension(330, 560));
-        title.setText(recipe.getTitle());
+        title.setText("<html>" + "<B>" + recipe.getTitle() + "</B>" + "</html>");
         description.setText(recipe.getDescription());
-        portionCount.setText("Count of portions: " + recipe.getPortionCount());
+        portionCount.setText("<html>" + "<B>" + "Count of portions: " + "</B>" + recipe.getPortionCount() + "</html>");
         instructions.setText(recipe.getInstructions());
         instructions.setEditable(false);
         instructions.setCursor(null);
@@ -41,14 +41,15 @@ public final class OpenRecipeDialog extends EntityDialog<Recipe> {
 
 
         timeToPrepare.setText("Time to prepare: " + recipe.getTimeToPrepare() + " mins");
-        category.setText("Category: " + recipe.getCategory().getName() + " ");
-        ingredientList.setText("List of ingredients:");
+        category.setText("<html>" + "<B>" + "Category: " + "</B>" + recipe.getCategory().getName() + " </html> ");
+        ingredientList.setText("<html>" + "<B>" + "List of ingredients:" + "</B>" + "</html>");
     }
 
     private void addFields() {
         panel.add(title);
         panel.add(description);
         panel.add(portionCount);
+        panel.add(new JLabel("<html>" + "<B>" + "Instructions:" + "</B>" + "</html>"));
         panel.add(instructions);
         panel.add(timeToPrepare);
         var categoryPanel = new JPanel();
@@ -62,7 +63,7 @@ public final class OpenRecipeDialog extends EntityDialog<Recipe> {
     private void addIngredients(){
         for(Map.Entry<Ingredient, Pair<Unit, Integer>> ingredientPairEntry : recipe.getIngredients().entrySet()){
             JLabel ingredient = new JLabel();
-            ingredient.setText(ingredientPairEntry.getKey().toString() + " -> " + ingredientPairEntry.getValue().getValue() + ingredientPairEntry.getValue().getKey().getAbbreviation());
+            ingredient.setText(ingredientPairEntry.getKey().toString() + " -> " + ingredientPairEntry.getValue().getValue() + " " + ingredientPairEntry.getValue().getKey().getAbbreviation());
             panel.add(ingredient);
         }
     }

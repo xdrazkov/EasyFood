@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -97,7 +98,7 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
         ingredient.addActionListener(new FilterUnits());
         newIngredient.add(ingredient);
 
-        JTextField quantity = new JTextField();
+        JTextField quantity = FieldMaker.makeIntField();
         quantity.setText(count);
         newIngredient.add(quantity);
 

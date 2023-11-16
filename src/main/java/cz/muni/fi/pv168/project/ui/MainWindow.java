@@ -63,11 +63,11 @@ public class MainWindow {
     private final Map<GeneralAction, List<Integer>> forbiddenActionsInTabs = new HashMap<>();
 
     private final JTabbedPane tabbedPane;
-    private final Border padding = new EmptyBorder(0, 5, 0, 5);
+    private final Border padding = new EmptyBorder(0, 20, 0, 20);
 
     public MainWindow() {
         frame = createFrame();
-        frame.setMinimumSize(new Dimension(800, 800));
+        frame.setMinimumSize(new Dimension(1400, 800));
         frame.setIconImage(Icons.APP_ICON);
 
         // Generate test objects

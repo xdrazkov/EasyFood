@@ -15,7 +15,8 @@ public class UnitTableModel extends AbstractTableModel {
 
     private final List<Column<Unit, ?>> columns = List.of(
             Column.readonly("Name", String.class, Unit::getName),
-            Column.readonly("Abbreviation", String.class, Unit::getAbbreviation)
+            Column.readonly("Abbreviation", String.class, Unit::getAbbreviation),
+            Column.readonly("Conversion Rate", Float.class, Unit::getConversionRate)
     );
 
     public UnitTableModel(List<Unit> units) {

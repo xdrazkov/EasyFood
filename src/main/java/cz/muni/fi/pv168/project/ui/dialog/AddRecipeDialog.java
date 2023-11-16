@@ -40,7 +40,6 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
         this.units = units;
         setValues();
         addFields();
-        addIngredients();
     }
 
     private void setValues() {
@@ -71,10 +70,6 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
         scroll = new JScrollPane(test);
         scroll.setMinimumSize(new Dimension(300,150));
         panel.add(scroll);
-    }
-
-    private void addIngredients() {
-        addIngredient(null, "0", null);
     }
 
     public void addIngredient(Object selectedIngredient, String count, Object selectedUnit){
