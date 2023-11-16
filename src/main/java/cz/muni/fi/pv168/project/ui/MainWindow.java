@@ -72,18 +72,18 @@ public class MainWindow {
 
         // Generate test objects
         var testDataGenerator = new TestDataGenerator();
-        var categories = testDataGenerator.createTestCategories(5);
-        var units = testDataGenerator.createTestUnits(5);
-        var ingredients = testDataGenerator.createTestIngredients(5, units);
-        var recipes = testDataGenerator.createTestRecipes(20, categories, ingredients, units);
+        var categories = testDataGenerator.getCategories();
+        var units = testDataGenerator.getUnits();
+        var ingredients = testDataGenerator.getIngredients();
+        var recipes = testDataGenerator.getRecipes();
 
         var recipeValidator = new RecipeValidator();
 
         var guidProvider = new UuidGuidProvider();
 
-        var recipeRepository = new InMemoryRepository<>(recipes);
+//        var recipeRepository = new InMemoryRepository<>(recipes);
 
-        var recipeCrudService = new RecipeCrudService(recipeRepository, recipeValidator, guidProvider);
+//        var recipeCrudService = new RecipeCrudService(recipeRepository, recipeValidator, guidProvider);
 
         // Create models
         RecipeTableModel recipeTableModel = new RecipeTableModel(recipes);

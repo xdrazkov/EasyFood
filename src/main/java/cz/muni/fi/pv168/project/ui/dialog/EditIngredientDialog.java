@@ -36,7 +36,7 @@ public class EditIngredientDialog extends EntityDialog<Ingredient> {
     @Override
     Ingredient getEntity() {
         ingredient.setName(name.getText());
-        ingredient.setDefaulUnit((Unit) defaulUnit.getSelectedItem());
+        ingredient.setDefaultUnit((Unit) defaulUnit.getSelectedItem());
         ingredient.setCaloriesPerUnit(Integer.parseInt(nutritionalValue.getText().replaceAll(" ", "")));
         return ingredient;
     }

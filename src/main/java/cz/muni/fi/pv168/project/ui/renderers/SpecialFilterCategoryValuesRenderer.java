@@ -18,7 +18,7 @@ public class SpecialFilterCategoryValuesRenderer extends AbstractRenderer<Specia
     }
 
     private static void renderAll(JLabel label) {
-        label.setText("(ALL)");
+        label.setText("All categories");
         label.setFont(label.getFont().deriveFont(Font.ITALIC));
         label.setForeground(Color.GRAY);
     }

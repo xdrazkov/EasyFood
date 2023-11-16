@@ -17,15 +17,42 @@ public class Recipe extends Entity {
     private HashMap<Ingredient, Pair<Unit, Integer>> ingredients;
 
     public Recipe(){}
-    public Recipe(String guid, String title, String description, int portionCount, String instructions, int timeToPrepare, Category category, HashMap<Ingredient, Pair<Unit, Integer>> ingredientList) {
+    public Recipe(String guid,
+                  String title,
+                  String description,
+                  int portionCount,
+                  String instructions,
+                  int timeToPrepare,
+                  Category category,
+                  HashMap<Ingredient, Pair<Unit, Integer>> ingredientList) {
         super(guid);
-        this.title = title;
-        this.description = description;
-        this.portionCount = portionCount;
-        this.instructions = instructions;
-        this.timeToPrepare = timeToPrepare;
-        this.category = category;
-        this.ingredients = ingredientList;
+        init(title, description, portionCount, instructions, timeToPrepare, category, ingredientList);
+    }
+
+    public Recipe(String title,
+                  String description,
+                  int portionCount,
+                  String instructions,
+                  int timeToPrepare,
+                  Category category,
+                  HashMap<Ingredient, Pair<Unit, Integer>> ingredientList) {
+        init(title, description, portionCount, instructions, timeToPrepare, category, ingredientList);
+    }
+
+    private void init(String title,
+                      String description,
+                      int portionCount,
+                      String instructions,
+                      int timeToPrepare,
+                      Category category,
+                      HashMap<Ingredient, Pair<Unit, Integer>> ingredientList) {
+        setTitle(title);
+        setDescription(description);
+        setPortionCount(portionCount);
+        setInstructions(instructions);
+        setTimeToPrepare(timeToPrepare);
+        setCategory(category);
+        setIngredients(ingredientList);
         calculateNutritionalValue();
     }
 
