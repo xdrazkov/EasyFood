@@ -6,10 +6,8 @@ import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -108,12 +106,16 @@ public final class TestDataGenerator {
     }
     private HashMap<Ingredient, Pair<Unit, Integer>> createIngredientList(List<Ingredient> ingredients, List<Unit> units) {
         HashMap<Ingredient, Pair<Unit, Integer>> ingredientList = new HashMap<>();
+        List<Ingredient> shuffledIngredients = new ArrayList<>(ingredients);
+        Collections.shuffle(shuffledIngredients);
 
-        for (Ingredient ingredient : ingredients) {
-            // For simplicity, assume a random unit and amount for each ingredient
+
+        for (int x = 0; x < random.nextInt(shuffledIngredients.size()); x++) {
+            var ingredient = shuffledIngredients.get(x);
+            // picks only unit with compatible unit
             List<Unit> randomUnits = units.stream().filter(r -> r.getIngredientType() == ingredient.getDefaultUnit().getIngredientType()).toList();
             Unit randomUnit = randomUnits.get(random.nextInt(randomUnits.size()));
-            int randomAmount = random.nextInt(100) + 1; // Random amount between 1 and 100
+            int randomAmount = random.nextInt(10) + 1;
             ingredientList.put(ingredient, Pair.of(randomUnit, randomAmount));
         }
 
