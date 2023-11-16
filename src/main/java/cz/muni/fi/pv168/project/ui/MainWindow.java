@@ -45,6 +45,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
 public class MainWindow {
@@ -165,12 +166,6 @@ public class MainWindow {
         var nutritionalValuesSlider =
                 getRangeSlider(recipeTableModel, recipeTableFilter::filterNutritionalValues,
                         Recipe::getNutritionalValue, "Nutritional values (kcal)");
-
-        // paints rows in recipe and category tab by their category color
-        var recipeRowColorRenderer = new RecipeCategoryRenderer(2);
-        recipeTablePanel.getTable().setDefaultRenderer(Object.class, recipeRowColorRenderer);
-        recipeTablePanel.getTable().setDefaultRenderer(Integer.class, recipeRowColorRenderer);
-        categoryTablePanel.getTable().setDefaultRenderer(Object.class, new RecipeCategoryRenderer(0));
 
         JPanel toolbarPanel = new JPanel(new GridLayout(2, 1));
         JPanel preparationPanel = createSliderPanel(nutritionalValuesSlider);

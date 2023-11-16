@@ -4,10 +4,12 @@ import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
 import cz.muni.fi.pv168.project.ui.model.IngredientTableModel;
 import cz.muni.fi.pv168.project.ui.model.RecipeTableModel;
 import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
+import cz.muni.fi.pv168.project.ui.renderers.RecipeCategoryRenderer;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.util.function.Consumer;
 
@@ -22,6 +24,7 @@ public class TablePanel extends JPanel {
         add(new JScrollPane(table), BorderLayout.CENTER);
         setTablePanelType(tableModel);
         this.onSelectionChange = onSelectionChange;
+        setRenderer();
     }
 
     public JTable getTable() {
@@ -60,6 +63,25 @@ public class TablePanel extends JPanel {
             this.tablePanelType = TablePanelType.UNIT;
         } else {
             System.out.println(tableModel + " invalid panel type");
+        }
+    }
+
+    private void setRenderer() {
+        switch (this.tablePanelType) {
+            case RECIPE:
+                var recipeRowColorRenderer = new RecipeCategoryRenderer(2);
+                table.setDefaultRenderer(Object.class, recipeRowColorRenderer);
+                table.setDefaultRenderer(Integer.class, recipeRowColorRenderer);
+                break;
+            case CATEGORY:
+                table.setDefaultRenderer(Object.class, new RecipeCategoryRenderer(0));
+                break;
+            case INGREDIENT:
+                table.setDefaultRenderer(Integer.class, new DefaultTableCellRenderer());
+                break;
+            case UNIT:
+                table.setDefaultRenderer(Float.class, new DefaultTableCellRenderer());
+                break;
         }
     }
 }
