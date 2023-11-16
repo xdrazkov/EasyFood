@@ -25,7 +25,7 @@ public class AddCategoryDialog extends EntityDialog<Category> {
 
     private void addFields() {
         add("Name:", name, THIN_HEIGHT);
-        add("", color, THIN_HEIGHT);
+        add(color, THIN_HEIGHT);
     }
 
     @Override

@@ -26,8 +26,8 @@ public class ViewAboutDialog extends EntityDialog<String> {
 
     private void addFields() {
         add("Application made by", authors, THIN_HEIGHT);
-        add("", description, THIN_HEIGHT);
-        add("", copyright, THIN_HEIGHT);
+        add(description, THIN_HEIGHT);
+        add(copyright, THIN_HEIGHT);
     }
 
     @Override

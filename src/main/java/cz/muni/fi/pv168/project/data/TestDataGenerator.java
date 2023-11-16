@@ -110,7 +110,7 @@ public final class TestDataGenerator {
         Collections.shuffle(shuffledIngredients);
 
 
-        for (int x = 0; x < random.nextInt(shuffledIngredients.size()); x++) {
+        for (int x = 0; x < random.nextInt(shuffledIngredients.size() - 1) + 1; x++) {
             var ingredient = shuffledIngredients.get(x);
             // picks only unit with compatible unit
             List<Unit> randomUnits = units.stream().filter(r -> r.getIngredientType() == ingredient.getDefaultUnit().getIngredientType()).toList();
