@@ -25,12 +25,12 @@ public class OpenCategoryDialog extends EntityDialog<Category> {
     }
 
     private void addFields() {
-        panel.add(name);
+        add("",name, THIN_HEIGHT);
         var colorPanel = new JPanel();
         colorPanel.setLayout(new GridBagLayout());
         colorPanel.add(color);
         colorPanel.add(new ColoredCircle(category.getColor()));
-        panel.add(colorPanel);
+        add("", colorPanel, THIN_HEIGHT);
     }
 
     @Override

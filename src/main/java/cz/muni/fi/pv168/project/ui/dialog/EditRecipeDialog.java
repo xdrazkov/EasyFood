@@ -11,7 +11,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,10 +24,8 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
     private final JTextArea instructions = new JTextArea();
     private final JTextField timeToPrepare = FieldMaker.makeIntField();
     private final JComboBox<Category> category = new JComboBox<>();
-    private final JLabel ingredientsLabel = new JLabel();
     private final JButton newButton = new JButton();
-    private JScrollPane scroll;
-    private final JPanel test = new JPanel();
+    private final JPanel ingredientsPanel = new JPanel();
 
     private final Recipe recipe;
     private final List<Category> categories;
@@ -48,7 +45,6 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
     }
 
     private void setValues() {
-        panel.setPreferredSize(new Dimension(330, 560));
         title.setText(recipe.getTitle());
         description.setText(recipe.getDescription());
         portionCount.setText(Integer.toString(recipe.getPortionCount()));
@@ -56,26 +52,20 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
         timeToPrepare.setText(Integer.toString(recipe.getTimeToPrepare()));
         category.setModel(new javax.swing.DefaultComboBoxModel<>(categories.toArray(new Category[categories.size()])));
         category.getModel().setSelectedItem(recipe.getCategory());
-        ingredientsLabel.setText("Ingredients");
         newButton.setText("New Ingredient");
         newButton.addActionListener(new AddIngredient());
-        test.setLayout(new MigLayout("wrap 1"));
+        ingredientsPanel.setLayout(new MigLayout("wrap 1"));
     }
 
     private void addFields() {
-        add("Title:", title);
-        add("Description:", description);
-        add("Portions:", portionCount);
-        JScrollPane scrollInstructions = new JScrollPane(instructions);
-        scrollInstructions.setMinimumSize(new Dimension(300,100));
-        add("Instructions:", scrollInstructions);
-        add("Time to prepare(min):", timeToPrepare);
-        add("Category:", category);
-        panel.add(ingredientsLabel);
-        panel.add(newButton);
-        scroll = new JScrollPane(test);
-        scroll.setMinimumSize(new Dimension(300,150));
-        panel.add(scroll);
+        add("Title:", title, THIN_HEIGHT);
+        add("Description:", description, THIN_HEIGHT);
+        add("Portions:", portionCount, THIN_HEIGHT);
+        add("Instructions:", new JScrollPane(instructions), THICC_HEIGHT);
+        add("Time to prepare(min):", timeToPrepare, THIN_HEIGHT);
+        add("Category:", category, THIN_HEIGHT);
+        add("Ingredients:", new JScrollPane(ingredientsPanel), THICC_HEIGHT);
+        add("", newButton, THIN_HEIGHT);
     }
 
    private void addIngredients() {
@@ -116,11 +106,11 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
         xButton.addActionListener(new DeleteIngredient());
         newIngredient.add(xButton);
 
-        test.add(newIngredient);
+        ingredientsPanel.add(newIngredient);
     }
 
     public void deleteIngredient(JButton source){
-        test.remove(source.getParent());
+        ingredientsPanel.remove(source.getParent());
     }
 
     @Override
@@ -141,7 +131,7 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
 
     public HashMap<Ingredient, Pair<Unit, Integer>> getAllIngredients(){
         HashMap<Ingredient, Pair<Unit, Integer>> newIgredients = new HashMap<>();
-        for (Component component : test.getComponents()){
+        for (Component component : ingredientsPanel.getComponents()){
             Ingredient ingredient = (Ingredient)((JComboBox<Ingredient>)((JPanel)component).getComponent(0)).getSelectedItem();
             int count = Integer.parseInt(((JTextField)((JPanel)component).getComponent(1)).getText());
             Unit unit = (Unit)((JComboBox<Unit>)((JPanel)component).getComponent(2)).getSelectedItem();

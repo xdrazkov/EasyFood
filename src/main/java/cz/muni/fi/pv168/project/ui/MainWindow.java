@@ -64,7 +64,9 @@ public class MainWindow {
     private final Map<GeneralAction, List<Integer>> forbiddenActionsInTabs = new HashMap<>();
 
     private final JTabbedPane tabbedPane;
-    private final Border padding = new EmptyBorder(0, 20, 0, 20);
+    private final Border padding = new EmptyBorder(0, 10, 0, 10);
+
+    public static final Dimension SCREEN_SIZE = Toolkit.getDefaultToolkit().getScreenSize();
 
     public MainWindow() {
         frame = createFrame();

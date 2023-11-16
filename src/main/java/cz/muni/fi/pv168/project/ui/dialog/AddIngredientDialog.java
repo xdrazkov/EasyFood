@@ -25,9 +25,9 @@ public class AddIngredientDialog extends EntityDialog<Ingredient> {
     }
 
     private void addFields() {
-        add("Name:", name);
-        add("Default Unit:", defaultUnit);
-        add("Nutritional value per default unit:", nutritionalValue);
+        add("Name:", name, THIN_HEIGHT);
+        add("Default Unit:", defaultUnit, THIN_HEIGHT);
+        add("Nutritional value per default unit:", nutritionalValue, THIN_HEIGHT);
     }
 
     @Override

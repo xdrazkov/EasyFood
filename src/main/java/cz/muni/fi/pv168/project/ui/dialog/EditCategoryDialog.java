@@ -23,7 +23,7 @@ public class EditCategoryDialog extends EntityDialog<Category> {
     }
 
     private void addFields() {
-        add("Name:", name);
+        add("Name:", name, THIN_HEIGHT);
         panel.add(color);
     }
 

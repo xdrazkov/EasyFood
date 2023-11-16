@@ -29,7 +29,7 @@ public final class OpenRecipeDialog extends EntityDialog<Recipe> {
     }
 
     private void setValues() {
-        panel.setPreferredSize(new Dimension(330, 560));
+//        panel.setPreferredSize(new Dimension(330, 500));
         title.setText("<html>" + "<B>" + recipe.getTitle() + "</B>" + "</html>");
         description.setText(recipe.getDescription());
         portionCount.setText("<html>" + "<B>" + "Count of portions: " + "</B>" + recipe.getPortionCount() + "</html>");
@@ -37,6 +37,11 @@ public final class OpenRecipeDialog extends EntityDialog<Recipe> {
         instructions.setEditable(false);
         instructions.setCursor(null);
         instructions.setOpaque(false);
+
+        instructions.setLineWrap(true);
+        // instructions has weird preferred size (the third of the whole dialog)
+        instructions.setPreferredSize(new Dimension(panel.getPreferredSize().width,
+                                                    instructions.getPreferredSize().height));
         //instructions.setFocusable(true);
 
 

@@ -29,10 +29,10 @@ public class EditUnitDialog extends EntityDialog<Unit> {
     }
 
     private void addFields() {
-        add("Name:", name);
-        add("Abbreviation:", abbreviation);
-        add("Unit type:", ingredientType);
-        add("Conversion rate to base unit (g/ml/pcs):", conversionRate);
+        add("Name:", name, THIN_HEIGHT);
+        add("Abbreviation:", abbreviation, THIN_HEIGHT);
+        add("Unit type:", ingredientType, THIN_HEIGHT);
+        add("Conversion rate to base unit (g/ml/pcs):", conversionRate, THIN_HEIGHT);
     }
 
     @Override

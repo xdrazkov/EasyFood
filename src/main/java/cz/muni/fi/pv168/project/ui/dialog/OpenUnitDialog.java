@@ -28,9 +28,9 @@ public class OpenUnitDialog extends EntityDialog<Unit> {
     }
 
     private void addFields() {
-        panel.add(name);
-        panel.add(conversionRate);
-        panel.add(ingredientType);
+        add("", name, THIN_HEIGHT);
+        add("", conversionRate, THIN_HEIGHT);
+        add("", ingredientType, THIN_HEIGHT);
     }
 
     @Override
