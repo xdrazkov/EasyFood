@@ -25,51 +25,40 @@ public final class OpenRecipeDialog extends EntityDialog<Recipe> {
         this.recipe = recipe;
         setValues();
         addFields();
-        addIngredients();
     }
 
     private void setValues() {
-//        panel.setPreferredSize(new Dimension(330, 500));
         title.setText("<html>" + "<B>" + recipe.getTitle() + "</B>" + "</html>");
-        description.setText(recipe.getDescription());
+        description.setText("<html>" + "<B>" + "Description: " + "</B> <br>" + recipe.getDescription() + " </html> ");
         portionCount.setText("<html>" + "<B>" + "Count of portions: " + "</B>" + recipe.getPortionCount() + "</html>");
         instructions.setText(recipe.getInstructions());
-        instructions.setEditable(false);
-        instructions.setCursor(null);
         instructions.setOpaque(false);
-
         instructions.setLineWrap(true);
-        // instructions has weird preferred size (the third of the whole dialog)
-        instructions.setPreferredSize(new Dimension(panel.getPreferredSize().width,
-                                                    instructions.getPreferredSize().height));
-        //instructions.setFocusable(true);
-
-
-        timeToPrepare.setText("Time to prepare: " + recipe.getTimeToPrepare() + " mins");
+        timeToPrepare.setText("<html>" + "<B>" + "Time to prepare: " + "</B>" + recipe.getTimeToPrepare() + " mins" + " </html> ");
         category.setText("<html>" + "<B>" + "Category: " + "</B>" + recipe.getCategory().getName() + " </html> ");
         ingredientList.setText("<html>" + "<B>" + "List of ingredients:" + "</B>" + "</html>");
     }
 
     private void addFields() {
-        panel.add(title);
-        panel.add(description);
-        panel.add(portionCount);
-        panel.add(new JLabel("<html>" + "<B>" + "Instructions:" + "</B>" + "</html>"));
-        panel.add(instructions);
-        panel.add(timeToPrepare);
-        var categoryPanel = new JPanel();
-        categoryPanel.setLayout(new GridBagLayout());
+        add(title, THIN_HEIGHT);
+        add(description, THIN_HEIGHT);
+        add(portionCount, THIN_HEIGHT);
+        add(timeToPrepare, THIN_HEIGHT);
+        var categoryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         categoryPanel.add(category);
         categoryPanel.add(new ColoredCircle(recipe.getCategory().getColor()));
-        panel.add(categoryPanel);
-        panel.add(ingredientList);
+        add(categoryPanel, THIN_HEIGHT);
+        add(ingredientList, THIN_HEIGHT);
+        addIngredients();
+        add(new JLabel("<html>" + "<B>" + "Instructions:" + "</B>" + "</html>"), THIN_HEIGHT);
+        add(new JScrollPane(instructions), THICC_HEIGHT);
     }
 
     private void addIngredients(){
         for(Map.Entry<Ingredient, Pair<Unit, Integer>> ingredientPairEntry : recipe.getIngredients().entrySet()){
             JLabel ingredient = new JLabel();
             ingredient.setText(ingredientPairEntry.getKey().toString() + " -> " + ingredientPairEntry.getValue().getValue() + " " + ingredientPairEntry.getValue().getKey().getAbbreviation());
-            panel.add(ingredient);
+            add(ingredient, THIN_HEIGHT);
         }
     }
 

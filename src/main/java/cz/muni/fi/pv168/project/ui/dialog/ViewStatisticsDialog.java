@@ -34,8 +34,8 @@ public class ViewStatisticsDialog extends EntityDialog<String>  {
     }
 
     private void addFields() {
-        add("", total, THIN_HEIGHT);
-        add("", ingredientPanel, THIN_HEIGHT);
+        add(total, THIN_HEIGHT);
+        add(ingredientPanel, THIN_HEIGHT);
     }
 
     private void addIngredients(){

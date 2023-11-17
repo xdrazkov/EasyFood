@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.awt.*;
 
-public class Category {
+public class Category extends Entity {
     private String name;
     private Color color;
     public Category(String name, Color color) {

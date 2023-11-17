@@ -65,7 +65,7 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
         add("Time to prepare(min):", timeToPrepare, THIN_HEIGHT);
         add("Category:", category, THIN_HEIGHT);
         add("Ingredients:", new JScrollPane(ingredientsPanel), THICC_HEIGHT);
-        add("", newButton, THIN_HEIGHT);
+        add(newButton, THIN_HEIGHT);
     }
 
    private void addIngredients() {

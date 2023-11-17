@@ -25,6 +25,7 @@ abstract class EntityDialog<E> {
 
     EntityDialog() {
         panel.setMaximumSize(new Dimension(DIALOG_WIDTH, DIALOG_HEIGHT));
+//        panel.setPreferredSize(new Dimension(DIALOG_WIDTH, DIALOG_HEIGHT));
         panel.setLayout(new MigLayout("wrap 1"));
     }
 
@@ -35,6 +36,9 @@ abstract class EntityDialog<E> {
             panel.add(label);
         }
         panel.add(component);
+    }
+    void add(JComponent component, int thickness) {
+        add("", component, thickness);
     }
     
     abstract E getEntity();
