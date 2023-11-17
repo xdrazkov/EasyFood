@@ -1,8 +1,14 @@
 package cz.muni.fi.pv168.project.ui.model;
 
+import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.IngredientType;
 import cz.muni.fi.pv168.project.model.Unit;
+import cz.muni.fi.pv168.project.ui.dialog.AddUnitDialog;
+import cz.muni.fi.pv168.project.ui.dialog.EditUnitDialog;
+import cz.muni.fi.pv168.project.ui.dialog.OpenUnitDialog;
 
+import javax.swing.*;
 import java.util.HashMap;
 import java.util.List;
 
@@ -35,5 +41,28 @@ public class UnitTableModel extends BasicTableModel<Unit> {
 
     public HashMap<IngredientType, Unit> getBaseUnitsMap() {
         return baseUnitsMap;
+    }
+
+    @Override
+    public void performAddAction(JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
+        UnitTableModel unitTable = (UnitTableModel) table.getModel();
+        var dialog = new AddUnitDialog(table);
+        dialog.show(table, "Edit Unit").ifPresent(unitTable::addRow);
+    }
+
+    @Override
+    public void performEditAction(int[] selectedRows, JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
+        int modelRow = table.convertRowIndexToModel(selectedRows[0]);
+        var unit = unitTableModel.getEntity(modelRow);
+        var dialog = new EditUnitDialog(unit, table);
+        dialog.show(table, "Edit Unit").ifPresent(unitTableModel::updateRow);
+    }
+
+    @Override
+    public void performOpenAction(JTable table, int modelRow) {
+        UnitTableModel unitTableModel = (UnitTableModel) table.getModel();
+        var unit = unitTableModel.getEntity(modelRow);
+        var dialog = new OpenUnitDialog(unit, unitTableModel);
+        dialog.show(table, "Open Unit").ifPresent(unitTableModel::updateRow);
     }
 }

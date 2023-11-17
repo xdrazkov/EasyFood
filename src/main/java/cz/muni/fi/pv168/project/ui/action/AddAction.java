@@ -7,7 +7,7 @@ import cz.muni.fi.pv168.project.ui.dialog.AddCategoryDialog;
 import cz.muni.fi.pv168.project.ui.dialog.AddIngredientDialog;
 import cz.muni.fi.pv168.project.ui.dialog.AddRecipeDialog;
 import cz.muni.fi.pv168.project.ui.dialog.AddUnitDialog;
-import cz.muni.fi.pv168.project.ui.dialog.EditUnitDialog;
+import cz.muni.fi.pv168.project.ui.model.BasicTableModel;
 import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
 import cz.muni.fi.pv168.project.ui.model.IngredientTableModel;
 import cz.muni.fi.pv168.project.ui.model.RecipeTableModel;
@@ -18,7 +18,6 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.List;
-import java.util.Optional;
 
 public final class AddAction extends GeneralAction {
 
@@ -46,21 +45,8 @@ public final class AddAction extends GeneralAction {
             table.getCellEditor().cancelCellEditing();
         }
 
-        if (table.getModel() instanceof RecipeTableModel recipeTableModel) {
-            var dialog = new AddRecipeDialog(categories, ingredients, units);
-            dialog.show(table, "Add Recipe").ifPresent(recipeTableModel::addRow);
-        } else if (table.getModel() instanceof UnitTableModel unitTable) {
-            var dialog = new AddUnitDialog(table);
-            dialog.show(table, "Edit Unit").ifPresent(unitTable::addRow);
-        } else if (table.getModel() instanceof CategoryTableModel categoryTableModel) {
-            var dialog = new AddCategoryDialog(categoryTableModel);
-            dialog.show(table, "Add Category").ifPresent(categoryTableModel::addRow);
-        } else if (table.getModel() instanceof IngredientTableModel ingredientTableModel) {
-            var dialog = new AddIngredientDialog(unitTableModel);
-            dialog.show(table, "Add Ingredient").ifPresent(ingredientTableModel::addRow);
-        } else {
-            System.out.println("Editing different class " + table.getModel().getClass());
-        }
+        BasicTableModel model = (BasicTableModel) table.getModel();
+        model.performAddAction(table, unitTableModel, categories, ingredients, units);
     }
 
     @Override

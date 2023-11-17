@@ -1,5 +1,10 @@
 package cz.muni.fi.pv168.project.ui.model;
 
+import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.model.Ingredient;
+import cz.muni.fi.pv168.project.model.Unit;
+
+import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +23,12 @@ public abstract class BasicTableModel<E> extends AbstractTableModel implements E
     }
 
     public abstract List<Column<E, ?>> makeColumns();
+
+    public abstract void performAddAction(JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units);
+
+    public abstract void performEditAction(int[] selectedRows, JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units);
+
+    public abstract void performOpenAction(JTable table, int modelRow);
 
     public List<E> getObjects() {
         return objects;
