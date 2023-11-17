@@ -117,9 +117,9 @@ public class MainWindow {
         frame.add(tabbedPane, BorderLayout.CENTER);
 
         // Set up actions for recipe table
-        addAction = new AddAction(categoryTableModel.getCategories(), ingredientTableModel.getIngredients(), unitTableModel.getUnits(), unitTableModel);
-        deleteAction = new DeleteAction(recipeTablePanel.getTable(), ingredientTablePanel.getTable(), categoryTablePanel.getTable(), unitTablePanel.getTable());
-        editAction = new EditAction(categoryTableModel.getCategories(), ingredientTableModel.getIngredients(), unitTableModel.getUnits(), unitTableModel);
+        addAction = new AddAction(categoryTableModel.getObjects(), ingredientTableModel.getObjects(), unitTableModel.getObjects(), unitTableModel);
+        deleteAction = new DeleteAction();
+        editAction = new EditAction(categoryTableModel.getObjects(), ingredientTableModel.getObjects(), unitTableModel.getObjects(), unitTableModel);
         openAction = new OpenAction();
 
         // Add row sorters
@@ -135,7 +135,7 @@ public class MainWindow {
 
         exportAction = new ExportAction(recipeTablePanel, exportService);
         importAction = new ImportAction();
-        viewStatisticsAction = new ViewStatisticsAction(recipeTableModel.getRecipes(), ingredientTableModel.getIngredients());
+        viewStatisticsAction = new ViewStatisticsAction(recipeTableModel.getObjects(), ingredientTableModel.getObjects());
         viewAboutAction = new ViewAboutAction();
         this.actions = List.of(addAction, editAction, deleteAction, openAction, importAction, exportAction, viewAboutAction, viewStatisticsAction);
         setForbiddenActionsInTabs();
@@ -216,7 +216,7 @@ public class MainWindow {
 
     private static JComboBox<Either<SpecialFilterCategoryValues, Category>> createCategoryFilter(
             RecipeTableFilter recipeTableFilter, CategoryTableModel categoryTableModel) {
-        return FilterComboboxBuilder.create(SpecialFilterCategoryValues.class, categoryTableModel.getCategories().toArray(new Category[0]))
+        return FilterComboboxBuilder.create(SpecialFilterCategoryValues.class, categoryTableModel.getObjects().toArray(new Category[0]))
                 .setSelectedItem(SpecialFilterCategoryValues.ALL)
                 .setSpecialValuesRenderer(new SpecialFilterCategoryValuesRenderer())
                 .setValuesRenderer(new CategoryRenderer())
@@ -229,12 +229,12 @@ public class MainWindow {
         ListModel<Ingredient> listModel = new AbstractListModel<>() {
             @Override
             public int getSize() {
-                return ingredientTableModel.getIngredients().size();
+                return ingredientTableModel.getObjects().size();
             }
 
             @Override
             public Ingredient getElementAt(int index) {
-                return ingredientTableModel.getIngredients().get(index);
+                return ingredientTableModel.getObjects().get(index);
             }
         };
 
@@ -251,7 +251,7 @@ public class MainWindow {
                                                  Consumer<Either<T, Pair<Integer, Integer>>> filterFunction,
                                                  Function<Recipe,Integer> mapperFunction,
                                                  String description) {
-        List<Integer> values = recipeTableModel.getRecipes().stream()
+        List<Integer> values = recipeTableModel.getObjects().stream()
                 .map(mapperFunction)
                 .toList();
 
