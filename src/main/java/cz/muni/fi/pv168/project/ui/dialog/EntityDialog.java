@@ -26,10 +26,6 @@ abstract class EntityDialog<E> {
     EntityDialog() {
         panel.setMaximumSize(new Dimension(DIALOG_WIDTH, DIALOG_HEIGHT));
         panel.setLayout(new MigLayout("wrap 1"));
-        System.out.println(DIALOG_HEIGHT);
-        System.out.println(DIALOG_WIDTH);
-        System.out.println(THICC_HEIGHT);
-        System.out.println(THIN_HEIGHT);
     }
 
     void add(String labelText, JComponent component, int thickness) {
@@ -46,8 +42,9 @@ abstract class EntityDialog<E> {
     public Optional<E> show(JComponent parentComponent, String title) {
         int result = JOptionPane.showOptionDialog(parentComponent, panel, title,
                 OK_CANCEL_OPTION, PLAIN_MESSAGE, null, null, null);
-        if (result == OK_OPTION && getEntity() != null) {
-            return Optional.of(getEntity());
+        E entity = getEntity();
+        if (result == OK_OPTION && entity != null) {
+            return Optional.of(entity);
         } else {
             return Optional.empty();
         }

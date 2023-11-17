@@ -7,6 +7,7 @@ import cz.muni.fi.pv168.project.ui.dialog.AddCategoryDialog;
 import cz.muni.fi.pv168.project.ui.dialog.AddIngredientDialog;
 import cz.muni.fi.pv168.project.ui.dialog.AddRecipeDialog;
 import cz.muni.fi.pv168.project.ui.dialog.AddUnitDialog;
+import cz.muni.fi.pv168.project.ui.dialog.EditUnitDialog;
 import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
 import cz.muni.fi.pv168.project.ui.model.IngredientTableModel;
 import cz.muni.fi.pv168.project.ui.model.RecipeTableModel;
@@ -17,6 +18,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.List;
+import java.util.Optional;
 
 public final class AddAction extends GeneralAction {
 
@@ -48,8 +50,8 @@ public final class AddAction extends GeneralAction {
             var dialog = new AddRecipeDialog(categories, ingredients, units);
             dialog.show(table, "Add Recipe").ifPresent(recipeTableModel::addRow);
         } else if (table.getModel() instanceof UnitTableModel unitTable) {
-            var dialog = new AddUnitDialog();
-            dialog.show(table, "Add Unit").ifPresent(unitTable::addRow);
+            var dialog = new AddUnitDialog(table);
+            dialog.show(table, "Edit Unit").ifPresent(unitTable::addRow);
         } else if (table.getModel() instanceof CategoryTableModel categoryTableModel) {
             var dialog = new AddCategoryDialog(categoryTableModel);
             dialog.show(table, "Add Category").ifPresent(categoryTableModel::addRow);

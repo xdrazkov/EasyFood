@@ -54,7 +54,7 @@ public final class EditAction extends GeneralAction {
         } else if (table.getModel() instanceof UnitTableModel unitTable) {
             int modelRow = table.convertRowIndexToModel(selectedRows[0]);
             var unit = unitTable.getEntity(modelRow);
-            var dialog = new EditUnitDialog(unit);
+            var dialog = new EditUnitDialog(unit, table);
             dialog.show(table, "Edit Unit").ifPresent(unitTable::updateRow);
         } else if (table.getModel() instanceof CategoryTableModel categoryTableModel) {
             int modelRow = table.convertRowIndexToModel(selectedRows[0]);
