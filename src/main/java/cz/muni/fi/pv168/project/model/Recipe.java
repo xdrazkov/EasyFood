@@ -13,7 +13,6 @@ public class Recipe extends Entity {
     private int timeToPrepare; // in minutes; import java.util.concurrent.TimeUnit
     private int nutritionalValue;
     private Category category;
-    /** when modifying, please call {@link Recipe#calculateNutritionalValue()}**/
     private HashMap<Ingredient, Pair<Unit, Integer>> ingredients;
 
     public Recipe(){}
@@ -53,7 +52,6 @@ public class Recipe extends Entity {
         setTimeToPrepare(timeToPrepare);
         setCategory(category);
         setIngredients(ingredientList);
-        calculateNutritionalValue();
     }
 
     public String getTitle() {
@@ -97,12 +95,10 @@ public class Recipe extends Entity {
     }
 
     public int getNutritionalValue() {
+        calculateNutritionalValue();
         return nutritionalValue;
     }
 
-    public void setNutritionalValue(int nutritionalValue) {
-        this.nutritionalValue = nutritionalValue;
-    }
 
     public Category getCategory() {
         return category;
@@ -118,7 +114,6 @@ public class Recipe extends Entity {
 
     public void setIngredients(HashMap<Ingredient, Pair<Unit, Integer>> ingredients) {
         this.ingredients = ingredients;
-        calculateNutritionalValue();
     }
     private void calculateNutritionalValue() {
         this.nutritionalValue = 0;
@@ -132,7 +127,6 @@ public class Recipe extends Entity {
 
     public void addIngredient(Ingredient ingredient, Unit unit, int amount) {
         this.ingredients.putIfAbsent(ingredient, Pair.of(unit, amount));
-        calculateNutritionalValue();
     }
 
     /**
@@ -140,7 +134,6 @@ public class Recipe extends Entity {
      */
     public boolean deleteIngredient(Ingredient ingredient) {
         var deletedRecord = this.ingredients.remove(ingredient);
-        calculateNutritionalValue();
         return deletedRecord != null;
     }
 }
