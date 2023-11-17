@@ -34,6 +34,7 @@ public final class OpenRecipeDialog extends EntityDialog<Recipe> {
         instructions.setText(recipe.getInstructions());
         instructions.setOpaque(false);
         instructions.setLineWrap(true);
+        instructions.setEditable(false);
         timeToPrepare.setText("<html>" + "<B>" + "Time to prepare: " + "</B>" + recipe.getTimeToPrepare() + " mins" + " </html> ");
         category.setText("<html>" + "<B>" + "Category: " + "</B>" + recipe.getCategory().getName() + " </html> ");
         ingredientList.setText("<html>" + "<B>" + "List of ingredients:" + "</B>" + "</html>");
