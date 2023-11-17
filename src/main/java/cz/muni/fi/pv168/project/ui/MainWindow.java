@@ -173,7 +173,8 @@ public class MainWindow {
         JPanel preparationPanel = createSliderPanel(nutritionalValuesSlider);
         JPanel nutritionalPanel = createSliderPanel(preparationTimeSlider);
         var toolbar = createToolbar();
-        var filtersToolbar = createToolbar(categoryFilter, new JScrollPane(ingredientFilter), preparationPanel, nutritionalPanel);
+        var resetButton = createResetButton(categoryFilter, ingredientFilter, nutritionalValuesSlider, preparationTimeSlider);
+        var filtersToolbar = createToolbar(categoryFilter, new JScrollPane(ingredientFilter), preparationPanel, nutritionalPanel, resetButton);
         toolbarPanel.add(toolbar);
         toolbarPanel.add(filtersToolbar);
         toolbarPanel.setBorder(padding);
@@ -204,13 +205,7 @@ public class MainWindow {
 
                 setStatusBarName(statusBar);
 
-                // reset filter selection
-                categoryFilter.setSelectedIndex(0);
-                ingredientFilter.setSelectedIndex(0);
-
-                // reset sliders
-                nutritionalValuesSlider.resetSlider();
-                preparationTimeSlider.resetSlider();
+                resetFilters(categoryFilter, ingredientFilter, nutritionalValuesSlider, preparationTimeSlider);
             }
         });
     }
@@ -338,12 +333,11 @@ public class MainWindow {
         return toolbar;
     }
 
-    private JToolBar createToolbar(Component... components) {
+    private static JToolBar createToolbar(Component... components) {
         var toolbar = new JToolBar();
         for (var component : components) {
             toolbar.add(component);
         }
-
         return toolbar;
     }
 
@@ -445,5 +439,26 @@ public class MainWindow {
 
         finalPanel.setBorder(new EmptyBorder(0, 10, 0, 10));
         return finalPanel;
+    }
+
+    private static void resetFilters(JComboBox<Either<SpecialFilterCategoryValues, Category>> categoryFilter, JList<Either<SpecialFilterIngredientValues, Ingredient>> ingredientFilter, RangeSlider nutritionalValuesSlider, RangeSlider preparationTimeSlider) {
+        // reset filter selection
+        categoryFilter.setSelectedIndex(0);
+        ingredientFilter.setSelectedIndex(0);
+
+        // reset sliders
+        nutritionalValuesSlider.resetSlider();
+        preparationTimeSlider.resetSlider();
+    }
+
+    private static Button createResetButton(JComboBox<Either<SpecialFilterCategoryValues, Category>> categoryFilter, JList<Either<SpecialFilterIngredientValues, Ingredient>> ingredientFilter, RangeSlider nutritionalValuesSlider, RangeSlider preparationTimeSlider) {
+        var resetButton = new Button("Reset all filters");
+        resetButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                resetFilters(categoryFilter, ingredientFilter, nutritionalValuesSlider, preparationTimeSlider);
+            }
+        });
+        return resetButton;
     }
 }
