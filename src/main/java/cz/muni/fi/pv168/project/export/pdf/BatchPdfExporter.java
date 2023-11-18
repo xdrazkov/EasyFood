@@ -22,7 +22,7 @@ public class BatchPdfExporter implements BatchExporter {
 
     private static final Format FORMAT = new Format("PDF", List.of("pdf"));
     private static final float MARGIN = 50;
-    private static final float LINE_HEIGHT = 17f;
+    private static final float LINE_HEIGHT = 19f;
     private static final PDFont FONT = PDType1Font.HELVETICA;
     private static final PDFont FONT_BOLD = PDType1Font.HELVETICA_BOLD;
     private PDPageContentStream contentStream;
@@ -66,6 +66,7 @@ public class BatchPdfExporter implements BatchExporter {
                             ingredientDetails.getRight() + " " + ingredientDetails.getLeft().getName(), FONT, textFontSize, 20);
                 }
 
+                writeLine(document, "", FONT, textFontSize);
                 writeLine(document, "", FONT, textFontSize);
             }
 
