@@ -2,6 +2,8 @@ package cz.muni.fi.pv168.project.ui.model;
 
 import cz.muni.fi.pv168.project.model.IngredientType;
 import cz.muni.fi.pv168.project.model.Unit;
+import cz.muni.fi.pv168.project.model.UuidGuidProvider;
+import cz.muni.fi.pv168.project.service.crud.CrudService;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
@@ -9,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class UnitTableModel extends AbstractTableModel {
+
+    private static final UuidGuidProvider guidProvider = new UuidGuidProvider();
 
     private final List<Unit> units;
     private final HashMap<IngredientType, Unit> baseUnitsMap = new HashMap<IngredientType, Unit>();
@@ -18,8 +22,8 @@ public class UnitTableModel extends AbstractTableModel {
             Column.readonly("Abbreviation", String.class, Unit::getAbbreviation)
     );
 
-    public UnitTableModel(List<Unit> units) {
-        this.units = new ArrayList<>(units);
+    public UnitTableModel(CrudService<Unit> unitCrudService) {
+        this.units = new ArrayList<>(unitCrudService.findAll());
         setupBaseUnits();
     }
 
@@ -85,9 +89,9 @@ public class UnitTableModel extends AbstractTableModel {
     }
 
     public void setupBaseUnits(){
-        Unit gram = new Unit("grams", "g", IngredientType.WEIGHABLE, 1);
-        Unit milliliter = new Unit("milliliters", "ml", IngredientType.POURABLE, 1);
-        Unit piece = new Unit("pieces", "pcs", IngredientType.COUNTABLE, 1);
+        Unit gram = new Unit( guidProvider.newGuid(),"grams", "g", IngredientType.WEIGHABLE, 1);
+        Unit milliliter = new Unit(guidProvider.newGuid(), "milliliters", "ml", IngredientType.POURABLE, 1);
+        Unit piece = new Unit(guidProvider.newGuid() ,"pieces", "pcs", IngredientType.COUNTABLE, 1);
         units.add(gram);
         units.add(milliliter);
         units.add(piece);

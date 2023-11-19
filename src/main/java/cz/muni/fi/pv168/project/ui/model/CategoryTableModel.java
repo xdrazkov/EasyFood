@@ -1,6 +1,7 @@
 package cz.muni.fi.pv168.project.ui.model;
 
 import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.service.crud.CrudService;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
@@ -14,8 +15,8 @@ public class CategoryTableModel extends AbstractTableModel {
             Column.readonly("Name", Category.class, Category::getItself)
     );
 
-    public CategoryTableModel(List<Category> categories) {
-        this.categories = new ArrayList<>(categories);
+    public CategoryTableModel(CrudService<Category> categoryCrudService) {
+        this.categories = new ArrayList<>(categoryCrudService.findAll());
     }
 
     @Override

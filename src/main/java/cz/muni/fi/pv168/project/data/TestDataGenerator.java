@@ -2,8 +2,6 @@ package cz.muni.fi.pv168.project.data;
 
 import com.formdev.flatlaf.util.HSLColor;
 import cz.muni.fi.pv168.project.model.*;
-import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,17 +22,17 @@ public final class TestDataGenerator {
         float s = random.nextFloat(0.3f * 100, 0.7f * 100);
         float l = random.nextFloat(0.7f * 100, 0.9f * 100);
         HSLColor hslColor = new HSLColor(h, s, l);
-        return new Category("Category " + index, hslColor.getRGB());
+        return new Category(guidProvider.newGuid(), "Category " + index, hslColor.getRGB());
     }
 
     public Ingredient createTestIngredient(int index, List<Unit> units) {
         int pick = random.nextInt(units.toArray().length);
-        return new Ingredient("Ingredient " + index, units.get(pick), random.nextInt(10, 100));
+        return new Ingredient(guidProvider.newGuid(), "Ingredient " + index, units.get(pick), random.nextInt(10, 100));
     }
 
     public Unit createTestUnit(int index) {
         int pick = random.nextInt(IngredientType.values().length);
-        return new Unit("Unit " + index, "abb " + index,IngredientType.values()[pick], index);
+        return new Unit(guidProvider.newGuid(), "Unit " + index, "abb " + index,IngredientType.values()[pick], index);
     }
 
     public Recipe createTestRecipe(int index, Category category, HashMap<Ingredient, AmountInUnit> ingredient, Unit unit) {

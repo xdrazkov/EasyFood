@@ -1,6 +1,7 @@
 package cz.muni.fi.pv168.project.ui.dialog;
 
 import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.model.UuidGuidProvider;
 import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
 
 import javax.swing.*;
@@ -30,6 +31,6 @@ public class AddCategoryDialog extends EntityDialog<Category> {
 
     @Override
     Category getEntity() {
-        return new Category(name.getText(), color.getColor());
+        return new Category(new UuidGuidProvider().newGuid(), name.getText(), color.getColor());
     }
 }

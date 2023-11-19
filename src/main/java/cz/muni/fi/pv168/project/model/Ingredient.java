@@ -2,12 +2,13 @@ package cz.muni.fi.pv168.project.model;
 
 import java.util.List;
 
-public class Ingredient {
+public class Ingredient extends Entity{
     private String name;
     private Unit defaulUnit;
     private int caloriesPerUnit;
 
-    public Ingredient(String name, Unit defaulUnit, int caloriesPerUnit) {
+    public Ingredient(String guid, String name, Unit defaulUnit, int caloriesPerUnit) {
+        super(guid);
         this.name = name;
         this.defaulUnit = defaulUnit;
         this.caloriesPerUnit = caloriesPerUnit;

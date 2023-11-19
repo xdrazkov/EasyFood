@@ -3,13 +3,13 @@ package cz.muni.fi.pv168.project.ui;
 import cz.muni.fi.pv168.project.data.TestDataGenerator;
 import cz.muni.fi.pv168.project.export.json.BatchJsonExporter;
 import cz.muni.fi.pv168.project.export.pdf.BatchPdfExporter;
-import cz.muni.fi.pv168.project.model.Category;
-import cz.muni.fi.pv168.project.model.Ingredient;
-import cz.muni.fi.pv168.project.model.Recipe;
-import cz.muni.fi.pv168.project.model.UuidGuidProvider;
-import cz.muni.fi.pv168.project.service.crud.RecipeCrudService;
+import cz.muni.fi.pv168.project.model.*;
+import cz.muni.fi.pv168.project.service.crud.GenericCrudService;
 import cz.muni.fi.pv168.project.service.export.GenericExportService;
+import cz.muni.fi.pv168.project.service.validation.CategoryValidator;
+import cz.muni.fi.pv168.project.service.validation.IngredientValidator;
 import cz.muni.fi.pv168.project.service.validation.RecipeValidator;
+import cz.muni.fi.pv168.project.service.validation.UnitValidator;
 import cz.muni.fi.pv168.project.storage.InMemoryRepository;
 import cz.muni.fi.pv168.project.ui.action.*;
 import cz.muni.fi.pv168.project.ui.filters.RecipeTableFilter;
@@ -78,18 +78,28 @@ public class MainWindow {
         var recipes = testDataGenerator.createTestRecipes(20, categories, ingredients, units);
 
         var recipeValidator = new RecipeValidator();
+        var ingredientValidator = new IngredientValidator();
+        var categoryValidator = new CategoryValidator();
+        var unitValidator = new UnitValidator();
 
         var guidProvider = new UuidGuidProvider();
 
         var recipeRepository = new InMemoryRepository<>(recipes);
+        var ingredientRepository = new InMemoryRepository<>(ingredients);
+        var categoryRepository = new InMemoryRepository<>(categories);
+        var unitRepository = new InMemoryRepository<>(units);
 
-        var recipeCrudService = new RecipeCrudService(recipeRepository, recipeValidator, guidProvider);
+
+        var recipeCrudService = new GenericCrudService<>(recipeRepository, recipeValidator, guidProvider);
+        var ingredientCrudService = new GenericCrudService<>(ingredientRepository, ingredientValidator, guidProvider);
+        var categoryCrudService = new GenericCrudService<>(categoryRepository, categoryValidator, guidProvider);
+        var unitCrudService = new GenericCrudService<>(unitRepository, unitValidator, guidProvider);
 
         // Create models
-        RecipeTableModel recipeTableModel = new RecipeTableModel(recipes);
-        IngredientTableModel ingredientTableModel = new IngredientTableModel(ingredients);
-        CategoryTableModel categoryTableModel = new CategoryTableModel(categories);
-        UnitTableModel unitTableModel = new UnitTableModel(units);
+        RecipeTableModel recipeTableModel = new RecipeTableModel(recipeCrudService);
+        IngredientTableModel ingredientTableModel = new IngredientTableModel(ingredientCrudService);
+        CategoryTableModel categoryTableModel = new CategoryTableModel(categoryCrudService);
+        UnitTableModel unitTableModel = new UnitTableModel(unitCrudService);
         List<AbstractTableModel> tableModels =
                 List.of(recipeTableModel, ingredientTableModel, categoryTableModel, unitTableModel);
 
@@ -216,10 +226,6 @@ public class MainWindow {
                 preparationTimeSlider.resetSlider();
             }
         });
-    }
-
-    private void refresh() {
-//        recipeTableModel.refresh();
     }
 
     private static JComboBox<Either<SpecialFilterCategoryValues, Category>> createCategoryFilter(

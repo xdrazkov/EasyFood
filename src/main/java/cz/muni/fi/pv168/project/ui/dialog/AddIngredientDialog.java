@@ -2,6 +2,7 @@ package cz.muni.fi.pv168.project.ui.dialog;
 
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Unit;
+import cz.muni.fi.pv168.project.model.UuidGuidProvider;
 import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
 
 import javax.swing.*;
@@ -32,6 +33,6 @@ public class AddIngredientDialog extends EntityDialog<Ingredient> {
 
     @Override
     Ingredient getEntity() {
-        return new Ingredient(name.getText(), (Unit) defaultUnit.getSelectedItem(), Integer.parseInt(nutritionalValue.getText().replaceAll(" ", "")));
+        return new Ingredient(new UuidGuidProvider().newGuid(), name.getText(), (Unit) defaultUnit.getSelectedItem(), Integer.parseInt(nutritionalValue.getText().replaceAll(" ", "")));
     }
 }

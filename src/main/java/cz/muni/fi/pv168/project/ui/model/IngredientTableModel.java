@@ -1,10 +1,9 @@
 package cz.muni.fi.pv168.project.ui.model;
 
 import cz.muni.fi.pv168.project.model.Ingredient;
-import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Unit;
+import cz.muni.fi.pv168.project.service.crud.CrudService;
 
-import javax.swing.AbstractListModel;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +22,9 @@ public class IngredientTableModel extends AbstractTableModel {
             Column.readonly("Nutritional value (kcal)", Integer.class, Ingredient::getCaloriesPerUnit)
     );
 
-    public IngredientTableModel(List<Ingredient> ingredients) {
-        this.ingredients = new ArrayList<>(ingredients);
+    public IngredientTableModel(CrudService<Ingredient> ingredientCrudService) {
+
+        this.ingredients = new ArrayList<>(ingredientCrudService.findAll());
     }
 
     @Override

@@ -1,12 +1,13 @@
 package cz.muni.fi.pv168.project.model;
 
-public class Unit {
+public class Unit extends Entity{
     private String name;
     private String abbreviation;
     private IngredientType ingredientType;
     private float conversionRate; // quantity * rate = quantity_base_unit
 
-    public Unit(String name, String abbreviation, IngredientType ingredientType, float conversionRate) {
+    public Unit(String guid, String name, String abbreviation, IngredientType ingredientType, float conversionRate) {
+        super(guid);
         this.name = name;
         this.abbreviation = abbreviation;
         this.ingredientType = ingredientType;

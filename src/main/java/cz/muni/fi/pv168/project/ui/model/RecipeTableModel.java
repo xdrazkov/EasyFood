@@ -2,6 +2,7 @@ package cz.muni.fi.pv168.project.ui.model;
 
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Recipe;
+import cz.muni.fi.pv168.project.service.crud.CrudService;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
@@ -18,8 +19,8 @@ public class RecipeTableModel extends AbstractTableModel implements EntityTableM
             Column.readonly("Nutritional value (kcal)", Integer.class, Recipe::getNutritionalValue)
     );
 
-    public RecipeTableModel(List<Recipe> recipes) {
-        this.recipes = new ArrayList<>(recipes);
+    public RecipeTableModel(CrudService<Recipe> recipeCrudService) {
+        this.recipes = new ArrayList<>(recipeCrudService.findAll());
     }
 
     public List<Recipe> getRecipes() {
