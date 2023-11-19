@@ -14,10 +14,10 @@ public class Recipe extends Entity {
     private int nutritionalValue;
     private Category category;
     /** when modifying, please call {@link Recipe#calculateNutritionalValue()}**/
-    private HashMap<Ingredient, Pair<Unit, Integer>> ingredients;
+    private HashMap<Ingredient, AmountInUnit> ingredients;
 
     public Recipe(){}
-    public Recipe(String guid, String title, String description, int portionCount, String instructions, int timeToPrepare, Category category, HashMap<Ingredient, Pair<Unit, Integer>> ingredientList) {
+    public Recipe(String guid, String title, String description, int portionCount, String instructions, int timeToPrepare, Category category, HashMap<Ingredient, AmountInUnit> ingredientList) {
         super(guid);
         this.title = title;
         this.description = description;
@@ -85,26 +85,26 @@ public class Recipe extends Entity {
         this.category = category;
     }
 
-    public HashMap<Ingredient, Pair<Unit, Integer>> getIngredients() {
+    public HashMap<Ingredient, AmountInUnit> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(HashMap<Ingredient, Pair<Unit, Integer>> ingredients) {
+    public void setIngredients(HashMap<Ingredient, AmountInUnit> ingredients) {
         this.ingredients = ingredients;
         calculateNutritionalValue();
     }
     private void calculateNutritionalValue() {
         this.nutritionalValue = 0;
-        for (Map.Entry<Ingredient, Pair<Unit, Integer>> entry: ingredients.entrySet()) {
-            Unit unit = entry.getValue().getLeft();
-            int amount = entry.getValue().getRight();
+        for (Map.Entry<Ingredient, AmountInUnit> entry: ingredients.entrySet()) {
+            Unit unit = entry.getValue().getUnit();
+            int amount = entry.getValue().getAmount();
             Ingredient ingredient = entry.getKey();
             this.nutritionalValue += ingredient.getTotalCalories(unit, amount);
         }
     }
 
     public void addIngredient(Ingredient ingredient, Unit unit, int amount) {
-        this.ingredients.putIfAbsent(ingredient, Pair.of(unit, amount));
+        this.ingredients.putIfAbsent(ingredient, new AmountInUnit(unit, amount));
         calculateNutritionalValue();
     }
 

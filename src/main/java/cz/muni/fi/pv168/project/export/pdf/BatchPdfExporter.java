@@ -1,5 +1,6 @@
 package cz.muni.fi.pv168.project.export.pdf;
 
+import cz.muni.fi.pv168.project.model.AmountInUnit;
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Recipe;
 import cz.muni.fi.pv168.project.model.Unit;
@@ -58,12 +59,12 @@ public class BatchPdfExporter implements BatchExporter {
                 writeLine(document,  recipe.getCategory().getName(), FONT, textFontSize, leftTab);
 
                 writeLine(document, "Ingredients:", FONT_BOLD, textFontSize);
-                for (Map.Entry<Ingredient, Pair<Unit, Integer>> entry : recipe.getIngredients().entrySet()) {
+                for (Map.Entry<Ingredient, AmountInUnit> entry : recipe.getIngredients().entrySet()) {
                     Ingredient ingredient = entry.getKey();
-                    Pair<Unit, Integer> ingredientDetails = entry.getValue();
+                    AmountInUnit ingredientDetails = entry.getValue();
 
                     writeLine(document, " - " + ingredient.getName() + ": " +
-                            ingredientDetails.getRight() + " " + ingredientDetails.getLeft().getName(), FONT, textFontSize, 20);
+                            ingredientDetails.getAmount() + " " + ingredientDetails.getUnit().getName(), FONT, textFontSize, 20);
                 }
 
                 writeLine(document, "", FONT, textFontSize);

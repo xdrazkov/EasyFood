@@ -37,7 +37,7 @@ public final class TestDataGenerator {
         return new Unit("Unit " + index, "abb " + index,IngredientType.values()[pick], index);
     }
 
-    public Recipe createTestRecipe(int index, Category category, HashMap<Ingredient, Pair<Unit, Integer>> ingredient, Unit unit) {
+    public Recipe createTestRecipe(int index, Category category, HashMap<Ingredient, AmountInUnit> ingredient, Unit unit) {
         return new Recipe( guidProvider.newGuid(),"Recipe " + index,
                 "Description for " + index,
                 random.nextInt(1, 10),
@@ -76,13 +76,13 @@ public final class TestDataGenerator {
         return recipes;
     }
 
-    public HashMap<Ingredient, Pair<Unit, Integer>> generateRandomIngredientsForRecipe (List<Ingredient> data, List<Unit> units){
+    public HashMap<Ingredient, AmountInUnit> generateRandomIngredientsForRecipe (List<Ingredient> data, List<Unit> units){
         int nextSize = random.nextInt(1, Math.min(data.size(), units.size()));
-        HashMap<Ingredient, Pair<Unit, Integer>> sublist = new HashMap<>();
+        HashMap<Ingredient, AmountInUnit> sublist = new HashMap<>();
         for (int i = 0; i < nextSize; i++) {
             Ingredient selected = selectRandom(data);
             if (!sublist.containsKey(selected))
-                sublist.put(selected, new MutablePair<>(selected.getDefaultUnit(), i));
+                sublist.put(selected, new AmountInUnit(selected.getDefaultUnit(), i));
         }
         return sublist;
     }

@@ -125,7 +125,7 @@ public class MainWindow {
         var ingredientRowSorter = new TableRowSorter<>(ingredientTableModel);
         var unitRowSorter = new TableRowSorter<>(unitTableModel);
 
-        var exportService = new GenericExportService(recipeRowSorter, recipeTablePanel , List.of(new BatchJsonExporter(), new BatchPdfExporter()));
+        var exportService = new GenericExportService(recipeRowSorter, recipeTablePanel, List.of(new BatchJsonExporter(unitTableModel), new BatchPdfExporter()));
 //        var importService = new GenericImportService(tableContext, List.of(new BatchJsonImporter(), new BatchXmlImporter()));
 
         // create import/export actions

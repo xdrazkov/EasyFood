@@ -1,5 +1,6 @@
 package cz.muni.fi.pv168.project.ui.dialog;
 
+import cz.muni.fi.pv168.project.model.AmountInUnit;
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Recipe;
@@ -78,8 +79,8 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
     }
 
    private void addIngredients() {
-       for (Map.Entry<Ingredient, Pair<Unit, Integer>> ingredientPairEntry : recipe.getIngredients().entrySet()) {
-           addIngredient(ingredientPairEntry.getKey(), Integer.toString(ingredientPairEntry.getValue().getValue()), ingredientPairEntry.getValue().getKey());
+       for (Map.Entry<Ingredient, AmountInUnit> ingredientPairEntry : recipe.getIngredients().entrySet()) {
+           addIngredient(ingredientPairEntry.getKey(), Integer.toString(ingredientPairEntry.getValue().getAmount()), ingredientPairEntry.getValue().getUnit());
        }
    }
 
@@ -124,7 +125,7 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
 
     @Override
     Recipe getEntity() {
-        HashMap<Ingredient, Pair<Unit, Integer>> newIgredients = getAllIngredients();
+        HashMap<Ingredient, AmountInUnit> newIgredients = getAllIngredients();
         if(newIgredients == null){
             return null;
         }
@@ -138,8 +139,8 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
         return recipe;
     }
 
-    public HashMap<Ingredient, Pair<Unit, Integer>> getAllIngredients(){
-        HashMap<Ingredient, Pair<Unit, Integer>> newIgredients = new HashMap<>();
+    public HashMap<Ingredient, AmountInUnit> getAllIngredients(){
+        HashMap<Ingredient, AmountInUnit> newIgredients = new HashMap<>();
         for (Component component : test.getComponents()){
             Ingredient ingredient = (Ingredient)((JComboBox<Ingredient>)((JPanel)component).getComponent(0)).getSelectedItem();
             int count = Integer.parseInt(((JTextField)((JPanel)component).getComponent(1)).getText());
@@ -148,7 +149,7 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
                 JOptionPane.showConfirmDialog(null, "There are some duplicities in your ingredients.\nNot possible to save.", "Warning", JOptionPane.CLOSED_OPTION);
                 return null;
             }
-            newIgredients.put(ingredient, Pair.of(unit, count));
+            newIgredients.put(ingredient, new AmountInUnit(unit, count));
         }
         return newIgredients;
     }
