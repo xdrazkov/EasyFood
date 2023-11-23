@@ -7,9 +7,11 @@ import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO generic
 public class CategoryTableModel extends AbstractTableModel {
 
-    private final List<Category> categories;
+    private List<Category> categories;
+    private final CrudService<Category> categoryCrudService;
 
     private final List<Column<Category, ?>> columns = List.of(
             Column.readonly("Name", Category.class, Category::getItself)
@@ -17,6 +19,7 @@ public class CategoryTableModel extends AbstractTableModel {
 
     public CategoryTableModel(CrudService<Category> categoryCrudService) {
         this.categories = new ArrayList<>(categoryCrudService.findAll());
+        this.categoryCrudService = categoryCrudService;
     }
 
     @Override
@@ -78,5 +81,10 @@ public class CategoryTableModel extends AbstractTableModel {
 
     public List<Category> getCategories() {
         return categories;
+    }
+
+    public void refresh() {
+        this.categories = new ArrayList<>(categoryCrudService.findAll());
+        fireTableDataChanged();
     }
 }

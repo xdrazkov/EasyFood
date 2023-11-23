@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import cz.muni.fi.pv168.project.export.json.seralizers.CustomAmountInUnitSerializer;
 import cz.muni.fi.pv168.project.model.AmountInUnit;
 import cz.muni.fi.pv168.project.service.export.DataManipulationException;
 import cz.muni.fi.pv168.project.service.export.batch.Batch;

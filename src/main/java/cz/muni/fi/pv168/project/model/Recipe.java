@@ -1,10 +1,13 @@
 package cz.muni.fi.pv168.project.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import cz.muni.fi.pv168.project.export.json.deserializers.RecipeJsonDeserializer;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@JsonDeserialize(using = RecipeJsonDeserializer.class)
 public class Recipe extends Entity {
     private String title;
     private String description;

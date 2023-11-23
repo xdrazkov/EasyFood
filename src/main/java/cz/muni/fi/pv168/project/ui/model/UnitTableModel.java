@@ -14,8 +14,9 @@ public class UnitTableModel extends AbstractTableModel {
 
     private static final UuidGuidProvider guidProvider = new UuidGuidProvider();
 
-    private final List<Unit> units;
+    private List<Unit> units;
     private final HashMap<IngredientType, Unit> baseUnitsMap = new HashMap<IngredientType, Unit>();
+    private final CrudService<Unit> unitCrudService;
 
     private final List<Column<Unit, ?>> columns = List.of(
             Column.readonly("Name", String.class, Unit::getName),
@@ -23,6 +24,7 @@ public class UnitTableModel extends AbstractTableModel {
     );
 
     public UnitTableModel(CrudService<Unit> unitCrudService) {
+        this.unitCrudService = unitCrudService;
         this.units = new ArrayList<>(unitCrudService.findAll());
         setupBaseUnits();
     }
@@ -103,4 +105,11 @@ public class UnitTableModel extends AbstractTableModel {
     public HashMap<IngredientType, Unit> getBaseUnitsMap() {
         return baseUnitsMap;
     }
+
+    // TODO basic units are missing
+    public void refresh() {
+        this.units = new ArrayList<>(unitCrudService.findAll());
+        fireTableDataChanged();
+    }
+
 }

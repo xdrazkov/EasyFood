@@ -10,11 +10,8 @@ import java.util.List;
 
 public class IngredientTableModel extends AbstractTableModel {
 
-    public List<Ingredient> getIngredients() {
-        return ingredients;
-    }
-
-    private final List<Ingredient> ingredients;
+    private List<Ingredient> ingredients;
+    private final CrudService<Ingredient> ingredientCrudService;
 
     private final List<Column<Ingredient, ?>> columns = List.of(
             Column.readonly("Name", String.class, Ingredient::getName),
@@ -23,8 +20,12 @@ public class IngredientTableModel extends AbstractTableModel {
     );
 
     public IngredientTableModel(CrudService<Ingredient> ingredientCrudService) {
-
+        this.ingredientCrudService = ingredientCrudService;
         this.ingredients = new ArrayList<>(ingredientCrudService.findAll());
+    }
+
+    public List<Ingredient> getIngredients() {
+        return ingredients;
     }
 
     @Override
@@ -82,5 +83,10 @@ public class IngredientTableModel extends AbstractTableModel {
 
     public Ingredient getEntity(int rowIndex) {
         return ingredients.get(rowIndex);
+    }
+
+    public void refresh() {
+        this.ingredients = new ArrayList<>(ingredientCrudService.findAll());
+        fireTableDataChanged();
     }
 }

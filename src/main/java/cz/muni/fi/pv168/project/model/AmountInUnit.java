@@ -1,7 +1,10 @@
 package cz.muni.fi.pv168.project.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import cz.muni.fi.pv168.project.export.json.deserializers.AmountInUnitJsonDeserializer;
 import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
 
+@JsonDeserialize(using = AmountInUnitJsonDeserializer.class)
 public class AmountInUnit {
     private Unit unit;
     private int amount;

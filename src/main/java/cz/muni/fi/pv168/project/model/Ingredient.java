@@ -1,17 +1,32 @@
 package cz.muni.fi.pv168.project.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import cz.muni.fi.pv168.project.export.json.deserializers.IngredientJsonDeserializer;
+
 import java.util.List;
 
+
+@JsonDeserialize(using = IngredientJsonDeserializer.class)
 public class Ingredient extends Entity{
     private String name;
-    private Unit defaulUnit;
+    private Unit defaultUnit;
     private int caloriesPerUnit;
 
     public Ingredient(String guid, String name, Unit defaulUnit, int caloriesPerUnit) {
         super(guid);
         this.name = name;
-        this.defaulUnit = defaulUnit;
+        this.defaultUnit = defaulUnit;
         this.caloriesPerUnit = caloriesPerUnit;
+    }
+    // TODO do not delete
+    public Ingredient(String name, Unit defaultUnit, int caloriesPerUnit) {
+        this.name = name;
+        this.defaultUnit = defaultUnit;
+        this.caloriesPerUnit = caloriesPerUnit;
+    }
+    // TODO do not delete
+    public Ingredient() {
+
     }
 
     public String getName() {
@@ -23,11 +38,11 @@ public class Ingredient extends Entity{
     }
 
     public Unit getDefaultUnit() {
-        return defaulUnit;
+        return defaultUnit;
     }
 
-    public void setDefaulUnit(Unit defaulUnit) {
-        this.defaulUnit = defaulUnit;
+    public void setDefaultUnit(Unit defaultUnit) {
+        this.defaultUnit = defaultUnit;
     }
 
     public int getCaloriesPerUnit() {
@@ -68,6 +83,6 @@ public class Ingredient extends Entity{
         if (! (obj instanceof Ingredient theirs)) {
             return false;
         }
-        return this.name.equals(theirs.name) && this.defaulUnit.equals(theirs.defaulUnit);
+        return this.name.equals(theirs.name) && this.defaultUnit.equals(theirs.defaultUnit);
     }
 }

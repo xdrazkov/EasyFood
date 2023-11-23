@@ -2,10 +2,12 @@ package cz.muni.fi.pv168.project.ui;
 
 import cz.muni.fi.pv168.project.data.TestDataGenerator;
 import cz.muni.fi.pv168.project.export.json.BatchJsonExporter;
+import cz.muni.fi.pv168.project.export.json.BatchJsonImporter;
 import cz.muni.fi.pv168.project.export.pdf.BatchPdfExporter;
 import cz.muni.fi.pv168.project.model.*;
 import cz.muni.fi.pv168.project.service.crud.GenericCrudService;
 import cz.muni.fi.pv168.project.service.export.GenericExportService;
+import cz.muni.fi.pv168.project.service.export.GenericImportService;
 import cz.muni.fi.pv168.project.service.validation.CategoryValidator;
 import cz.muni.fi.pv168.project.service.validation.IngredientValidator;
 import cz.muni.fi.pv168.project.service.validation.RecipeValidator;
@@ -135,13 +137,15 @@ public class MainWindow {
         var ingredientRowSorter = new TableRowSorter<>(ingredientTableModel);
         var unitRowSorter = new TableRowSorter<>(unitTableModel);
 
+        // TODO exporters by DAO
         var exportService = new GenericExportService(recipeRowSorter, recipeTablePanel, List.of(new BatchJsonExporter(unitTableModel), new BatchPdfExporter()));
-//        var importService = new GenericImportService(tableContext, List.of(new BatchJsonImporter(), new BatchXmlImporter()));
+        var importService = new GenericImportService(recipeCrudService, List.of(new BatchJsonImporter()));
 
         // create import/export actions
 
         exportAction = new ExportAction(recipeTablePanel, exportService);
-        importAction = new ImportAction();
+        // TODO generic collection
+        importAction = new ImportAction(recipeTablePanel, importService, () -> { recipeTableModel.refresh(); ingredientTableModel.refresh(); categoryTableModel.refresh(); unitTableModel.refresh();});
         viewStatisticsAction = new ViewStatisticsAction(recipeTableModel.getRecipes(), ingredientTableModel.getIngredients());
         viewAboutAction = new ViewAboutAction();
         this.actions = List.of(addAction, editAction, deleteAction, openAction, importAction, exportAction, viewAboutAction, viewStatisticsAction);

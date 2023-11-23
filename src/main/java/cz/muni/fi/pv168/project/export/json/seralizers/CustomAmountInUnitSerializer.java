@@ -1,4 +1,4 @@
-package cz.muni.fi.pv168.project.export.json;
+package cz.muni.fi.pv168.project.export.json.seralizers;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -20,12 +20,14 @@ public class CustomAmountInUnitSerializer extends StdSerializer<AmountInUnit> {
         this.unitTableModel = unitTableModel;
     }
 
+    // TODO
     @Override
     public void serialize(
             AmountInUnit amountInUnit, JsonGenerator jsonGenerator, SerializerProvider serializer) throws IOException {
         jsonGenerator.writeStartObject();
         AmountInUnit amountInBaseUnit = amountInUnit.convertToBaseUnit(unitTableModel);
-        jsonGenerator.writeNumberField(amountInBaseUnit.getUnit().toString(), amountInBaseUnit.getAmount());
+        jsonGenerator.writeStringField("unit", amountInBaseUnit.getUnit().toString());
+        jsonGenerator.writeNumberField("amount", amountInBaseUnit.getAmount());
         jsonGenerator.writeEndObject();
     }
 }
