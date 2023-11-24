@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class UnitTableModel extends BasicTableModel<Unit> {
-    private final HashMap<IngredientType, Unit> baseUnitsMap = new HashMap<IngredientType, Unit>();
+    private final HashMap<IngredientType, Unit> baseUnitsMap = new HashMap<>();
     public UnitTableModel(CrudService<Unit> crudService) {
         super(crudService);
         setupBaseUnits();

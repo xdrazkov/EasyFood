@@ -21,7 +21,7 @@ public class AddIngredientDialog extends EntityDialog<Ingredient> {
     private void setValues() {
         name.setText("");
         nutritionalValue.setText("0");
-        defaultUnit.setModel(new javax.swing.DefaultComboBoxModel<Unit>(unitTableModel.getEntities().toArray(new Unit[0])));
+        defaultUnit.setModel(new javax.swing.DefaultComboBoxModel<>(unitTableModel.getEntities().toArray(new Unit[0])));
     }
 
     private void addFields() {

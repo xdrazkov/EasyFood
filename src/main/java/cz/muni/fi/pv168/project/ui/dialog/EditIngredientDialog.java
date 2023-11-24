@@ -23,7 +23,7 @@ public class EditIngredientDialog extends EntityDialog<Ingredient> {
     private void setValues() {
         name.setText(ingredient.getName());
         nutritionalValue.setText(Integer.toString(ingredient.getCaloriesPerUnit()));
-        defaulUnit.setModel(new javax.swing.DefaultComboBoxModel<Unit>(unitTableModel.getEntities().toArray(new Unit[0])));
+        defaulUnit.setModel(new javax.swing.DefaultComboBoxModel<>(unitTableModel.getEntities().toArray(new Unit[0])));
         defaulUnit.getModel().setSelectedItem(ingredient.getDefaultUnit());
     }
 

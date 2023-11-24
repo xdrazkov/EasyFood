@@ -30,9 +30,7 @@ public class AmountInUnitJsonDeserializer extends JsonDeserializer<AmountInUnit>
             default -> throw new IOException(unitName + " unknown ingredient name");
         };
 
-        var amountInUnit = new AmountInUnit(new Unit(unitName, unitName, ingredientType,1), amount);
-
         // TODO static default units
-        return amountInUnit;
+        return new AmountInUnit(new Unit(unitName, unitName, ingredientType,1), amount);
     }
 }

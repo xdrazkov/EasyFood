@@ -2,14 +2,10 @@ package cz.muni.fi.pv168.project.data;
 
 import com.formdev.flatlaf.util.HSLColor;
 import cz.muni.fi.pv168.project.model.*;
-import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.awt.*;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public final class TestDataGenerator {
     private static final UuidGuidProvider guidProvider = new UuidGuidProvider();

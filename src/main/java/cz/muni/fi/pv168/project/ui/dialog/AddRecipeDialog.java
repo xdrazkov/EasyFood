@@ -2,7 +2,6 @@ package cz.muni.fi.pv168.project.ui.dialog;
 
 import cz.muni.fi.pv168.project.model.*;
 import net.miginfocom.swing.MigLayout;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.swing.*;
 import java.awt.*;
@@ -132,7 +131,7 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
     }
 
     public Unit[] filterUnits(JComboBox<Ingredient> source){
-        Ingredient selectedIngredient = (Ingredient)source.getSelectedItem();;
+        Ingredient selectedIngredient = (Ingredient)source.getSelectedItem();
         ArrayList<Unit> filteredUnits = new ArrayList<>();
         for(Unit unit : units){
             if (selectedIngredient != null && selectedIngredient.getDefaultUnit().getIngredientType() == unit.getIngredientType()){
