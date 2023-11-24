@@ -4,6 +4,7 @@ import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Recipe;
 import cz.muni.fi.pv168.project.model.Unit;
+import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.ui.dialog.AddRecipeDialog;
 import cz.muni.fi.pv168.project.ui.dialog.EditRecipeDialog;
 import cz.muni.fi.pv168.project.ui.dialog.OpenRecipeDialog;
@@ -12,8 +13,8 @@ import javax.swing.*;
 import java.util.List;
 
 public class RecipeTableModel extends BasicTableModel<Recipe> {
-    public RecipeTableModel(List<Recipe> recipes) {
-        super(recipes);
+    public RecipeTableModel(CrudService<Recipe> recipeCrudService) {
+        super(recipeCrudService);
     }
 
     public List<Column<Recipe, ?>> makeColumns() {

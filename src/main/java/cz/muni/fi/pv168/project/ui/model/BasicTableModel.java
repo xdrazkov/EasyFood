@@ -1,20 +1,24 @@
 package cz.muni.fi.pv168.project.ui.model;
 
 import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.model.Entity;
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Unit;
+import cz.muni.fi.pv168.project.service.crud.CrudService;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BasicTableModel<E> extends AbstractTableModel implements EntityTableModel<E> {
-    private final List<E> objects;
+public abstract class BasicTableModel<E extends Entity> extends AbstractTableModel implements EntityTableModel<E> {
+    private final CrudService<E> entityCrudService;
+    private List<E> entities;
     private List<Column<E, ?>> columns = List.of();
 
-    public BasicTableModel(List<E> recipes) {
-        this.objects = new ArrayList<>(recipes);
+    public BasicTableModel(CrudService<E> entityCrudService) {
+        this.entityCrudService = entityCrudService;
+        this.entities = new ArrayList<>(entityCrudService.findAll());
         setColumns();
     }
 
@@ -30,13 +34,13 @@ public abstract class BasicTableModel<E> extends AbstractTableModel implements E
 
     public abstract void performOpenAction(JTable table, int modelRow);
 
-    public List<E> getObjects() {
-        return objects;
+    public List<E> getEntities() {
+        return entities;
     }
 
     @Override
     public int getRowCount() {
-        return objects.size();
+        return entities.size();
     }
 
     @Override
@@ -67,27 +71,42 @@ public abstract class BasicTableModel<E> extends AbstractTableModel implements E
 
     @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
-        var recipe = getEntity(rowIndex);
-        columns.get(columnIndex).setValue(value, recipe);
+        if (value != null) {
+            var entity = getEntity(rowIndex);
+            columns.get(columnIndex).setValue(value, entity);
+            updateRow(entity);
+        }
     }
 
     public void deleteRow(int rowIndex) {
-        objects.remove(rowIndex);
+        var entityToBeDeleted = getEntity(rowIndex);
+        entityCrudService.deleteByGuid(entityToBeDeleted.getGuid());
+        entities.remove(rowIndex);
         fireTableRowsDeleted(rowIndex, rowIndex);
     }
 
-    public void addRow(E recipe) {
-        int newRowIndex = objects.size();
-        objects.add(recipe);
+    // TODO ask why separate collections for mem repository and table
+    public void addRow(E entity) {
+        entityCrudService.create(entity).intoException();
+
+        int newRowIndex = entities.size();
+        entities.add(entity);
         fireTableRowsInserted(newRowIndex, newRowIndex);
     }
 
-    public void updateRow(E recipe) {
-        int rowIndex = objects.indexOf(recipe);
+    public void updateRow(E entity) {
+        entityCrudService.update(entity)
+                .intoException();
+        int rowIndex = entities.indexOf(entity);
         fireTableRowsUpdated(rowIndex, rowIndex);
     }
 
+    public void refresh() {
+        this.entities = new ArrayList<>(entityCrudService.findAll());
+        fireTableDataChanged();
+    }
+
     public E getEntity(int rowIndex) {
-        return objects.get(rowIndex);
+        return entities.get(rowIndex);
     }
 }

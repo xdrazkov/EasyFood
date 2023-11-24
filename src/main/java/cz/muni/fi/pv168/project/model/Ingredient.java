@@ -1,8 +1,13 @@
 package cz.muni.fi.pv168.project.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import cz.muni.fi.pv168.project.export.json.deserializers.IngredientJsonDeserializer;
+
 import java.util.List;
 
-public class Ingredient extends Entity {
+
+@JsonDeserialize(using = IngredientJsonDeserializer.class)
+public class Ingredient extends Entity{
     private String name;
     private Unit defaultUnit;
     private int caloriesPerUnit;
@@ -11,6 +16,10 @@ public class Ingredient extends Entity {
         this.name = name;
         this.defaultUnit = defaultUnit;
         this.caloriesPerUnit = caloriesPerUnit;
+    }
+    // TODO do not delete
+    public Ingredient() {
+
     }
 
     public String getName() {

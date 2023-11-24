@@ -3,6 +3,7 @@ package cz.muni.fi.pv168.project.ui.model;
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Unit;
+import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.ui.dialog.AddCategoryDialog;
 import cz.muni.fi.pv168.project.ui.dialog.EditCategoryDialog;
 import cz.muni.fi.pv168.project.ui.dialog.OpenCategoryDialog;
@@ -11,8 +12,8 @@ import javax.swing.*;
 import java.util.List;
 
 public class CategoryTableModel extends BasicTableModel<Category> {
-    public CategoryTableModel(List<Category> recipes) {
-        super(recipes);
+    public CategoryTableModel(CrudService<Category> categoryCrudService) {
+        super(categoryCrudService);
     }
 
     public List<Column<Category, ?>> makeColumns() {

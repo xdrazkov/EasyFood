@@ -2,24 +2,23 @@ package cz.muni.fi.pv168.project.ui;
 
 import cz.muni.fi.pv168.project.data.TestDataGenerator;
 import cz.muni.fi.pv168.project.export.json.BatchJsonExporter;
+import cz.muni.fi.pv168.project.export.json.BatchJsonImporter;
 import cz.muni.fi.pv168.project.export.pdf.BatchPdfExporter;
-import cz.muni.fi.pv168.project.model.Category;
-import cz.muni.fi.pv168.project.model.Ingredient;
-import cz.muni.fi.pv168.project.model.Recipe;
-import cz.muni.fi.pv168.project.model.UuidGuidProvider;
-import cz.muni.fi.pv168.project.service.crud.RecipeCrudService;
+import cz.muni.fi.pv168.project.model.*;
+import cz.muni.fi.pv168.project.service.crud.GenericCrudService;
 import cz.muni.fi.pv168.project.service.export.GenericExportService;
+import cz.muni.fi.pv168.project.service.export.GenericImportService;
+import cz.muni.fi.pv168.project.service.validation.CategoryValidator;
+import cz.muni.fi.pv168.project.service.validation.IngredientValidator;
 import cz.muni.fi.pv168.project.service.validation.RecipeValidator;
+import cz.muni.fi.pv168.project.service.validation.UnitValidator;
 import cz.muni.fi.pv168.project.storage.InMemoryRepository;
 import cz.muni.fi.pv168.project.ui.action.*;
 import cz.muni.fi.pv168.project.ui.filters.RecipeTableFilter;
 import cz.muni.fi.pv168.project.ui.filters.components.FilterListModelBuilder;
 import cz.muni.fi.pv168.project.ui.filters.values.SpecialFilterCategoryValues;
 import cz.muni.fi.pv168.project.ui.filters.values.SpecialFilterIngredientValues;
-import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
-import cz.muni.fi.pv168.project.ui.model.IngredientTableModel;
-import cz.muni.fi.pv168.project.ui.model.RecipeTableModel;
-import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
+import cz.muni.fi.pv168.project.ui.model.*;
 import cz.muni.fi.pv168.project.ui.panels.*;
 import cz.muni.fi.pv168.project.ui.rangeSlider.RangeSlider;
 import cz.muni.fi.pv168.project.ui.rangeSlider.RecipeRangeSliderChangeListener;
@@ -44,8 +43,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
 public class MainWindow {
@@ -81,19 +78,29 @@ public class MainWindow {
         var recipes = testDataGenerator.getRecipes();
 
         var recipeValidator = new RecipeValidator();
+        var ingredientValidator = new IngredientValidator();
+        var categoryValidator = new CategoryValidator();
+        var unitValidator = new UnitValidator();
 
         var guidProvider = new UuidGuidProvider();
 
         var recipeRepository = new InMemoryRepository<>(recipes);
+        var ingredientRepository = new InMemoryRepository<>(ingredients);
+        var categoryRepository = new InMemoryRepository<>(categories);
+        var unitRepository = new InMemoryRepository<>(units);
 
-        var recipeCrudService = new RecipeCrudService(recipeRepository, recipeValidator, guidProvider);
+
+        var recipeCrudService = new GenericCrudService<>(recipeRepository, recipeValidator, guidProvider);
+        var ingredientCrudService = new GenericCrudService<>(ingredientRepository, ingredientValidator, guidProvider);
+        var categoryCrudService = new GenericCrudService<>(categoryRepository, categoryValidator, guidProvider);
+        var unitCrudService = new GenericCrudService<>(unitRepository, unitValidator, guidProvider);
 
         // Create models
-        RecipeTableModel recipeTableModel = new RecipeTableModel(recipes);
-        IngredientTableModel ingredientTableModel = new IngredientTableModel(ingredients);
-        CategoryTableModel categoryTableModel = new CategoryTableModel(categories);
-        UnitTableModel unitTableModel = new UnitTableModel(units);
-        List<AbstractTableModel> tableModels =
+        RecipeTableModel recipeTableModel = new RecipeTableModel(recipeCrudService);
+        IngredientTableModel ingredientTableModel = new IngredientTableModel(ingredientCrudService);
+        CategoryTableModel categoryTableModel = new CategoryTableModel(categoryCrudService);
+        UnitTableModel unitTableModel = new UnitTableModel(unitCrudService);
+        List<BasicTableModel<?>> tableModels =
                 List.of(recipeTableModel, ingredientTableModel, categoryTableModel, unitTableModel);
 
         // Create panels
@@ -117,9 +124,9 @@ public class MainWindow {
         frame.add(tabbedPane, BorderLayout.CENTER);
 
         // Set up actions for recipe table
-        addAction = new AddAction(categoryTableModel.getObjects(), ingredientTableModel.getObjects(), unitTableModel.getObjects(), unitTableModel);
+        addAction = new AddAction(categoryTableModel.getEntities(), ingredientTableModel.getEntities(), unitTableModel.getEntities(), unitTableModel);
         deleteAction = new DeleteAction();
-        editAction = new EditAction(categoryTableModel.getObjects(), ingredientTableModel.getObjects(), unitTableModel.getObjects(), unitTableModel);
+        editAction = new EditAction(categoryTableModel.getEntities(), ingredientTableModel.getEntities(), unitTableModel.getEntities(), unitTableModel);
         openAction = new OpenAction();
 
         // Add row sorters
@@ -128,14 +135,14 @@ public class MainWindow {
         var ingredientRowSorter = new TableRowSorter<>(ingredientTableModel);
         var unitRowSorter = new TableRowSorter<>(unitTableModel);
 
-        var exportService = new GenericExportService(recipeRowSorter, recipeTablePanel , List.of(new BatchJsonExporter(), new BatchPdfExporter()));
-//        var importService = new GenericImportService(tableContext, List.of(new BatchJsonImporter(), new BatchXmlImporter()));
+        // TODO exporters by DAO
+        var exportService = new GenericExportService(recipeRowSorter, recipeTablePanel, List.of(new BatchJsonExporter(unitTableModel), new BatchPdfExporter()));
+        var importService = new GenericImportService(recipeCrudService, List.of(new BatchJsonImporter()));
 
         // create import/export actions
-
         exportAction = new ExportAction(recipeTablePanel, exportService);
-        importAction = new ImportAction();
-        viewStatisticsAction = new ViewStatisticsAction(recipeTableModel.getObjects(), ingredientTableModel.getObjects());
+        importAction = new ImportAction(recipeTablePanel, importService, () -> tableModels.forEach(BasicTableModel::refresh));
+        viewStatisticsAction = new ViewStatisticsAction(recipeTableModel.getEntities(), ingredientTableModel.getEntities());
         viewAboutAction = new ViewAboutAction();
         this.actions = List.of(addAction, editAction, deleteAction, openAction, importAction, exportAction, viewAboutAction, viewStatisticsAction);
         setForbiddenActionsInTabs();
@@ -168,6 +175,14 @@ public class MainWindow {
         var nutritionalValuesSlider =
                 getRangeSlider(recipeTableModel, recipeTableFilter::filterNutritionalValues,
                         Recipe::getNutritionalValue, "Nutritional values (kcal)");
+
+
+        // TODO check usefulness
+        // paints rows in recipe and category tab by their category color
+        var recipeRowColorRenderer = new RecipeCategoryRenderer(2);
+        recipeTablePanel.getTable().setDefaultRenderer(Object.class, recipeRowColorRenderer);
+        recipeTablePanel.getTable().setDefaultRenderer(Integer.class, recipeRowColorRenderer);
+        categoryTablePanel.getTable().setDefaultRenderer(Object.class, new RecipeCategoryRenderer(0));
 
         JPanel toolbarPanel = new JPanel(new GridLayout(2, 1));
         JPanel preparationPanel = createSliderPanel(nutritionalValuesSlider);
@@ -210,13 +225,9 @@ public class MainWindow {
         });
     }
 
-    private void refresh() {
-//        recipeTableModel.refresh();
-    }
-
     private static JComboBox<Either<SpecialFilterCategoryValues, Category>> createCategoryFilter(
             RecipeTableFilter recipeTableFilter, CategoryTableModel categoryTableModel) {
-        return FilterComboboxBuilder.create(SpecialFilterCategoryValues.class, categoryTableModel.getObjects().toArray(new Category[0]))
+        return FilterComboboxBuilder.create(SpecialFilterCategoryValues.class, categoryTableModel.getEntities().toArray(new Category[0]))
                 .setSelectedItem(SpecialFilterCategoryValues.ALL)
                 .setSpecialValuesRenderer(new SpecialFilterCategoryValuesRenderer())
                 .setValuesRenderer(new CategoryRenderer())
@@ -229,12 +240,12 @@ public class MainWindow {
         ListModel<Ingredient> listModel = new AbstractListModel<>() {
             @Override
             public int getSize() {
-                return ingredientTableModel.getObjects().size();
+                return ingredientTableModel.getEntities().size();
             }
 
             @Override
             public Ingredient getElementAt(int index) {
-                return ingredientTableModel.getObjects().get(index);
+                return ingredientTableModel.getEntities().get(index);
             }
         };
 
@@ -251,7 +262,7 @@ public class MainWindow {
                                                  Consumer<Either<T, Pair<Integer, Integer>>> filterFunction,
                                                  Function<Recipe,Integer> mapperFunction,
                                                  String description) {
-        List<Integer> values = recipeTableModel.getObjects().stream()
+        List<Integer> values = recipeTableModel.getEntities().stream()
                 .map(mapperFunction)
                 .toList();
 

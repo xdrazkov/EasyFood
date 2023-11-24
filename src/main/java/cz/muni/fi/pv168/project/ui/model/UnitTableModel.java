@@ -4,6 +4,7 @@ import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.IngredientType;
 import cz.muni.fi.pv168.project.model.Unit;
+import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.ui.dialog.AddUnitDialog;
 import cz.muni.fi.pv168.project.ui.dialog.EditUnitDialog;
 import cz.muni.fi.pv168.project.ui.dialog.OpenUnitDialog;
@@ -14,8 +15,8 @@ import java.util.List;
 
 public class UnitTableModel extends BasicTableModel<Unit> {
     private final HashMap<IngredientType, Unit> baseUnitsMap = new HashMap<IngredientType, Unit>();
-    public UnitTableModel(List<Unit> units) {
-        super(units);
+    public UnitTableModel(CrudService<Unit> crudService) {
+        super(crudService);
         setupBaseUnits();
     }
 
@@ -31,9 +32,9 @@ public class UnitTableModel extends BasicTableModel<Unit> {
         Unit gram = new Unit("grams", "g", IngredientType.WEIGHABLE, 1);
         Unit milliliter = new Unit("milliliters", "ml", IngredientType.POURABLE, 1);
         Unit piece = new Unit("pieces", "pcs", IngredientType.COUNTABLE, 1);
-        getObjects().add(gram);
-        getObjects().add(milliliter);
-        getObjects().add(piece);
+        addRow(gram);
+        addRow(milliliter);
+        addRow(piece);
         baseUnitsMap.put(IngredientType.WEIGHABLE, gram);
         baseUnitsMap.put(IngredientType.POURABLE, milliliter);
         baseUnitsMap.put(IngredientType.COUNTABLE, piece);

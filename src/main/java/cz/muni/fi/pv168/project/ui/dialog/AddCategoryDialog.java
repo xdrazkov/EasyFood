@@ -1,6 +1,7 @@
 package cz.muni.fi.pv168.project.ui.dialog;
 
 import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.model.UuidGuidProvider;
 import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
 
 import javax.swing.*;

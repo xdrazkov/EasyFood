@@ -13,6 +13,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.util.function.Consumer;
 
+// TODO generic
 public class TablePanel extends JPanel {
     private final JTable table;
     private final Consumer<Integer> onSelectionChange;

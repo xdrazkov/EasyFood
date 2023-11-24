@@ -13,6 +13,7 @@ public class InMemoryRepository<T extends Entity> implements Repository<T> {
 
     private Map<String, T> data = new HashMap<>();
 
+    // TODO remove completely useless
     public InMemoryRepository(Collection<T> initEntities) {
         initEntities.forEach(this::create);
     }

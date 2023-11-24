@@ -1,6 +1,8 @@
 package cz.muni.fi.pv168.project.ui.action;
 
+import cz.muni.fi.pv168.project.service.export.DataManipulationException;
 import cz.muni.fi.pv168.project.service.export.ExportService;
+import cz.muni.fi.pv168.project.service.export.batch.BatchOperationException;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
 import cz.muni.fi.pv168.project.util.Filter;
 
@@ -40,8 +42,12 @@ public final class ExportAction extends GeneralAction {
                 exportFile = ((Filter) filter).decorate(exportFile);
             }
 
-            exportService.exportData(exportFile);
-
+            try {
+                exportService.exportData(exportFile);
+            } catch (DataManipulationException | BatchOperationException ex) {
+                JOptionPane.showMessageDialog(parent, "Export has successfully failed.\n" + ex.getMessage());
+                return;
+            }
             JOptionPane.showMessageDialog(parent, "Export has successfully finished.");
         }
     }

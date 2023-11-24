@@ -3,6 +3,7 @@ package cz.muni.fi.pv168.project.ui.model;
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Unit;
+import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.ui.dialog.AddIngredientDialog;
 import cz.muni.fi.pv168.project.ui.dialog.EditIngredientDialog;
 import cz.muni.fi.pv168.project.ui.dialog.OpenIngredientDialog;
@@ -11,8 +12,8 @@ import javax.swing.*;
 import java.util.List;
 
 public class IngredientTableModel extends BasicTableModel<Ingredient> {
-    public IngredientTableModel(List<Ingredient> ingredients) {
-        super(ingredients);
+    public IngredientTableModel(CrudService<Ingredient> ingredientCrudService) {
+        super(ingredientCrudService);
     }
 
     public List<Column<Ingredient, ?>> makeColumns() {

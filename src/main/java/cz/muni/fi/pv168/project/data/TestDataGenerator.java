@@ -104,8 +104,8 @@ public final class TestDataGenerator {
     private int getRandomNutValue() {
         return random.nextInt(2)+ 1;
     }
-    private HashMap<Ingredient, Pair<Unit, Integer>> createIngredientList(List<Ingredient> ingredients, List<Unit> units) {
-        HashMap<Ingredient, Pair<Unit, Integer>> ingredientList = new HashMap<>();
+    private HashMap<Ingredient, AmountInUnit> createIngredientList(List<Ingredient> ingredients, List<Unit> units) {
+        HashMap<Ingredient, AmountInUnit> ingredientList = new HashMap<>();
         List<Ingredient> shuffledIngredients = new ArrayList<>(ingredients);
         Collections.shuffle(shuffledIngredients);
 
@@ -116,7 +116,7 @@ public final class TestDataGenerator {
             List<Unit> randomUnits = units.stream().filter(r -> r.getIngredientType() == ingredient.getDefaultUnit().getIngredientType()).toList();
             Unit randomUnit = randomUnits.get(random.nextInt(randomUnits.size()));
             int randomAmount = random.nextInt(10) + 1;
-            ingredientList.put(ingredient, Pair.of(randomUnit, randomAmount));
+            ingredientList.put(ingredient, new AmountInUnit(randomUnit, randomAmount));
         }
 
         return ingredientList;

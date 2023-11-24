@@ -1,5 +1,6 @@
 package cz.muni.fi.pv168.project.ui.dialog;
 
+import cz.muni.fi.pv168.project.model.AmountInUnit;
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Recipe;
 import cz.muni.fi.pv168.project.model.Unit;
@@ -56,9 +57,11 @@ public final class OpenRecipeDialog extends EntityDialog<Recipe> {
     }
 
     private void addIngredients(){
-        for(Map.Entry<Ingredient, Pair<Unit, Integer>> ingredientPairEntry : recipe.getIngredients().entrySet()){
+        for(Map.Entry<Ingredient, AmountInUnit> amountInUnitEntry : recipe.getIngredients().entrySet()){
             JLabel ingredient = new JLabel();
-            ingredient.setText(ingredientPairEntry.getKey().toString() + " -> " + ingredientPairEntry.getValue().getValue() + " " + ingredientPairEntry.getValue().getKey().getAbbreviation());
+            ingredient.setText(amountInUnitEntry.getKey().toString() +
+                    " -> " + amountInUnitEntry.getValue().getAmount() +
+                    " " + amountInUnitEntry.getValue().getUnit().getAbbreviation());
             add(ingredient, THIN_HEIGHT);
         }
     }
