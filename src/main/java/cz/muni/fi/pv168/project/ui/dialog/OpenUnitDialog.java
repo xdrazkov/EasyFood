@@ -10,20 +10,18 @@ public class OpenUnitDialog extends EntityDialog<Unit> {
     private final JLabel name = new JLabel();
     private final JLabel conversionRate =  new JLabel();
     private final JLabel ingredientType =  new JLabel();
-    private final UnitTableModel unitTableModel;
 
     private final Unit unit;
 
-    public OpenUnitDialog(Unit unit, UnitTableModel unitTableModel) {
+    public OpenUnitDialog(Unit unit) {
         this.unit = unit;
-        this.unitTableModel = unitTableModel; // TODO: implement through Repository/CRUDService
         setValues();
         addFields();
     }
 
     private void setValues() {
         name.setText("<html>" + "<B>" + unit.getName() + " (" + unit.getAbbreviation() + ")" + "</B>" + "</html>");
-        conversionRate.setText("<html>" + "<B>" + "Conversion rate: " + "</B>" + "1 " + unit.getAbbreviation() + " = " + unit.getConversionRate() + " " + unit.getIngredientType().getBaseUnit(unitTableModel).getAbbreviation() + "</html>");
+        conversionRate.setText("<html>" + "<B>" + "Conversion rate: " + "</B>" + "1 " + unit.getAbbreviation() + " = " + unit.getConversionRate() + " " + unit.getIngredientType().getBaseUnit().getAbbreviation() + "</html>");
         ingredientType.setText("<html>" + "<B>" + "Unit type: " + "</B>" + unit.getIngredientType() + "</html>");
     }
 

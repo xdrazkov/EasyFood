@@ -9,7 +9,7 @@ public enum IngredientType {
     WEIGHABLE, // g
     COUNTABLE; // pcs
 
-    public Unit getBaseUnit(UnitTableModel unitTableModel){
-        return unitTableModel.getBaseUnitsMap().get(this);
+    public Unit getBaseUnit(){
+        return UnitTableModel.getBaseUnit(this);
     }
 }

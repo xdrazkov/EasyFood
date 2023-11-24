@@ -1,9 +1,12 @@
 package cz.muni.fi.pv168.project.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import cz.muni.fi.pv168.project.export.json.deserializers.AmountInUnitJsonDeserializer;
+import cz.muni.fi.pv168.project.export.json.seralizers.AmountInUnitJsonSerializer;
 import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
 
+@JsonSerialize(using = AmountInUnitJsonSerializer.class)
 @JsonDeserialize(using = AmountInUnitJsonDeserializer.class)
 public class AmountInUnit {
     private Unit unit;
@@ -14,8 +17,8 @@ public class AmountInUnit {
         this.amount = amount;
     }
 
-    public AmountInUnit convertToBaseUnit(UnitTableModel unitTableModel) {
-        return new AmountInUnit(unit.getIngredientType().getBaseUnit(unitTableModel), (int) (amount * unit.getConversionRate()));
+    public AmountInUnit convertToBaseUnit() {
+        return new AmountInUnit(unit.getIngredientType().getBaseUnit(), (int) (amount * unit.getConversionRate()));
     }
 
     public Unit getUnit() {

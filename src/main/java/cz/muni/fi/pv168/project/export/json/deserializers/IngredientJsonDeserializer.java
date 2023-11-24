@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.muni.fi.pv168.project.model.Ingredient;
+import static cz.muni.fi.pv168.project.export.json.JsonFields.*;
 
 
 import java.io.IOException;
@@ -17,8 +18,8 @@ public class IngredientJsonDeserializer extends JsonDeserializer<Ingredient> {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(jsonParser);
 
-        String name = rootNode.get("name").asText();
-        float caloriesPerUnit = (float) rootNode.get("caloriesPerUnit").asDouble();
+        String name = rootNode.get(INGREDIENT_NAME).asText();
+        float caloriesPerUnit = (float) rootNode.get(CALORIES_PER_UNIT).asDouble();
 
         var ingredient = new Ingredient();
         ingredient.setName(name);

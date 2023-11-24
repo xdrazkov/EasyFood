@@ -25,7 +25,7 @@ public class CategoryTableModel extends BasicTableModel<Category> {
     @Override
     public void performAddAction(JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
         CategoryTableModel categoryTableModel = (CategoryTableModel) table.getModel();
-        var dialog = new AddCategoryDialog(categoryTableModel);
+        var dialog = new AddCategoryDialog();
         dialog.show(table, "Add Category").ifPresent(categoryTableModel::addRow);
     }
 

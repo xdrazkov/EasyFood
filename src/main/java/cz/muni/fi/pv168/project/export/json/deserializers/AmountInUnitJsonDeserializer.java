@@ -7,7 +7,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.muni.fi.pv168.project.model.AmountInUnit;
 import cz.muni.fi.pv168.project.model.IngredientType;
-import cz.muni.fi.pv168.project.model.Unit;
+
+import static cz.muni.fi.pv168.project.export.json.JsonFields.*;
 
 import java.io.IOException;
 
@@ -18,8 +19,8 @@ public class AmountInUnitJsonDeserializer extends JsonDeserializer<AmountInUnit>
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(jsonParser);
 
-        String unitName = rootNode.get("unit").asText();
-        int amount = rootNode.get("amount").asInt();
+        String unitName = rootNode.get(UNIT).asText();
+        int amount = rootNode.get(AMOUNT).asInt();
 
         IngredientType ingredientType = switch (unitName) {
             // TODO string as constant
@@ -30,7 +31,6 @@ public class AmountInUnitJsonDeserializer extends JsonDeserializer<AmountInUnit>
             default -> throw new IOException(unitName + " unknown ingredient name");
         };
 
-        // TODO static default units
-        return new AmountInUnit(new Unit(unitName, unitName, ingredientType,1), amount);
+        return new AmountInUnit(ingredientType.getBaseUnit(), amount);
     }
 }

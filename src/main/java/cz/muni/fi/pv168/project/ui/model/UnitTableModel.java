@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class UnitTableModel extends BasicTableModel<Unit> {
-    private final HashMap<IngredientType, Unit> baseUnitsMap = new HashMap<>();
+    private static final HashMap<IngredientType, Unit> baseUnitsMap = new HashMap<>();
     public UnitTableModel(CrudService<Unit> crudService) {
         super(crudService);
         setupBaseUnits();
@@ -63,7 +63,11 @@ public class UnitTableModel extends BasicTableModel<Unit> {
     public void performOpenAction(JTable table, int modelRow) {
         UnitTableModel unitTableModel = (UnitTableModel) table.getModel();
         var unit = unitTableModel.getEntity(modelRow);
-        var dialog = new OpenUnitDialog(unit, unitTableModel);
+        var dialog = new OpenUnitDialog(unit);
         dialog.show(table, "Open Unit").ifPresent(unitTableModel::updateRow);
+    }
+
+    public static Unit getBaseUnit(IngredientType ingredientType) {
+        return baseUnitsMap.get(ingredientType);
     }
 }

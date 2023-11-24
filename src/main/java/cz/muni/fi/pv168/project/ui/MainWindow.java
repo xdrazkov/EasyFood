@@ -36,6 +36,8 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.table.TableRowSorter;
 
+import static cz.muni.fi.pv168.project.ui.panels.TablePanelType.*;
+
 public class MainWindow {
     private final JFrame frame;
     private final GeneralAction addAction;
@@ -100,10 +102,10 @@ public class MainWindow {
             tablePanels.add(new TablePanel(tableModel, this::changeActionsState));
         }
 
-        var recipeTablePanel = tablePanels.get(TablePanelType.RECIPE.ordinal());
-        var ingredientTablePanel = tablePanels.get(TablePanelType.INGREDIENT.ordinal());
-        var categoryTablePanel = tablePanels.get(TablePanelType.CATEGORY.ordinal());
-        var unitTablePanel = tablePanels.get(TablePanelType.UNIT.ordinal());
+        var recipeTablePanel = tablePanels.get(RECIPE.ordinal());
+        var ingredientTablePanel = tablePanels.get(INGREDIENT.ordinal());
+        var categoryTablePanel = tablePanels.get(CATEGORY.ordinal());
+        var unitTablePanel = tablePanels.get(UNIT.ordinal());
 
         // Add the panels to tabbed pane
         this.tabbedPane = new JTabbedPane();
@@ -124,7 +126,7 @@ public class MainWindow {
         var recipeRowSorter = (TableRowSorter<RecipeTableModel>)  recipeTablePanel.getTable().getRowSorter();
 
         // TODO exporters by DAO
-        var exportService = new GenericExportService(recipeRowSorter ,recipeTablePanel, List.of(new BatchJsonExporter(unitTableModel), new BatchPdfExporter()));
+        var exportService = new GenericExportService(recipeRowSorter ,recipeTablePanel, List.of(new BatchJsonExporter(), new BatchPdfExporter()));
         var importService = new GenericImportService(recipeCrudService, ingredientCrudService, categoryCrudService, List.of(new BatchJsonImporter()));
 
         // create import/export actions
@@ -178,7 +180,7 @@ public class MainWindow {
 
                 // filters visible only on recipe tab
                 int currTabIndex = tabPanel.getSelectedIndex();
-                filtersToolbar.setVisible(currTabIndex == TablePanelType.RECIPE.ordinal());
+                filtersToolbar.setVisible(currTabIndex == RECIPE.ordinal());
 
                 setStatusBarName(statusBar);
 
@@ -307,9 +309,9 @@ public class MainWindow {
             this.forbiddenActionsInTabs.put(action, List.of());
         }
         List<Integer> forbidden = List.of(
-                TablePanelType.INGREDIENT.ordinal(),
-                TablePanelType.CATEGORY.ordinal(),
-                TablePanelType.UNIT.ordinal());
+                INGREDIENT.ordinal(),
+                CATEGORY.ordinal(),
+                UNIT.ordinal());
         this.forbiddenActionsInTabs.put(exportAction, forbidden);
         this.forbiddenActionsInTabs.put(importAction, forbidden);
     }

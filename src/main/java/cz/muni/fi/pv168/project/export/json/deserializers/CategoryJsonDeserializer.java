@@ -10,6 +10,8 @@ import cz.muni.fi.pv168.project.model.Category;
 import java.awt.*;
 import java.io.IOException;
 
+import static cz.muni.fi.pv168.project.export.json.JsonFields.*;
+
 public class CategoryJsonDeserializer extends JsonDeserializer<Category> {
 
     @Override
@@ -17,9 +19,9 @@ public class CategoryJsonDeserializer extends JsonDeserializer<Category> {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(jsonParser);
 
-        String name = rootNode.get("name").asText();
+        String name = rootNode.get(CATEGORY_NAME).asText();
 
-        JsonNode colorNode = rootNode.get("color");
+        JsonNode colorNode = rootNode.get(CATEGORY_COLOR);
         Color color = parseColor(colorNode);
 
         return new Category(name, color);

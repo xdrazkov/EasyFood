@@ -19,12 +19,6 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class BatchJsonExporter implements BatchExporter {
-    private final UnitTableModel unitTableModel;
-
-    public BatchJsonExporter(UnitTableModel unitTableModel) {
-        this.unitTableModel = unitTableModel;
-    }
-
     private static final Format FORMAT = new Format("JSON", List.of("json"));
 
     @Override
@@ -38,7 +32,6 @@ public class BatchJsonExporter implements BatchExporter {
             ObjectMapper mapper = new ObjectMapper();
             SimpleModule module =
                     new SimpleModule("CustomCarSerializer", new Version(1, 0, 0, null, null, null));
-            module.addSerializer(AmountInUnit.class, new AmountInUnitJsonSerializer(unitTableModel));
             mapper.registerModule(module);
 
             ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
