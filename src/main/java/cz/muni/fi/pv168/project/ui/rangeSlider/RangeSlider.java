@@ -101,7 +101,7 @@ public class RangeSlider extends JSlider {
     /**
      * sets slider knobs to default position
      */
-    public void resetSlider() {
+    public void setKnobsToDefaultPosition() {
         this.setValue(this.getMinimum());
         this.setUpperValue(this.getMaximum());
     }

@@ -15,18 +15,13 @@ import cz.muni.fi.pv168.project.service.validation.UnitValidator;
 import cz.muni.fi.pv168.project.storage.InMemoryRepository;
 import cz.muni.fi.pv168.project.ui.action.*;
 import cz.muni.fi.pv168.project.ui.filters.RecipeTableFilter;
-import cz.muni.fi.pv168.project.ui.filters.components.FilterListModelBuilder;
 import cz.muni.fi.pv168.project.ui.filters.values.SpecialFilterCategoryValues;
-import cz.muni.fi.pv168.project.ui.filters.values.SpecialFilterIngredientValues;
 import cz.muni.fi.pv168.project.ui.model.*;
 import cz.muni.fi.pv168.project.ui.panels.*;
-import cz.muni.fi.pv168.project.ui.rangeSlider.RangeSlider;
-import cz.muni.fi.pv168.project.ui.rangeSlider.RecipeRangeSliderChangeListener;
 import cz.muni.fi.pv168.project.ui.renderers.*;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
 import cz.muni.fi.pv168.project.util.Either;
 import cz.muni.fi.pv168.project.ui.filters.components.FilterComboboxBuilder;
-import org.apache.commons.lang3.tuple.Pair;
 
 
 import javax.swing.*;
@@ -35,14 +30,10 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import javax.swing.table.TableRowSorter;
 
 public class MainWindow {
@@ -130,13 +121,10 @@ public class MainWindow {
         openAction = new OpenAction();
 
         // Add row sorters
-        var recipeRowSorter = new TableRowSorter<>(recipeTableModel);
-        var categoryRowSorter = new TableRowSorter<>(categoryTableModel);
-        var ingredientRowSorter = new TableRowSorter<>(ingredientTableModel);
-        var unitRowSorter = new TableRowSorter<>(unitTableModel);
+        var recipeRowSorter = (TableRowSorter<RecipeTableModel>)  recipeTablePanel.getTable().getRowSorter();
 
         // TODO exporters by DAO
-        var exportService = new GenericExportService(recipeRowSorter, recipeTablePanel, List.of(new BatchJsonExporter(unitTableModel), new BatchPdfExporter()));
+        var exportService = new GenericExportService(recipeRowSorter ,recipeTablePanel, List.of(new BatchJsonExporter(unitTableModel), new BatchPdfExporter()));
         var importService = new GenericImportService(recipeCrudService, ingredientCrudService, categoryCrudService, List.of(new BatchJsonImporter()));
 
         // create import/export actions
@@ -155,41 +143,15 @@ public class MainWindow {
         JLabel statusBar = createStatusBar();
         setStatusBarName(statusBar);
 
-        // set all row sorters
-        recipeTablePanel.getTable().setRowSorter(recipeRowSorter);
-        categoryTablePanel.getTable().setRowSorter(categoryRowSorter);
-        ingredientTablePanel.getTable().setRowSorter(ingredientRowSorter);
-        unitTablePanel.getTable().setRowSorter(unitRowSorter);
-
         // adding listener to change text of status bar when filtering rows
         recipeRowSorter.addRowSorterListener(e -> setStatusBarName(statusBar));
 
-        var recipeTableFilter = new RecipeTableFilter(recipeRowSorter);
-        var categoryFilter = createCategoryFilter(recipeTableFilter, categoryTableModel);
-        var ingredientFilter = createIngredientFilter(recipeTableFilter, ingredientTableModel);
-
-        var preparationTimeSlider =
-                getRangeSlider(recipeTableModel, recipeTableFilter::filterPreparationTime,
-                        Recipe::getTimeToPrepare, "Preparation time (min)");
-
-        var nutritionalValuesSlider =
-                getRangeSlider(recipeTableModel, recipeTableFilter::filterNutritionalValues,
-                        Recipe::getNutritionalValue, "Nutritional values (kcal)");
-
-
-        // TODO check usefulness
-        // paints rows in recipe and category tab by their category color
-        var recipeRowColorRenderer = new RecipeCategoryRenderer(2);
-        recipeTablePanel.getTable().setDefaultRenderer(Object.class, recipeRowColorRenderer);
-        recipeTablePanel.getTable().setDefaultRenderer(Integer.class, recipeRowColorRenderer);
-        categoryTablePanel.getTable().setDefaultRenderer(Object.class, new RecipeCategoryRenderer(0));
+        var filterToolBar = new FilterToolbar(recipeCrudService, ingredientCrudService, categoryCrudService, unitCrudService, recipeRowSorter);
+        actions.forEach(a -> a.setFilterToolbar(filterToolBar));
 
         JPanel toolbarPanel = new JPanel(new GridLayout(2, 1));
-        JPanel preparationPanel = createSliderPanel(nutritionalValuesSlider);
-        JPanel nutritionalPanel = createSliderPanel(preparationTimeSlider);
         var toolbar = createToolbar();
-        var resetButton = createResetButton(categoryFilter, ingredientFilter, nutritionalValuesSlider, preparationTimeSlider);
-        var filtersToolbar = createToolbar(categoryFilter, new JScrollPane(ingredientFilter), preparationPanel, nutritionalPanel, resetButton);
+        var filtersToolbar = filterToolBar.getFilterToolBar();
         toolbarPanel.add(toolbar);
         toolbarPanel.add(filtersToolbar);
         toolbarPanel.setBorder(padding);
@@ -220,7 +182,7 @@ public class MainWindow {
 
                 setStatusBarName(statusBar);
 
-                resetFilters(categoryFilter, ingredientFilter, nutritionalValuesSlider, preparationTimeSlider);
+                filterToolBar.resetFilters();
             }
         });
     }
@@ -233,57 +195,6 @@ public class MainWindow {
                 .setValuesRenderer(new CategoryRenderer())
                 .setFilter(recipeTableFilter::filterCategory)
                 .build();
-    }
-
-    private static JList<Either<SpecialFilterIngredientValues, Ingredient>> createIngredientFilter(
-            RecipeTableFilter recipeTableFilter, IngredientTableModel ingredientTableModel) {
-        ListModel<Ingredient> listModel = new AbstractListModel<>() {
-            @Override
-            public int getSize() {
-                return ingredientTableModel.getEntities().size();
-            }
-
-            @Override
-            public Ingredient getElementAt(int index) {
-                return ingredientTableModel.getEntities().get(index);
-            }
-        };
-
-        return FilterListModelBuilder.create(SpecialFilterIngredientValues.class, listModel)
-                .setSelectedIndex(0)
-                .setVisibleRowsCount(3)
-                .setSpecialValuesRenderer(new SpecialFilterIngredientValuesRenderer())
-                .setValuesRenderer(new IngredientRenderer())
-                .setFilter(recipeTableFilter::filterIngredient)
-                .build();
-    }
-
-    private static <T>RangeSlider getRangeSlider(RecipeTableModel recipeTableModel,
-                                                 Consumer<Either<T, Pair<Integer, Integer>>> filterFunction,
-                                                 Function<Recipe,Integer> mapperFunction,
-                                                 String description) {
-        List<Integer> values = recipeTableModel.getEntities().stream()
-                .map(mapperFunction)
-                .toList();
-
-        int minValue = values.stream().mapToInt(Integer::intValue).min().orElse(0);
-        int maxValue = values.stream().mapToInt(Integer::intValue).max().orElse(0);
-
-        RangeSlider slider = new RangeSlider(minValue, maxValue);
-
-        slider.setMajorTickSpacing((maxValue - minValue) / 5);
-        slider.setMinorTickSpacing((maxValue - minValue) / 10);
-
-        slider.setPaintTicks(true);
-        slider.setPaintLabels(true);
-
-        slider.setToolTipText(description);
-        slider.setValue(minValue);
-        slider.setUpperValue(maxValue);
-
-        slider.addChangeListener(new RecipeRangeSliderChangeListener<>(filterFunction));
-
-        return slider;
     }
 
     public void show() {
@@ -341,14 +252,6 @@ public class MainWindow {
         toolbar.add(exportAction);
         toolbar.addSeparator();
 
-        return toolbar;
-    }
-
-    private static JToolBar createToolbar(Component... components) {
-        var toolbar = new JToolBar();
-        for (var component : components) {
-            toolbar.add(component);
-        }
         return toolbar;
     }
 
@@ -430,46 +333,5 @@ public class MainWindow {
                 currTabTitle
         ));
         statusBar.setBorder(new EmptyBorder(0, 10, 0, 10));
-    }
-
-    private static JPanel createSliderPanel(RangeSlider slider) {
-        Button resetButton = new Button("Reset slider");
-        resetButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                slider.resetSlider();
-            }
-        });
-        JPanel buttonTextPanel = new JPanel(new GridLayout(1, 2));
-        buttonTextPanel.add(resetButton);
-        buttonTextPanel.add(new JLabel(slider.getToolTipText(), SwingConstants.CENTER));
-
-        JPanel finalPanel = new JPanel(new GridLayout(2, 1));
-        finalPanel.add(slider);
-        finalPanel.add(buttonTextPanel);
-
-        finalPanel.setBorder(new EmptyBorder(0, 10, 0, 10));
-        return finalPanel;
-    }
-
-    private static void resetFilters(JComboBox<Either<SpecialFilterCategoryValues, Category>> categoryFilter, JList<Either<SpecialFilterIngredientValues, Ingredient>> ingredientFilter, RangeSlider nutritionalValuesSlider, RangeSlider preparationTimeSlider) {
-        // reset filter selection
-        categoryFilter.setSelectedIndex(0);
-        ingredientFilter.setSelectedIndex(0);
-
-        // reset sliders
-        nutritionalValuesSlider.resetSlider();
-        preparationTimeSlider.resetSlider();
-    }
-
-    private static Button createResetButton(JComboBox<Either<SpecialFilterCategoryValues, Category>> categoryFilter, JList<Either<SpecialFilterIngredientValues, Ingredient>> ingredientFilter, RangeSlider nutritionalValuesSlider, RangeSlider preparationTimeSlider) {
-        var resetButton = new Button("Reset all filters");
-        resetButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                resetFilters(categoryFilter, ingredientFilter, nutritionalValuesSlider, preparationTimeSlider);
-            }
-        });
-        return resetButton;
     }
 }

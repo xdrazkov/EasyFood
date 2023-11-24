@@ -10,6 +10,7 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.util.function.Consumer;
 
@@ -26,6 +27,7 @@ public class TablePanel extends JPanel {
         setTablePanelType(tableModel);
         this.onSelectionChange = onSelectionChange;
         setRenderer();
+        table.setRowSorter(new TableRowSorter<>(tableModel));
     }
 
     public JTable getTable() {
@@ -77,10 +79,7 @@ public class TablePanel extends JPanel {
             case CATEGORY:
                 table.setDefaultRenderer(Object.class, new RecipeCategoryRenderer(0));
                 break;
-            case INGREDIENT:
-                table.setDefaultRenderer(Integer.class, new DefaultTableCellRenderer());
-                break;
-            case UNIT:
+            case INGREDIENT, UNIT:
                 table.setDefaultRenderer(Float.class, new DefaultTableCellRenderer());
                 break;
         }

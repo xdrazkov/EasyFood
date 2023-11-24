@@ -41,6 +41,7 @@ public final class ImportAction extends GeneralAction {
             callback.run();
             JOptionPane.showMessageDialog(recipeTablePanel, "Import was done");
         }
+        super.actionPerformed(e);
     }
 
     @Override

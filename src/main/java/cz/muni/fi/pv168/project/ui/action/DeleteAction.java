@@ -49,6 +49,7 @@ public final class DeleteAction extends GeneralAction {
         .boxed()
         .sorted(Comparator.reverseOrder())
         .forEach(deleteFunction);
+        super.actionPerformed(e);
     }
 
     @Override

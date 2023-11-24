@@ -41,6 +41,7 @@ public final class EditAction extends GeneralAction {
 
         BasicTableModel model = (BasicTableModel) table.getModel();
         model.performEditAction(selectedRows, table, unitTableModel, categoryCrudService.findAll(), ingredientCrudService.findAll(), unitCrudService.findAll());
+        super.actionPerformed(e);
     }
 
     @Override
