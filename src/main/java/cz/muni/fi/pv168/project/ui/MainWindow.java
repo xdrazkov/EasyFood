@@ -124,9 +124,9 @@ public class MainWindow {
         frame.add(tabbedPane, BorderLayout.CENTER);
 
         // Set up actions for recipe table
-        addAction = new AddAction(categoryTableModel.getEntities(), ingredientTableModel.getEntities(), unitTableModel.getEntities(), unitTableModel);
+        addAction = new AddAction(unitTableModel, ingredientCrudService, categoryCrudService, unitCrudService);
         deleteAction = new DeleteAction();
-        editAction = new EditAction(categoryTableModel.getEntities(), ingredientTableModel.getEntities(), unitTableModel.getEntities(), unitTableModel);
+        editAction = new EditAction(unitTableModel, ingredientCrudService, categoryCrudService, unitCrudService);
         openAction = new OpenAction();
 
         // Add row sorters
@@ -137,12 +137,12 @@ public class MainWindow {
 
         // TODO exporters by DAO
         var exportService = new GenericExportService(recipeRowSorter, recipeTablePanel, List.of(new BatchJsonExporter(unitTableModel), new BatchPdfExporter()));
-        var importService = new GenericImportService(recipeCrudService, List.of(new BatchJsonImporter()));
+        var importService = new GenericImportService(recipeCrudService, ingredientCrudService, categoryCrudService, List.of(new BatchJsonImporter()));
 
         // create import/export actions
         exportAction = new ExportAction(recipeTablePanel, exportService);
         importAction = new ImportAction(recipeTablePanel, importService, () -> tableModels.forEach(BasicTableModel::refresh));
-        viewStatisticsAction = new ViewStatisticsAction(recipeTableModel.getEntities(), ingredientTableModel.getEntities());
+        viewStatisticsAction = new ViewStatisticsAction(ingredientCrudService, recipeCrudService);
         viewAboutAction = new ViewAboutAction();
         this.actions = List.of(addAction, editAction, deleteAction, openAction, importAction, exportAction, viewAboutAction, viewStatisticsAction);
         setForbiddenActionsInTabs();

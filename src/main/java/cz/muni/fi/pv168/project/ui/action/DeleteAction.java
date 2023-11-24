@@ -1,14 +1,10 @@
 package cz.muni.fi.pv168.project.ui.action;
 
 import cz.muni.fi.pv168.project.ui.model.BasicTableModel;
-import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
-import cz.muni.fi.pv168.project.ui.model.IngredientTableModel;
-import cz.muni.fi.pv168.project.ui.model.RecipeTableModel;
 import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
 
 import javax.swing.*;
-import javax.swing.table.TableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;

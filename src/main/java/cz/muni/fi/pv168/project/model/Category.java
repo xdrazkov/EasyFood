@@ -46,4 +46,17 @@ public class Category extends Entity{
     public Category getItself() {
         return this;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (! (o instanceof Category that)) {
+            return false;
+        }
+        return this.color.equals(that.color) && this.name.equals(that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.color.getBlue() + this.color.getRed() + this.color.getRed();
+    }
 }
