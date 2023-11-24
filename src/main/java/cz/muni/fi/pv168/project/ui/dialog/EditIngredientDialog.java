@@ -8,7 +8,7 @@ import javax.swing.*;
 
 public class EditIngredientDialog extends EntityDialog<Ingredient> {
     private final JTextField name = new JTextField();
-    private final JTextField nutritionalValue = FieldMaker.makeIntField();
+    private final JTextField nutritionalValue = FieldMaker.makeFloatField();
     private final JComboBox<Unit> defaulUnit = new JComboBox<>();
     private final UnitTableModel unitTableModel;
     private final Ingredient ingredient;
@@ -22,7 +22,7 @@ public class EditIngredientDialog extends EntityDialog<Ingredient> {
 
     private void setValues() {
         name.setText(ingredient.getName());
-        nutritionalValue.setText(Integer.toString(ingredient.getCaloriesPerUnit()));
+        nutritionalValue.setText(Float.toString(ingredient.getCaloriesPerUnit()));
         defaulUnit.setModel(new javax.swing.DefaultComboBoxModel<>(unitTableModel.getEntities().toArray(new Unit[0])));
         defaulUnit.getModel().setSelectedItem(ingredient.getDefaultUnit());
     }
@@ -37,7 +37,7 @@ public class EditIngredientDialog extends EntityDialog<Ingredient> {
     Ingredient getEntity() {
         ingredient.setName(name.getText());
         ingredient.setDefaultUnit((Unit) defaulUnit.getSelectedItem());
-        ingredient.setCaloriesPerUnit(Integer.parseInt(nutritionalValue.getText().replaceAll(" ", "")));
+        ingredient.setCaloriesPerUnit(Float.parseFloat(nutritionalValue.getText().replaceAll(" ", "")));
         return ingredient;
     }
 }

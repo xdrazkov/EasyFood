@@ -1,11 +1,14 @@
 package cz.muni.fi.pv168.project.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import cz.muni.fi.pv168.project.export.json.deserializers.RecipeJsonDeserializer;
+import cz.muni.fi.pv168.project.export.json.seralizers.RecipeJsonSerializer;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@JsonSerialize(using = RecipeJsonSerializer.class)
 @JsonDeserialize(using = RecipeJsonDeserializer.class)
 public class Recipe extends Entity {
     private String title;
@@ -13,7 +16,6 @@ public class Recipe extends Entity {
     private int portionCount;
     private String instructions;
     private int timeToPrepare; // in minutes; import java.util.concurrent.TimeUnit
-    private int nutritionalValue;
     private Category category;
     private HashMap<Ingredient, AmountInUnit> ingredients;
 
@@ -97,12 +99,7 @@ public class Recipe extends Entity {
     }
 
     public int getNutritionalValue() {
-        calculateNutritionalValue();
-        return nutritionalValue;
-    }
-
-    public void setNutritionalValue(int nutritionalValue) {
-        this.nutritionalValue = nutritionalValue;
+        return calculateNutritionalValue();
     }
 
     public Category getCategory() {
@@ -120,14 +117,16 @@ public class Recipe extends Entity {
     public void setIngredients(HashMap<Ingredient, AmountInUnit> ingredients) {
         this.ingredients = ingredients;
     }
-    private void calculateNutritionalValue() {
-        this.nutritionalValue = 0;
+    private int calculateNutritionalValue() {
+        int nutritionalValue = 0;
         for (Map.Entry<Ingredient, AmountInUnit> entry: ingredients.entrySet()) {
             Unit unit = entry.getValue().getUnit();
             int amount = entry.getValue().getAmount();
             Ingredient ingredient = entry.getKey();
-            this.nutritionalValue += ingredient.getTotalCalories(unit, amount);
+            nutritionalValue += ingredient.getTotalCalories(unit, amount);
         }
+
+        return nutritionalValue;
     }
 
     public void addIngredient(Ingredient ingredient, Unit unit, int amount) {

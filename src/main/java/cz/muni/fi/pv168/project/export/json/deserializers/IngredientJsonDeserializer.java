@@ -18,9 +18,11 @@ public class IngredientJsonDeserializer extends JsonDeserializer<Ingredient> {
         JsonNode rootNode = mapper.readTree(jsonParser);
 
         String name = rootNode.get("name").asText();
+        float caloriesPerUnit = (float) rootNode.get("caloriesPerUnit").asDouble();
 
         var ingredient = new Ingredient();
         ingredient.setName(name);
+        ingredient.setCaloriesPerUnit(caloriesPerUnit);
         // default units are set in RecipeJsonDeserializer
         return ingredient;
     }

@@ -24,35 +24,19 @@ public class RecipeJsonDeserializer extends JsonDeserializer<Recipe> {
         String description = rootNode.get("description").asText();
         int portionCount = rootNode.get("portionCount").asInt();
         String instructions = rootNode.get("instructions").asText();
-        int nutritionalValue = rootNode.get("nutritionalValue").asInt();
+        int timeToPrepare = rootNode.get("timeToPrepare").asInt();
         Category category = mapper.treeToValue(rootNode.get("category"), Category.class);
 
         HashMap<Ingredient, AmountInUnit> ingredients = new HashMap<>();
-        if (rootNode.has("ingredients")) {
-            JsonNode ingredientsNode = rootNode.get("ingredients");
-            if (ingredientsNode.isObject()) {
-                for (JsonNode ingredientNode : ingredientsNode) {
-                    var ingredient = new Ingredient();
-                    ingredient.setName(ingredientsNode.fieldNames().next());
-                    AmountInUnit amountInUnit = mapper.treeToValue(ingredientNode, AmountInUnit.class);
-                    // TODO calories per unit
-                    ingredient.setCaloriesPerUnit(0);
-                    ingredient.setDefaultUnit(amountInUnit.getUnit());
-                    ingredients.put(ingredient, amountInUnit);
-                }
-            }
+
+        JsonNode ingredientsNode = rootNode.get("ingredients");
+        for (JsonNode ingredientAmountNode : ingredientsNode) {
+            var ingredient = mapper.treeToValue(ingredientAmountNode.get("ingredient"), Ingredient.class);
+            var amountInUnit = mapper.treeToValue(ingredientAmountNode.get("amountInUnit"), AmountInUnit.class);
+            ingredient.setDefaultUnit(amountInUnit.getUnit());
+            ingredients.put(ingredient, amountInUnit);
         }
 
-        // TODO constructor
-        var recipe = new Recipe();
-        recipe.setTitle(title);
-        recipe.setDescription(description);
-        recipe.setPortionCount(portionCount);
-        recipe.setInstructions(instructions);
-        recipe.setCategory(category);
-        recipe.setNutritionalValue(nutritionalValue); // TODO unnecessary
-        recipe.setIngredients(ingredients);
-
-        return recipe;
+        return new Recipe(title, description, portionCount, instructions, timeToPrepare, category, ingredients);
     }
 }

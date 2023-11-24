@@ -15,15 +15,15 @@ public class FieldMaker extends JComponent {
         formatter.setCommitsOnValidEdit(true);
         return new JFormattedTextField(formatter);
     }
-
     static public JFormattedTextField makeFloatField() {
         NumberFormat format = NumberFormat.getInstance();
         NumberFormatter formatter = new NumberFormatter(format);
-        formatter.setValueClass(Float.class);
-        formatter.setMinimum(0);
-        formatter.setMaximum(Float.MAX_VALUE);
+        formatter.setValueClass(Double.class);
+        formatter.setMinimum(0.0);
+        formatter.setMaximum(Double.MAX_VALUE);
         formatter.setAllowsInvalid(false);
         formatter.setCommitsOnValidEdit(true);
+
         return new JFormattedTextField(formatter);
     }
 }

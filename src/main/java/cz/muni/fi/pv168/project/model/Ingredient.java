@@ -1,25 +1,28 @@
 package cz.muni.fi.pv168.project.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import cz.muni.fi.pv168.project.export.json.deserializers.IngredientJsonDeserializer;
+import cz.muni.fi.pv168.project.export.json.seralizers.IngredientJsonSerializer;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
-
+@JsonSerialize(using = IngredientJsonSerializer.class)
 @JsonDeserialize(using = IngredientJsonDeserializer.class)
 public class Ingredient extends Entity{
     private String name;
     private Unit defaultUnit;
-    private int caloriesPerUnit;
+    private float caloriesPerUnit;
 
     public Ingredient(String name, Unit defaultUnit, int caloriesPerUnit) {
         this.name = name;
         this.defaultUnit = defaultUnit;
-        this.caloriesPerUnit = caloriesPerUnit;
+        this.caloriesPerUnit = caloriesPerUnit; // calories per default unit
     }
-    // TODO do not delete
-    public Ingredient() {
 
+    public Ingredient() {
     }
 
     public String getName() {
@@ -38,13 +41,12 @@ public class Ingredient extends Entity{
         this.defaultUnit = defaultUnit;
     }
 
-    public int getCaloriesPerUnit() {
+    public float getCaloriesPerUnit() {
         return caloriesPerUnit;
     }
 
-    public int getTotalCalories(Unit anyUnit, int amount) { // TODO distinguish type: eg. WEIGHABLE per 100g, COUNTABLE per 1pc
-        float countBase = anyUnit.getConversionRate() * amount;
-        return (int) (countBase * caloriesPerUnit);
+    public int getTotalCalories(Unit anyUnit, int amount) {
+        return (int) (caloriesPerUnit / defaultUnit.getConversionRate() * anyUnit.getConversionRate() * amount);
     }
 
     public int countInstances(List<Recipe> recipes){
@@ -57,8 +59,10 @@ public class Ingredient extends Entity{
         return count;
     }
 
-    public void setCaloriesPerUnit(int caloriesPerUnit) {
-        this.caloriesPerUnit = caloriesPerUnit;
+    public void setCaloriesPerUnit(float caloriesPerUnit) {
+        BigDecimal bigDecimal = new BigDecimal(Float.toString(caloriesPerUnit));
+        bigDecimal = bigDecimal.setScale(3, RoundingMode.HALF_UP);
+        this.caloriesPerUnit = bigDecimal.floatValue();
     }
 
     @Override
@@ -79,3 +83,4 @@ public class Ingredient extends Entity{
         return this.name.equals(theirs.name) && this.defaultUnit.equals(theirs.defaultUnit);
     }
 }
+

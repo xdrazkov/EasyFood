@@ -20,7 +20,7 @@ public class IngredientTableModel extends BasicTableModel<Ingredient> {
         return List.of(
                 Column.readonly("Name", String.class, Ingredient::getName),
                 Column.readonly("Default unit", Unit.class, Ingredient::getDefaultUnit),
-                Column.readonly("Nutritional value (kcal)", Integer.class, Ingredient::getCaloriesPerUnit)
+                Column.readonly("Nutritional value (kcal)", Float.class, Ingredient::getCaloriesPerUnit)
         );
     }
 
