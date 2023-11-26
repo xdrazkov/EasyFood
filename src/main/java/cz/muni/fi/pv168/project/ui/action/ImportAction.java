@@ -26,11 +26,12 @@ public final class ImportAction extends GeneralAction {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformedImpl(ActionEvent e) {
         var fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         importService.getFormats().forEach(f -> fileChooser.addChoosableFileFilter(new Filter(f)));
 
+        // TODO import strategy (delete all / add to existing)
         int dialogResult = fileChooser.showOpenDialog(recipeTablePanel);
 
         if (dialogResult == JFileChooser.APPROVE_OPTION) {
@@ -41,7 +42,6 @@ public final class ImportAction extends GeneralAction {
             callback.run();
             JOptionPane.showMessageDialog(recipeTablePanel, "Import was done");
         }
-        super.actionPerformed(e);
     }
 
     @Override

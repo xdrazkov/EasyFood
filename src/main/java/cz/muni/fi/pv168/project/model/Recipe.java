@@ -7,6 +7,7 @@ import cz.muni.fi.pv168.project.export.json.seralizers.RecipeJsonSerializer;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @JsonSerialize(using = RecipeJsonSerializer.class)
 @JsonDeserialize(using = RecipeJsonDeserializer.class)
@@ -139,5 +140,17 @@ public class Recipe extends Entity {
     public boolean deleteIngredient(Ingredient ingredient) {
         var deletedRecord = this.ingredients.remove(ingredient);
         return deletedRecord != null;
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (! (o instanceof Recipe that)) {
+            return false;
+        }
+        return this.title.equals(that.title);
+    }
+
+    @Override
+    public String toString(){
+        return this.title;
     }
 }

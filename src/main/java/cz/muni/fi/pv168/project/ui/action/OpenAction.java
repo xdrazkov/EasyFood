@@ -22,7 +22,7 @@ public final class OpenAction extends GeneralAction {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformedImpl(ActionEvent e) {
         JTable table = super.getTable();
         int[] selectedRows = table.getSelectedRows();
         if (selectedRows.length != 1) {

@@ -4,6 +4,7 @@ import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Unit;
 import cz.muni.fi.pv168.project.service.crud.CrudService;
+import cz.muni.fi.pv168.project.service.validation.ValidationException;
 import cz.muni.fi.pv168.project.ui.model.BasicTableModel;
 import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
@@ -32,7 +33,7 @@ public final class AddAction extends GeneralAction {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformedImpl(ActionEvent e) {
         JTable table = super.getTable();
         if (table.isEditing()) {
             table.getCellEditor().cancelCellEditing();
@@ -40,7 +41,7 @@ public final class AddAction extends GeneralAction {
 
         BasicTableModel model = (BasicTableModel) table.getModel();
         model.performAddAction(table, unitTableModel, categoryCrudService.findAll(), ingredientCrudService.findAll(), unitCrudService.findAll());
-        super.actionPerformed(e);
+
     }
 
     @Override

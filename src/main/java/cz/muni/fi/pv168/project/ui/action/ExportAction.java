@@ -29,7 +29,7 @@ public final class ExportAction extends GeneralAction {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformedImpl(ActionEvent e) {
         var fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         exportService.getFormats().forEach(f -> fileChooser.addChoosableFileFilter(new Filter(f)));

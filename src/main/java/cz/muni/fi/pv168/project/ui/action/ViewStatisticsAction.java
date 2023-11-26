@@ -24,7 +24,7 @@ public class ViewStatisticsAction extends GeneralAction {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformedImpl(ActionEvent e) {
         JTable table = super.getTable();
         var dialog = new ViewStatisticsDialog(recipeCrudService.findAll(), ingredientCrudService.findAll());
         dialog.show(table, "View Statistics");

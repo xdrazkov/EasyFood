@@ -54,9 +54,4 @@ public class Category extends Entity{
         }
         return this.color.equals(that.color) && this.name.equals(that.name);
     }
-
-    @Override
-    public int hashCode() {
-        return this.color.getBlue() + this.color.getRed() + this.color.getRed();
-    }
 }

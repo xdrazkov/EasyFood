@@ -31,7 +31,10 @@ public class GenericCrudService <T extends Entity> implements CrudService<T> {
         if (newEntity.getGuid() == null || newEntity.getGuid().isBlank()) {
             newEntity.setGuid(guidProvider.newGuid());
         } else if (entityRepository.existsByGuid(newEntity.getGuid())) {
-            throw new EntityAlreadyExistsException("Ingredient with given guid already exists: " + newEntity.getGuid());
+            throw new EntityAlreadyExistsException(newEntity.getClass() + " with given guid already exists: " + newEntity.getGuid());
+        }
+        if (findAll().contains(newEntity)) {
+            validationResult.add(newEntity + " already exists in memory");
         }
         if (validationResult.isValid()) {
             entityRepository.create(newEntity);

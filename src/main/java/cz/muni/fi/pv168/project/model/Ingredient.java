@@ -71,11 +71,6 @@ public class Ingredient extends Entity{
     }
 
     @Override
-    public int hashCode() {
-        return name.hashCode();
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (! (obj instanceof Ingredient theirs)) {
             return false;

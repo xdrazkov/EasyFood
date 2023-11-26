@@ -49,4 +49,12 @@ public class Unit extends Entity {
     public String toString() {
         return name;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (! (o instanceof Unit that)) {
+            return false;
+        }
+        return this.name.equals(that.name) && this.ingredientType.equals(that.ingredientType);
+    }
 }

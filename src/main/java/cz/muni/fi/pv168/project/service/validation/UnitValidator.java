@@ -10,9 +10,14 @@ public class UnitValidator implements Validator<Unit> {
     @Override
     public ValidationResult validate(Unit model) {
         var validators = List.of(
-                Validator.extracting(Unit::getName, new StringLengthValidator(1, 150, "Unit name"))
+                Validator.extracting(Unit::getName, new StringLengthValidator(1, 150, "Unit name")),
+                Validator.extracting(Unit::getAbbreviation, new StringLengthValidator(1, 10, "Unit abbrevation"))
         );
 
-        return Validator.compose(validators).validate(model);
+        ValidationResult validationResult = Validator.compose(validators).validate(model);
+        if (model.getConversionRate() <= 0) {
+            validationResult.add("Unit conversion rate has to be higher than 0");
+        }
+        return validationResult;
     }
 }
