@@ -30,14 +30,6 @@ public interface DataAccessObject<E> {
     Collection<E> findAll();
 
     /**
-     * Finds entity by ID.
-     *
-     * @param id entity id
-     * @return either empty if not found or the entity instance
-     */
-    Optional<E> findById(long id);
-
-    /**
      * Finds entity by GUID.
      *
      * @param guid entity guid
