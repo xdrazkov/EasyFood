@@ -5,6 +5,10 @@ import cz.muni.fi.pv168.project.export.json.BatchJsonExporter;
 import cz.muni.fi.pv168.project.export.json.BatchJsonImporter;
 import cz.muni.fi.pv168.project.export.pdf.BatchPdfExporter;
 import cz.muni.fi.pv168.project.model.*;
+import cz.muni.fi.pv168.project.service.CategoryDependencyChecker;
+import cz.muni.fi.pv168.project.service.IngredientDependencyChecker;
+import cz.muni.fi.pv168.project.service.RecipeDependencyChecker;
+import cz.muni.fi.pv168.project.service.UnitDependencyChecker;
 import cz.muni.fi.pv168.project.service.crud.GenericCrudService;
 import cz.muni.fi.pv168.project.service.export.GenericExportService;
 import cz.muni.fi.pv168.project.service.export.GenericImportService;
@@ -87,6 +91,11 @@ public class MainWindow {
         var ingredientCrudService = new GenericCrudService<>(ingredientRepository, ingredientValidator, guidProvider);
         var categoryCrudService = new GenericCrudService<>(categoryRepository, categoryValidator, guidProvider);
         var unitCrudService = new GenericCrudService<>(unitRepository, unitValidator, guidProvider);
+
+        recipeCrudService.setGeneralDependencyChecker(new RecipeDependencyChecker());
+        ingredientCrudService.setGeneralDependencyChecker(new IngredientDependencyChecker(recipeCrudService));
+        categoryCrudService.setGeneralDependencyChecker(new CategoryDependencyChecker(recipeCrudService));
+        unitCrudService.setGeneralDependencyChecker(new UnitDependencyChecker(recipeCrudService, ingredientCrudService));
 
         // Create models
         RecipeTableModel recipeTableModel = new RecipeTableModel(recipeCrudService);

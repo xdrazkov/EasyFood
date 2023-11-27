@@ -8,6 +8,7 @@ import cz.muni.fi.pv168.project.export.json.seralizers.IngredientJsonSerializer;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Objects;
 
 @JsonSerialize(using = IngredientJsonSerializer.class)
 @JsonDeserialize(using = IngredientJsonDeserializer.class)
@@ -75,7 +76,7 @@ public class Ingredient extends Entity{
         if (! (obj instanceof Ingredient theirs)) {
             return false;
         }
-        return this.name.equals(theirs.name) && this.defaultUnit.equals(theirs.defaultUnit);
+        return Objects.equals(this.name, theirs.name) && Objects.equals(this.defaultUnit, theirs.defaultUnit);
     }
 }
 

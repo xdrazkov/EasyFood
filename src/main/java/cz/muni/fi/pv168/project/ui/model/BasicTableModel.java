@@ -80,7 +80,8 @@ public abstract class BasicTableModel<E extends Entity> extends AbstractTableMod
 
     public void deleteRow(int rowIndex) {
         var entityToBeDeleted = getEntity(rowIndex);
-        entityCrudService.deleteByGuid(entityToBeDeleted.getGuid());
+        entityCrudService.deleteByGuid(entityToBeDeleted.getGuid())
+                .intoException();
         entities.remove(rowIndex);
         fireTableRowsDeleted(rowIndex, rowIndex);
     }

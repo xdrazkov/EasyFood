@@ -3,15 +3,19 @@ package cz.muni.fi.pv168.project.service.crud;
 import cz.muni.fi.pv168.project.model.Entity;
 import cz.muni.fi.pv168.project.model.GuidProvider;
 import cz.muni.fi.pv168.project.repository.Repository;
+import cz.muni.fi.pv168.project.service.GeneralDependencyChecker;
 import cz.muni.fi.pv168.project.service.validation.ValidationResult;
 import cz.muni.fi.pv168.project.service.validation.Validator;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class GenericCrudService <T extends Entity> implements CrudService<T> {
     private final Repository<T> entityRepository;
     private final Validator<T> entityValidator;
     private final GuidProvider guidProvider;
+    private GeneralDependencyChecker<T> generalDependencyChecker;
 
     public GenericCrudService(Repository<T> entityRepository, Validator<T> entityValidator,
                              GuidProvider guidProvider) {
@@ -54,12 +58,25 @@ public class GenericCrudService <T extends Entity> implements CrudService<T> {
     }
 
     @Override
-    public void deleteByGuid(String guid) {
+    public ValidationResult deleteByGuid(String guid) {
+        T entity =  entityRepository.findByGuid(guid).get();
+        var dependentEntities = generalDependencyChecker.getDependentEntities(entity);
+        if (!dependentEntities.isEmpty()) {
+            var validationResult = new ValidationResult();
+            validationResult.add(dependentEntities.stream().map(e -> e.toString() + " is dependent on " + entity).collect(Collectors.toSet()));
+            return validationResult;
+        }
         entityRepository.deleteByGuid(guid);
+
+        return ValidationResult.success();
     }
 
     @Override
     public void deleteAll() {
         entityRepository.deleteAll();
+    }
+
+    public void setGeneralDependencyChecker(GeneralDependencyChecker<T> generalDependencyChecker) {
+        this.generalDependencyChecker = generalDependencyChecker;
     }
 }
