@@ -3,6 +3,8 @@ package cz.muni.fi.pv168.project.storage.sql.entity.mapper;
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.storage.sql.entity.CategoryEntity;
 
+import java.awt.*;
+
 /**
  * Mapper from the {@link CategoryEntity} to {@link Category}.
  */
@@ -13,7 +15,7 @@ public final class CategoryMapper implements EntityMapper<CategoryEntity, Catego
         return new Category(
                 dbCategory.guid(),
                 dbCategory.name(),
-                dbCategory.color()
+                new Color(dbCategory.color())
         );
     }
 
@@ -31,7 +33,7 @@ public final class CategoryMapper implements EntityMapper<CategoryEntity, Catego
         return new CategoryEntity(
                 entity.getGuid(),
                 entity.getName(),
-                entity.getColorInInt()
+                entity.getColor().getRGB()
                 );
     }
 }
