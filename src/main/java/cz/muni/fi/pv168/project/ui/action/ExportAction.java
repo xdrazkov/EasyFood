@@ -29,7 +29,7 @@ public final class ExportAction extends GeneralAction {
     }
 
     @Override
-    public void actionPerformedImpl(ActionEvent e) {
+    protected void actionPerformedImpl(ActionEvent e) {
         var fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         exportService.getFormats().forEach(f -> fileChooser.addChoosableFileFilter(new Filter(f)));
@@ -53,7 +53,7 @@ public final class ExportAction extends GeneralAction {
     }
 
     @Override
-    protected void setShortDescription() {
-        putValue(SHORT_DESCRIPTION, "Export " + super.getCurrentTabName());
+    public void setShortDescription() {
+        putValue(SHORT_DESCRIPTION, "Export " + getCurrentTabName());
     }
 }

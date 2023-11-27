@@ -4,7 +4,6 @@ import cz.muni.fi.pv168.project.model.Recipe;
 import cz.muni.fi.pv168.project.ui.model.RecipeTableModel;
 import cz.muni.fi.pv168.project.ui.renderers.RecipeCategoryRenderer;
 
-import javax.swing.table.AbstractTableModel;
 import java.util.function.Consumer;
 
 public class RecipeTablePanel extends GeneralTablePanel<Recipe>{

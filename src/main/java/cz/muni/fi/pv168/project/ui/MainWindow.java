@@ -34,7 +34,6 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +84,6 @@ public class MainWindow {
         var ingredientRepository = new InMemoryRepository<>(ingredients);
         var categoryRepository = new InMemoryRepository<>(categories);
         var unitRepository = new InMemoryRepository<>(units);
-
 
         var recipeCrudService = new GenericCrudService<>(recipeRepository, recipeValidator, guidProvider);
         var ingredientCrudService = new GenericCrudService<>(ingredientRepository, ingredientValidator, guidProvider);
@@ -166,15 +164,15 @@ public class MainWindow {
         frame.pack();
 
         // maps starting table to all actions
-        setCurrentTableToActions(getCurrentTableFromPanel(tabbedPane));
+        setCurrentTableToActions(getCurrentTablePanelFromPanel(tabbedPane));
         tabbedPane.addChangeListener(new ChangeListener() {
             // when tab changes
             @Override
             public void stateChanged(ChangeEvent e) {
                 JTabbedPane tabPanel = (JTabbedPane) e.getSource();
 
-                var currTable = getCurrentTableFromPanel(tabPanel);
-                setCurrentTableToActions(currTable);
+                var currGeneralTable = getCurrentTablePanelFromPanel(tabPanel);
+                setCurrentTableToActions(currGeneralTable);
                 setToDefaultActionEnablement(getCurrentTableIndex(tabPanel));
 
                 // clear all row selections
@@ -278,10 +276,12 @@ public class MainWindow {
         editAction.setEnabled(selectedItemsCount == 1 && isActionAllowed(editAction, currentTabIndex));
         deleteAction.setEnabled(selectedItemsCount >= 1 && isActionAllowed(deleteAction, currentTabIndex));
         exportAction.setEnabled(selectedItemsCount >= 1 && isActionAllowed(exportAction, currentTabIndex));
+
+        actions.forEach(GeneralAction::setShortDescription);
     }
 
-    private void setCurrentTableToActions(JTable table) {
-        this.actions.forEach(x -> x.setTable(table));
+    private <T extends Entity> void setCurrentTableToActions(GeneralTablePanel<T> generalTablePanel) {
+        this.actions.forEach(x -> x.setGeneralTablePanel(generalTablePanel));
     }
 
     private Integer getCurrentTableIndex(JTabbedPane tab) {
@@ -291,6 +291,10 @@ public class MainWindow {
         JPanel panel = (JPanel) tab.getComponentAt(getCurrentTableIndex(tab));
         JScrollPane scrollPane = (JScrollPane) panel.getComponent(0);
         return (JTable) scrollPane.getViewport().getView();
+    }
+
+    private <T extends Entity> GeneralTablePanel<T> getCurrentTablePanelFromPanel(JTabbedPane tab) {
+        return (GeneralTablePanel<T>) tab.getComponentAt(getCurrentTableIndex(tab));
     }
 
     private void setToDefaultActionEnablement(int currentTabIndex) {

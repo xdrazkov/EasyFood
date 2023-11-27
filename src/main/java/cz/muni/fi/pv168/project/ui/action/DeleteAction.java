@@ -1,7 +1,6 @@
 package cz.muni.fi.pv168.project.ui.action;
 
 import cz.muni.fi.pv168.project.ui.model.BasicTableModel;
-import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
 
 import javax.swing.*;
@@ -20,7 +19,7 @@ public final class DeleteAction extends GeneralAction {
     }
 
     @Override
-    public void actionPerformedImpl(ActionEvent e) {
+    protected void actionPerformedImpl(ActionEvent e) {
         int dialogButton = JOptionPane.YES_NO_OPTION;
         int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure you want to delete selected item(s)?","Warning",dialogButton);
         if (dialogResult != JOptionPane.YES_OPTION){
@@ -39,7 +38,7 @@ public final class DeleteAction extends GeneralAction {
     }
 
     @Override
-    protected void setShortDescription() {
-        putValue(SHORT_DESCRIPTION, "Delete " + super.getCurrentTabName());
+    public void setShortDescription() {
+        putValue(SHORT_DESCRIPTION, "Delete " + getCurrentTabName());
     }
 }

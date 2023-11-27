@@ -1,11 +1,6 @@
 package cz.muni.fi.pv168.project.ui.action;
 
-import cz.muni.fi.pv168.project.ui.dialog.*;
 import cz.muni.fi.pv168.project.ui.model.BasicTableModel;
-import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
-import cz.muni.fi.pv168.project.ui.model.IngredientTableModel;
-import cz.muni.fi.pv168.project.ui.model.RecipeTableModel;
-import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
 
 import javax.swing.*;
@@ -22,7 +17,7 @@ public final class OpenAction extends GeneralAction {
     }
 
     @Override
-    public void actionPerformedImpl(ActionEvent e) {
+    protected void actionPerformedImpl(ActionEvent e) {
         JTable table = super.getTable();
         int[] selectedRows = table.getSelectedRows();
         if (selectedRows.length != 1) {
@@ -37,7 +32,7 @@ public final class OpenAction extends GeneralAction {
     }
 
     @Override
-    protected void setShortDescription() {
-        putValue(SHORT_DESCRIPTION, "Open " + super.getCurrentTabName());
+    public void setShortDescription() {
+        putValue(SHORT_DESCRIPTION, "Open " + getCurrentTabName());
     }
 }

@@ -26,7 +26,7 @@ public final class ImportAction extends GeneralAction {
     }
 
     @Override
-    public void actionPerformedImpl(ActionEvent e) {
+    protected void actionPerformedImpl(ActionEvent e) {
         var fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         importService.getFormats().forEach(f -> fileChooser.addChoosableFileFilter(new Filter(f)));
@@ -43,9 +43,13 @@ public final class ImportAction extends GeneralAction {
             JOptionPane.showMessageDialog(recipeTablePanel, "Import was done");
         }
     }
+    @Override
+    protected String getCurrentTabName() {
+        return generalTablePanel.getTablePanelType().getPluralName();
+    }
 
     @Override
-    protected void setShortDescription() {
-        putValue(SHORT_DESCRIPTION, "Import " + super.getCurrentTabName());
+    public void setShortDescription() {
+        putValue(SHORT_DESCRIPTION, "Import " + getCurrentTabName());
     }
 }
