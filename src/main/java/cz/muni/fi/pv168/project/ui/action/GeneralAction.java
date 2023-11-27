@@ -82,7 +82,7 @@ public abstract class GeneralAction extends AbstractAction {
         JPanel panel = new JPanel();
         panel.add(new JScrollPane(errorList));
 
-        JOptionPane.showMessageDialog(null, panel,"Action not successful!\n", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, panel,"Action not successful!", JOptionPane.ERROR_MESSAGE);
     }
 
 }
