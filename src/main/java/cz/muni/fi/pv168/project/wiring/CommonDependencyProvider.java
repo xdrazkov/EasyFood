@@ -8,6 +8,7 @@ import cz.muni.fi.pv168.project.repository.Repository;
 import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.service.export.ExportService;
 import cz.muni.fi.pv168.project.service.export.ImportService;
+import cz.muni.fi.pv168.project.storage.sql.db.DatabaseManager;
 
 public class CommonDependencyProvider implements DependencyProvider {
     private final Repository<Unit> unitRepository = null;
@@ -23,7 +24,31 @@ public class CommonDependencyProvider implements DependencyProvider {
     private final ImportService importService = null;
     private final ExportService exportService = null;
 
-    // TODO constructor
+    private final DatabaseManager databaseManager;
+
+    public CommonDependencyProvider(DatabaseManager databaseManager) {
+        this.databaseManager = databaseManager;
+
+        // TODO finish
+//        var departmentMapper = new DepartmentMapper();
+//        var departmentDao = new DepartmentDao(databaseManager::getConnectionHandler);
+//
+//        var employeeMapper = new EmployeeMapper(departmentDao, departmentMapper);
+//
+//        this.departments = new DepartmentSqlRepository(
+//                departmentDao,
+//                departmentMapper
+//        );
+//        this.employees = new EmployeeSqlRepository(
+//                new EmployeeDao(databaseManager::getConnectionHandler),
+//                employeeMapper
+//        );
+    }
+
+    @Override
+    public DatabaseManager getDatabaseManager() {
+        return databaseManager;
+    }
 
     @Override
     public Repository<Unit> getUnitRepository() {
