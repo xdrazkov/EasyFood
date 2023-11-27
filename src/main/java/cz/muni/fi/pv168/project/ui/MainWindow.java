@@ -102,26 +102,19 @@ public class MainWindow {
         IngredientTableModel ingredientTableModel = new IngredientTableModel(ingredientCrudService);
         CategoryTableModel categoryTableModel = new CategoryTableModel(categoryCrudService);
         UnitTableModel unitTableModel = new UnitTableModel(unitCrudService);
-        List<BasicTableModel<?>> tableModels =
+        List<BasicTableModel<? extends Entity>> tableModels =
                 List.of(recipeTableModel, ingredientTableModel, categoryTableModel, unitTableModel);
 
         // Create panels
-        List<TablePanel> tablePanels = new ArrayList<>();
-        for (var tableModel: tableModels) {
-            tablePanels.add(new TablePanel(tableModel, this::changeActionsState));
-        }
-
-        var recipeTablePanel = tablePanels.get(RECIPE.ordinal());
-        var ingredientTablePanel = tablePanels.get(INGREDIENT.ordinal());
-        var categoryTablePanel = tablePanels.get(CATEGORY.ordinal());
-        var unitTablePanel = tablePanels.get(UNIT.ordinal());
+        var recipeTablePanel = new RecipeTablePanel(recipeTableModel, this::changeActionsState);
+        var ingredientTablePanel = new IngredientTablePanel(ingredientTableModel, this::changeActionsState);;
+        var categoryTablePanel = new CategoryTablePanel(categoryTableModel, this::changeActionsState);
+        var unitTablePanel = new UnitTablePanel(unitTableModel, this::changeActionsState);
+        List<GeneralTablePanel<? extends Entity>> generalTablePanels = List.of(recipeTablePanel, ingredientTablePanel, categoryTablePanel, unitTablePanel);
 
         // Add the panels to tabbed pane
         this.tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("Recipes", recipeTablePanel);
-        tabbedPane.addTab("Ingredients", ingredientTablePanel);
-        tabbedPane.addTab("Categories", categoryTablePanel);
-        tabbedPane.addTab("Units", unitTablePanel);
+        generalTablePanels.forEach(panel -> tabbedPane.addTab(panel.getTablePanelType().getPluralName(), panel));
         tabbedPane.setBorder(padding);
         frame.add(tabbedPane, BorderLayout.CENTER);
 
@@ -149,7 +142,7 @@ public class MainWindow {
 
 
         // Add popup menu, toolbar, menubar, status bar
-        tablePanels.forEach(
+        generalTablePanels.forEach(
                 r -> r.getTable().setComponentPopupMenu(createTablePopupMenu(r.getTablePanelType())));
         JLabel statusBar = createStatusBar();
         setStatusBarName(statusBar);
@@ -185,7 +178,7 @@ public class MainWindow {
                 setToDefaultActionEnablement(getCurrentTableIndex(tabPanel));
 
                 // clear all row selections
-                tablePanels.forEach(r -> r.getTable().clearSelection());
+                generalTablePanels.forEach(r -> r.getTable().clearSelection());
 
                 // filters visible only on recipe tab
                 int currTabIndex = tabPanel.getSelectedIndex();

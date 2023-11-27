@@ -7,7 +7,7 @@ import cz.muni.fi.pv168.project.service.export.batch.BatchOperationException;
 import cz.muni.fi.pv168.project.service.export.format.Format;
 import cz.muni.fi.pv168.project.service.export.format.FormatMapping;
 import cz.muni.fi.pv168.project.ui.model.RecipeTableModel;
-import cz.muni.fi.pv168.project.ui.panels.TablePanel;
+import cz.muni.fi.pv168.project.ui.panels.GeneralTablePanel;
 
 import javax.swing.*;
 import java.util.Arrays;
@@ -24,12 +24,12 @@ public class GenericExportService implements ExportService {
 
     private final RowSorter<RecipeTableModel> recipeRowSorter;
 
-    private final TablePanel tablePanel;
+    private final GeneralTablePanel generalTablePanel;
 
-    public GenericExportService(RowSorter<RecipeTableModel> recipeRowSorter, TablePanel tablePanel, Collection<BatchExporter> exporters) {
+    public GenericExportService(RowSorter<RecipeTableModel> recipeRowSorter, GeneralTablePanel generalTablePanel, Collection<BatchExporter> exporters) {
         this.exporters = new FormatMapping<>(exporters);
         this.recipeRowSorter = recipeRowSorter;
-        this.tablePanel = tablePanel;
+        this.generalTablePanel = generalTablePanel;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class GenericExportService implements ExportService {
     public void exportData(String filePath) {
         var exporter = getExporter(filePath);
 
-        List<Recipe> selectedRecipes = Arrays.stream(tablePanel.getTable().getSelectedRows())
+        List<Recipe> selectedRecipes = Arrays.stream(generalTablePanel.getTable().getSelectedRows())
                 .mapToObj(row -> recipeRowSorter.getModel().getEntity(recipeRowSorter.convertRowIndexToModel(row)))
                 .collect(Collectors.toList());
 

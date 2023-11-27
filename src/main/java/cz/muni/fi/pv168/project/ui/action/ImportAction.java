@@ -1,7 +1,7 @@
 package cz.muni.fi.pv168.project.ui.action;
 
 import cz.muni.fi.pv168.project.service.export.ImportService;
-import cz.muni.fi.pv168.project.ui.panels.TablePanel;
+import cz.muni.fi.pv168.project.ui.panels.GeneralTablePanel;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
 import cz.muni.fi.pv168.project.util.Filter;
 
@@ -11,11 +11,11 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 
 public final class ImportAction extends GeneralAction {
-    private final TablePanel recipeTablePanel;
+    private final GeneralTablePanel recipeTablePanel;
     private final ImportService importService;
     private final Runnable callback;
 
-    public ImportAction(TablePanel recipeTablePanel, ImportService importService, Runnable callback) {
+    public ImportAction(GeneralTablePanel recipeTablePanel, ImportService importService, Runnable callback) {
         super("Import", Icons.IMPORT_ICON);
         this.recipeTablePanel = recipeTablePanel;
         this.importService = importService;
