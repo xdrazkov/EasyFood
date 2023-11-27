@@ -43,7 +43,16 @@ public final class ExportAction extends GeneralAction {
             }
 
             try {
-                exportService.exportData(exportFile);
+                String finalExportFile = exportFile;
+                SwingWorker<Void, String> swingWorker = new SwingWorker<Void, String>() {
+                    @Override
+                    protected Void doInBackground() {
+                        exportService.exportData(finalExportFile);
+
+                        return null;
+                    }
+                };
+                swingWorker.execute();
             } catch (DataManipulationException | BatchOperationException ex) {
                 JOptionPane.showMessageDialog(parent, "Export has successfully failed.\n" + ex.getMessage());
                 return;

@@ -37,9 +37,16 @@ public final class ImportAction extends GeneralAction {
         if (dialogResult == JFileChooser.APPROVE_OPTION) {
             File importFile = fileChooser.getSelectedFile();
 
-            importService.importData(importFile.getAbsolutePath());
+            SwingWorker<Void, File> swingWorker = new SwingWorker<Void, File>() {
+                @Override
+                protected Void doInBackground() {
+                    importService.importData(importFile.getAbsolutePath());
+                    callback.run();
+                    return null;
+                }
+            };
+            swingWorker.execute();
 
-            callback.run();
             JOptionPane.showMessageDialog(recipeTablePanel, "Import was done");
         }
     }
