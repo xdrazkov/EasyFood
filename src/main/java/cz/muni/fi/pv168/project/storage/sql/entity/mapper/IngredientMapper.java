@@ -26,9 +26,9 @@ public final class IngredientMapper implements EntityMapper<IngredientEntity, In
     @Override
     public Ingredient mapToBusiness(IngredientEntity entity) {
         var unit = unitDao
-                .findByGuid(entity.guid())
+                .findByGuid(entity.defaultUnit())
                 .map(unitMapper::mapToBusiness)
-                .orElseThrow(() -> new DataStorageException("Ingredient not found, id: " +
+                .orElseThrow(() -> new DataStorageException("Unit not found, id: " +
                         entity.guid()));
 
         return new Ingredient(
