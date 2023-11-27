@@ -23,11 +23,11 @@ public final class CategoryMapper implements EntityMapper<CategoryEntity, Catego
     }
 
     @Override
-    public CategoryEntity mapExistingEntityToDatabase(Category entity, Long dbId) {
-        return getCategoryEntity(entity, dbId);
+    public CategoryEntity mapExistingEntityToDatabase(Category entity, String guid) {
+        return getCategoryEntity(entity, guid);
     }
 
-    private static CategoryEntity getCategoryEntity(Category entity, Long dbId) {
+    private static CategoryEntity getCategoryEntity(Category entity, String guid) {
         return new CategoryEntity(
                 entity.getGuid(),
                 entity.getName(),

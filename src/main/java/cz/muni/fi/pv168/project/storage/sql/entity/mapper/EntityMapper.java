@@ -29,8 +29,8 @@ public interface EntityMapper<E, M> {
      * Map existing business entity to database entity
      *
      * @param entity existing business entity
-     * @param dbId existing entity db id
+     * @param guid existing entity guid
      * @return database entity
      */
-    E mapExistingEntityToDatabase(M entity, Long dbId);
+    E mapExistingEntityToDatabase(M entity, String guid);
 }
