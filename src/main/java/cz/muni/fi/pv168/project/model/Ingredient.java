@@ -17,6 +17,13 @@ public class Ingredient extends Entity{
     private Unit defaultUnit;
     private float caloriesPerUnit;
 
+    public Ingredient(String guid, String name, Unit defaultUnit, int caloriesPerUnit) {
+        super(guid);
+        this.name = name;
+        this.defaultUnit = defaultUnit;
+        this.caloriesPerUnit = caloriesPerUnit; // calories per default unit
+    }
+
     public Ingredient(String name, Unit defaultUnit, int caloriesPerUnit) {
         this.name = name;
         this.defaultUnit = defaultUnit;

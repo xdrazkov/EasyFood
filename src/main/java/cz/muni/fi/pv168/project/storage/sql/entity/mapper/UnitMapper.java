@@ -32,7 +32,7 @@ public final class UnitMapper implements EntityMapper<UnitEntity, Unit> {
 
     private static UnitEntity getUnitEntity(Unit entity, String guid) {
         return new UnitEntity(
-                entity.getGuid(),
+                guid,
                 entity.getName(),
                 entity.getAbbreviation(),
                 entity.getIngredientType().name(),

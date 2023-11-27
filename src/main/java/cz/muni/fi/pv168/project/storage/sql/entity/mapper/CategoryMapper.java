@@ -31,7 +31,7 @@ public final class CategoryMapper implements EntityMapper<CategoryEntity, Catego
 
     private static CategoryEntity getCategoryEntity(Category entity, String guid) {
         return new CategoryEntity(
-                entity.getGuid(),
+                guid,
                 entity.getName(),
                 entity.getColor().getRGB()
                 );
