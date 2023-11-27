@@ -16,7 +16,7 @@ import cz.muni.fi.pv168.project.service.validation.CategoryValidator;
 import cz.muni.fi.pv168.project.service.validation.IngredientValidator;
 import cz.muni.fi.pv168.project.service.validation.RecipeValidator;
 import cz.muni.fi.pv168.project.service.validation.UnitValidator;
-import cz.muni.fi.pv168.project.storage.InMemoryRepository;
+import cz.muni.fi.pv168.project.storage.memory.InMemoryRepository;
 import cz.muni.fi.pv168.project.ui.action.*;
 import cz.muni.fi.pv168.project.ui.filters.RecipeTableFilter;
 import cz.muni.fi.pv168.project.ui.filters.values.SpecialFilterCategoryValues;
