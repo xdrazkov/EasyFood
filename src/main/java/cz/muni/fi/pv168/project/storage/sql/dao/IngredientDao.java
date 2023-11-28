@@ -87,7 +87,7 @@ public final class IngredientDao implements DataAccessObject<IngredientEntity> {
     public Optional<IngredientEntity> findByGuid(String guid) {
         var sql = """
                 SELECT guid,
-                       number,
+                       name,
                        defaultUnit,
                        caloriesPerUnit
                 FROM Ingredient

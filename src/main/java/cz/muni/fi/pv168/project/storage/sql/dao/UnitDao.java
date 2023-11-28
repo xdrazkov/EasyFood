@@ -89,7 +89,7 @@ public final class UnitDao implements DataAccessObject<UnitEntity> {
     public Optional<UnitEntity> findByGuid(String guid) {
         var sql = """
                 SELECT guid,
-                       number,
+                       name,
                        abbreviation,
                        ingredientType,
                        conversionRate
