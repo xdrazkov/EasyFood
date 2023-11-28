@@ -3,6 +3,7 @@ package cz.muni.fi.pv168.project.wiring;
 import cz.muni.fi.pv168.project.export.json.BatchJsonImporter;
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Ingredient;
+import cz.muni.fi.pv168.project.model.IngredientType;
 import cz.muni.fi.pv168.project.model.Recipe;
 import cz.muni.fi.pv168.project.model.Unit;
 import cz.muni.fi.pv168.project.model.UuidGuidProvider;

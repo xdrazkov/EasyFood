@@ -76,6 +76,7 @@ public class GenericCrudService <T extends Entity> implements CrudService<T> {
         entityRepository.deleteAll();
     }
 
+    @Override
     public void setGeneralDependencyChecker(GeneralDependencyChecker<T> generalDependencyChecker) {
         this.generalDependencyChecker = generalDependencyChecker;
     }

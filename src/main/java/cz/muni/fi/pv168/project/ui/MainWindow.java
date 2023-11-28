@@ -26,6 +26,7 @@ import cz.muni.fi.pv168.project.ui.renderers.*;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
 import cz.muni.fi.pv168.project.util.Either;
 import cz.muni.fi.pv168.project.ui.filters.components.FilterComboboxBuilder;
+import cz.muni.fi.pv168.project.wiring.DependencyProvider;
 
 
 import javax.swing.*;
@@ -61,34 +62,15 @@ public class MainWindow {
 
     public static final Dimension SCREEN_SIZE = Toolkit.getDefaultToolkit().getScreenSize();
 
-    public MainWindow() {
+    public MainWindow(DependencyProvider dependencyProvider) {
         frame = createFrame();
         frame.setMinimumSize(new Dimension(1400, 800));
         frame.setIconImage(Icons.APP_ICON);
 
-        // Generate test objects
-        var testDataGenerator = new TestDataGenerator();
-        var categories = testDataGenerator.getCategories();
-        var units = testDataGenerator.getUnits();
-        var ingredients = testDataGenerator.getIngredients();
-        var recipes = testDataGenerator.getRecipes();
-
-        var recipeValidator = new RecipeValidator();
-        var ingredientValidator = new IngredientValidator();
-        var categoryValidator = new CategoryValidator();
-        var unitValidator = new UnitValidator();
-
-        var guidProvider = new UuidGuidProvider();
-
-        var recipeRepository = new InMemoryRepository<>(recipes);
-        var ingredientRepository = new InMemoryRepository<>(ingredients);
-        var categoryRepository = new InMemoryRepository<>(categories);
-        var unitRepository = new InMemoryRepository<>(units);
-
-        var recipeCrudService = new GenericCrudService<>(recipeRepository, recipeValidator, guidProvider);
-        var ingredientCrudService = new GenericCrudService<>(ingredientRepository, ingredientValidator, guidProvider);
-        var categoryCrudService = new GenericCrudService<>(categoryRepository, categoryValidator, guidProvider);
-        var unitCrudService = new GenericCrudService<>(unitRepository, unitValidator, guidProvider);
+        var recipeCrudService = dependencyProvider.getRecipeCrudService();
+        var ingredientCrudService = dependencyProvider.getIngredientCrudService();
+        var categoryCrudService = dependencyProvider.getCategoryCrudService();
+        var unitCrudService = dependencyProvider.getUnitCrudService();
 
         recipeCrudService.setGeneralDependencyChecker(new RecipeDependencyChecker());
         ingredientCrudService.setGeneralDependencyChecker(new IngredientDependencyChecker(recipeCrudService));

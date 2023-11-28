@@ -35,7 +35,6 @@ CREATE TABLE IF NOT EXISTS "Unit"
     `conversionRate`    REAL
 );
 
-
 --
 -- Ingredient table definition
 --
@@ -46,16 +45,6 @@ CREATE TABLE IF NOT EXISTS "Ingredient"
     `defaultUnit`    VARCHAR REFERENCES "Unit"(`guid`),
     `caloriesPerUnit`    REAL
 );
-
-
----
---- Insert base units
----
-INSERT INTO "Unit" ("guid", "name", "abbreviation", "ingredientType", "conversionRate")
-VALUES ('5b22b51c-3b9e-4bd4-8140-2db618ece49b', 'gram', 'g', 'WEIGHABLE', 1.0),
-       ('32d9b80f-48c1-4aa1-8903-9c0b306ab454', 'milliliter', 'ml', 'POURABLE', 1.0),
-       ('2f4c2180-0d1c-4299-bcdb-a749126b0537', 'piece', 'pc', 'COUNTABLE', 1.0)
-;
 
 
 --

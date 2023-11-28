@@ -15,8 +15,10 @@ import java.util.List;
 
 public class UnitTableModel extends BasicTableModel<Unit> {
     private static final HashMap<IngredientType, Unit> baseUnitsMap = new HashMap<>();
+    private CrudService<Unit> crudService;
     public UnitTableModel(CrudService<Unit> crudService) {
         super(crudService);
+        this.crudService = crudService;
         setupBaseUnits();
     }
 
@@ -32,9 +34,14 @@ public class UnitTableModel extends BasicTableModel<Unit> {
         Unit gram = new Unit("grams", "g", IngredientType.WEIGHABLE, 1);
         Unit milliliter = new Unit("milliliters", "ml", IngredientType.POURABLE, 1);
         Unit piece = new Unit("pieces", "pcs", IngredientType.COUNTABLE, 1);
-        addRow(gram);
-        addRow(milliliter);
-        addRow(piece);
+
+        List<Unit> units = crudService.findAll();
+        if (units.isEmpty()) {
+            crudService.create(gram);
+            crudService.create(milliliter);
+            crudService.create(piece);
+        }
+
         baseUnitsMap.put(IngredientType.WEIGHABLE, gram);
         baseUnitsMap.put(IngredientType.POURABLE, milliliter);
         baseUnitsMap.put(IngredientType.COUNTABLE, piece);
