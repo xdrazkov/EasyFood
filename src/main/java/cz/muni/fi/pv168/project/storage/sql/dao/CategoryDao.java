@@ -85,8 +85,8 @@ public final class CategoryDao implements DataAccessObject<CategoryEntity> {
     public Optional<CategoryEntity> findByGuid(String guid) {
         var sql = """
                 SELECT guid,
-                       number,
-                       name
+                       name,
+                       color
                 FROM Category
                 WHERE guid = ?
                 """;
