@@ -34,7 +34,7 @@ public final class IngredientDao implements DataAccessObject<IngredientEntity> {
             statement.setString(1, newIngredient.guid());
             statement.setString(2, newIngredient.name());
             statement.setString(3, newIngredient.defaultUnit());
-            statement.setFloat(3, newIngredient.caloriesPerUnit());
+            statement.setFloat(4, newIngredient.caloriesPerUnit());
             statement.executeUpdate();
 
             try (ResultSet keyResultSet = statement.getGeneratedKeys()) {
