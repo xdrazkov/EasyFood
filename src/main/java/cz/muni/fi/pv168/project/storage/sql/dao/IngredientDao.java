@@ -126,6 +126,7 @@ public final class IngredientDao implements DataAccessObject<IngredientEntity> {
             statement.setString(1, entity.name());
             statement.setString(2, entity.defaultUnit());
             statement.setFloat(3, entity.caloriesPerUnit());
+            statement.setString(4, entity.guid());
             int rowsUpdated = statement.executeUpdate();
             if (rowsUpdated == 0) {
                 throw new DataStorageException("Ingredient not found, guid: " + entity.guid());
