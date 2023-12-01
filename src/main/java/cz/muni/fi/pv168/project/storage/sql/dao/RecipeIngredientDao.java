@@ -96,7 +96,7 @@ public final class RecipeIngredientDao implements DataAccessObject<RecipeIngredi
                        unit,
                        amount
                 FROM RecipeIngredient
-                WHERE guid = ?
+                WHERE recipe = ?
                 """;
         try (
                 var connection = connections.get();
@@ -121,7 +121,7 @@ public final class RecipeIngredientDao implements DataAccessObject<RecipeIngredi
                        unit,
                        amount
                 FROM RecipeIngredient
-                WHERE guid = ?
+                WHERE id = ?
                 """;
         try (
                 var connection = connections.get();

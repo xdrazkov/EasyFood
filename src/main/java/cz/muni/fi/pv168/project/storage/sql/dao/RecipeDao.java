@@ -25,7 +25,7 @@ public final class RecipeDao implements DataAccessObject<RecipeEntity> {
 
     @Override
     public RecipeEntity create(RecipeEntity newRecipe) {
-        var sql = "INSERT INTO Recipe (guid, title, description, portionCount, instructions, timeToPrepare, category) VALUES (?, ?, ?, ?);";
+        var sql = "INSERT INTO Recipe (guid, title, description, portionCount, instructions, timeToPrepare, category) VALUES (?, ?, ?, ?, ?, ?, ?);";
 
         try (
                 var connection = connections.get();
@@ -34,10 +34,10 @@ public final class RecipeDao implements DataAccessObject<RecipeEntity> {
             statement.setString(1, newRecipe.guid());
             statement.setString(2, newRecipe.title());
             statement.setString(3, newRecipe.description());
-            statement.setInt(3, newRecipe.portionCount());
-            statement.setString(4, newRecipe.instructions());
-            statement.setInt(5, newRecipe.timeToPrepare());
-            statement.setString(6, newRecipe.category());
+            statement.setInt(4, newRecipe.portionCount());
+            statement.setString(5, newRecipe.instructions());
+            statement.setInt(6, newRecipe.timeToPrepare());
+            statement.setString(7, newRecipe.category());
             statement.executeUpdate();
 
             try (ResultSet keyResultSet = statement.getGeneratedKeys()) {
