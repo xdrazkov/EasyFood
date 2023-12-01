@@ -34,13 +34,14 @@ public final class RecipeMapper implements EntityMapper<RecipeEntity, Recipe> {
                         entity.guid()));
 
         return new Recipe(
+                entity.guid(),
                 entity.title(),
                 entity.description(),
                 entity.portionCount(),
                 entity.instructions(),
                 entity.timeToPrepare(),
                 category,
-                new HashMap<>() // TODO: Fix
+                new HashMap<>()
         );
     }
 

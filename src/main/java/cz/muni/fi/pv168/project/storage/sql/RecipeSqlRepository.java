@@ -78,8 +78,8 @@ public class RecipeSqlRepository implements Repository<Recipe> {
 
     @Override
     public void deleteByGuid(String guid) {
-        recipeDao.deleteByGuid(guid);
         recipeIngredientDao.deleteByRecipeGuid(guid);
+        recipeDao.deleteByGuid(guid);
     }
 
     @Override

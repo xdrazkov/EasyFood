@@ -59,7 +59,7 @@ public class GenericCrudService <T extends Entity> implements CrudService<T> {
 
     @Override
     public ValidationResult deleteByGuid(String guid) {
-        T entity =  entityRepository.findByGuid(guid).get();
+        T entity = entityRepository.findByGuid(guid).get();
         var validationResult = entityValidator.validate(entity);
         var dependentEntities = generalDependencyChecker.getDependentEntities(entity);
         if (!dependentEntities.isEmpty()) {

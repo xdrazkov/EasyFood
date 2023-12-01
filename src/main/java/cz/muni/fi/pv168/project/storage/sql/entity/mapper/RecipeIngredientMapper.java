@@ -40,7 +40,7 @@ public class RecipeIngredientMapper {
                     .orElseThrow(() -> new DataStorageException("Ingredient not found, id: " +
                             recipeIngredientEntity.ingredient()));
             Unit unit = unitDao
-                    .findByGuid(recipeIngredientEntity.ingredient())
+                    .findByGuid(recipeIngredientEntity.unit())
                     .map(unitMapper::mapToBusiness)
                     .orElseThrow(() -> new DataStorageException("Unit not found, id: " +
                             recipeIngredientEntity.ingredient()));
