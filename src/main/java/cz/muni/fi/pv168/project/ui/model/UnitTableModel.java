@@ -15,7 +15,7 @@ import java.util.List;
 
 public class UnitTableModel extends BasicTableModel<Unit> {
     private static final HashMap<IngredientType, Unit> baseUnitsMap = new HashMap<>();
-    private CrudService<Unit> crudService;
+    private final CrudService<Unit> crudService;
     public UnitTableModel(CrudService<Unit> crudService) {
         super(crudService);
         this.crudService = crudService;
@@ -37,9 +37,9 @@ public class UnitTableModel extends BasicTableModel<Unit> {
 
         List<Unit> units = crudService.findAll();
         if (units.isEmpty()) {
-            crudService.create(gram);
-            crudService.create(milliliter);
-            crudService.create(piece);
+            addRow(gram);
+            addRow(milliliter);
+            addRow(piece);
         }
 
         baseUnitsMap.put(IngredientType.WEIGHABLE, gram);
