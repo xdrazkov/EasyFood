@@ -41,10 +41,10 @@ public final class RecipeDao implements DataAccessObject<RecipeEntity> {
             statement.executeUpdate();
 
             try (ResultSet keyResultSet = statement.getGeneratedKeys()) {
-                String recipeGuid;
+                long recipeId;
 
                 if (keyResultSet.next()) {
-                    recipeGuid = keyResultSet.getString(1);
+                    recipeId = keyResultSet.getLong(1);
                 } else {
                     throw new DataStorageException("Failed to fetch generated key for: " + newRecipe);
                 }
@@ -52,7 +52,7 @@ public final class RecipeDao implements DataAccessObject<RecipeEntity> {
                     throw new DataStorageException("Multiple keys returned for: " + newRecipe);
                 }
 
-                return findByGuid(recipeGuid).orElseThrow();
+                return findByGuid(newRecipe.guid()).orElseThrow();
             }
         } catch (SQLException ex) {
             throw new DataStorageException("Failed to store: " + newRecipe, ex);

@@ -39,10 +39,10 @@ public final class UnitDao implements DataAccessObject<UnitEntity> {
             statement.executeUpdate();
 
             try (ResultSet keyResultSet = statement.getGeneratedKeys()) {
-                String unitGuid;
+                long unitId;
 
                 if (keyResultSet.next()) {
-                    unitGuid = keyResultSet.getString(1);
+                    unitId = keyResultSet.getLong(1);
                 } else {
                     throw new DataStorageException("Failed to fetch generated key for: " + newUnit);
                 }
@@ -50,7 +50,7 @@ public final class UnitDao implements DataAccessObject<UnitEntity> {
                     throw new DataStorageException("Multiple keys returned for: " + newUnit);
                 }
 
-                return findByGuid(unitGuid).orElseThrow();
+                return findByGuid(newUnit.guid()).orElseThrow();
             }
         } catch (SQLException ex) {
             throw new DataStorageException("Failed to store: " + newUnit, ex);

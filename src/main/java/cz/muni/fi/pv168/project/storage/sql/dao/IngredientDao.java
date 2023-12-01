@@ -38,10 +38,10 @@ public final class IngredientDao implements DataAccessObject<IngredientEntity> {
             statement.executeUpdate();
 
             try (ResultSet keyResultSet = statement.getGeneratedKeys()) {
-                String ingredientGuid;
+                long ingredientId;
 
                 if (keyResultSet.next()) {
-                    ingredientGuid = keyResultSet.getString(1);
+                    ingredientId = keyResultSet.getLong(1);
                 } else {
                     throw new DataStorageException("Failed to fetch generated key for: " + newIngredient);
                 }
@@ -49,7 +49,7 @@ public final class IngredientDao implements DataAccessObject<IngredientEntity> {
                     throw new DataStorageException("Multiple keys returned for: " + newIngredient);
                 }
 
-                return findByGuid(ingredientGuid).orElseThrow();
+                return findByGuid(newIngredient.guid()).orElseThrow();
             }
         } catch (SQLException ex) {
             throw new DataStorageException("Failed to store: " + newIngredient, ex);

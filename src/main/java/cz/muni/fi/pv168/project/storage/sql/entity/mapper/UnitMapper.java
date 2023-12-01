@@ -22,7 +22,7 @@ public final class UnitMapper implements EntityMapper<UnitEntity, Unit> {
 
     @Override
     public UnitEntity mapNewEntityToDatabase(Unit entity) {
-        return getUnitEntity(entity, null);
+        return getUnitEntity(entity, entity.getGuid());
     }
 
     @Override

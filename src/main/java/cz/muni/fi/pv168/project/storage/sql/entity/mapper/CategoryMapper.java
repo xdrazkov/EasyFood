@@ -21,7 +21,7 @@ public final class CategoryMapper implements EntityMapper<CategoryEntity, Catego
 
     @Override
     public CategoryEntity mapNewEntityToDatabase(Category entity) {
-        return getCategoryEntity(entity, null);
+        return getCategoryEntity(entity, entity.getGuid());
     }
 
     @Override

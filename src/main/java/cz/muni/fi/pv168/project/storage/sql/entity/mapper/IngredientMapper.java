@@ -42,7 +42,7 @@ public final class IngredientMapper implements EntityMapper<IngredientEntity, In
     // TODO Fix?
     @Override
     public IngredientEntity mapNewEntityToDatabase(Ingredient entity) {
-        return getIngredientEntity(entity, null);
+        return getIngredientEntity(entity, entity.getGuid());
     }
 
     // TODO Fix?

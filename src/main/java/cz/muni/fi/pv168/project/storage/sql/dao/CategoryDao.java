@@ -37,10 +37,10 @@ public final class CategoryDao implements DataAccessObject<CategoryEntity> {
             statement.executeUpdate();
 
             try (ResultSet keyResultSet = statement.getGeneratedKeys()) {
-                String categoryGuid;
+                long categoryId;
 
                 if (keyResultSet.next()) {
-                    categoryGuid = keyResultSet.getString(1);
+                    categoryId = keyResultSet.getLong(1);
                 } else {
                     throw new DataStorageException("Failed to fetch generated key for: " + newCategory);
                 }
@@ -48,7 +48,7 @@ public final class CategoryDao implements DataAccessObject<CategoryEntity> {
                     throw new DataStorageException("Multiple keys returned for: " + newCategory);
                 }
 
-                return findByGuid(categoryGuid).orElseThrow();
+                return findByGuid(newCategory.guid()).orElseThrow();
             }
         } catch (SQLException ex) {
             throw new DataStorageException("Failed to store: " + newCategory, ex);

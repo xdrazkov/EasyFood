@@ -1,6 +1,5 @@
 package cz.muni.fi.pv168.project.storage.sql.dao;
 
-import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.storage.sql.db.ConnectionHandler;
 import cz.muni.fi.pv168.project.storage.sql.entity.RecipeIngredientEntity;
 
@@ -39,10 +38,10 @@ public final class RecipeIngredientDao implements DataAccessObject<RecipeIngredi
             statement.executeUpdate();
 
             try (ResultSet keyResultSet = statement.getGeneratedKeys()) {
-                String recipeIngredientGuid;
+                long recipeIngredientId;
 
                 if (keyResultSet.next()) {
-                    recipeIngredientGuid = keyResultSet.getString(1);
+                    recipeIngredientId = keyResultSet.getLong(1);
                 } else {
                     throw new DataStorageException("Failed to fetch generated key for: " + newRecipeIngredient);
                 }
@@ -50,7 +49,7 @@ public final class RecipeIngredientDao implements DataAccessObject<RecipeIngredi
                     throw new DataStorageException("Multiple keys returned for: " + newRecipeIngredient);
                 }
 
-                return findByGuid(recipeIngredientGuid).orElseThrow();
+                return findById(recipeIngredientId).orElseThrow();
             }
         } catch (SQLException ex) {
             throw new DataStorageException("Failed to store: " + newRecipeIngredient, ex);
@@ -111,7 +110,34 @@ public final class RecipeIngredientDao implements DataAccessObject<RecipeIngredi
             }
             return result;
         } catch (SQLException ex) {
-            throw new DataStorageException("Failed to load recipeIngredient by guid: " + guid, ex);
+            throw new DataStorageException("Failed to load recipeIngredient by recipe guid: " + guid, ex);
+        }
+    }
+
+    public Optional<RecipeIngredientEntity> findById(long id) {
+        var sql = """
+                SELECT recipe,
+                       ingredient,
+                       unit,
+                       amount
+                FROM RecipeIngredient
+                WHERE guid = ?
+                """;
+        try (
+                var connection = connections.get();
+                var statement = connection.use().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)
+        ) {
+            statement.setLong(1, id);
+
+            var resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return Optional.of(recipeIngredientFromResultSet(resultSet));
+            } else {
+                return Optional.empty();
+            }
+
+        } catch (SQLException ex) {
+            throw new DataStorageException("Failed to load recipeIngredient by id: " + id, ex);
         }
     }
 

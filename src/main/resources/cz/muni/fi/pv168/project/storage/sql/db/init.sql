@@ -3,6 +3,7 @@
 --
 CREATE TABLE IF NOT EXISTS "Category"
 (
+    `id`           BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     `guid`      VARCHAR     NOT NULL UNIQUE,
     `name`    VARCHAR(150) NOT NULL,
     `color`    INTEGER
@@ -14,6 +15,7 @@ CREATE TABLE IF NOT EXISTS "Category"
 --
 CREATE TABLE IF NOT EXISTS "Recipe"
 (
+    `id`           BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     `guid`      VARCHAR     NOT NULL UNIQUE,
     `title`    VARCHAR(150) NOT NULL,
     `description`      VARCHAR(150) NOT NULL,
@@ -28,6 +30,7 @@ CREATE TABLE IF NOT EXISTS "Recipe"
 --
 CREATE TABLE IF NOT EXISTS "Unit"
 (
+    `id`           BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     `guid`      VARCHAR     NOT NULL UNIQUE,
     `name`    VARCHAR(150) NOT NULL,
     `abbreviation`    VARCHAR(150) NOT NULL,
@@ -40,6 +43,7 @@ CREATE TABLE IF NOT EXISTS "Unit"
 --
 CREATE TABLE IF NOT EXISTS "Ingredient"
 (
+    `id`           BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     `guid`      VARCHAR     NOT NULL UNIQUE,
     `name`    VARCHAR(150) NOT NULL,
     `defaultUnit`    VARCHAR REFERENCES "Unit"(`guid`),
@@ -52,6 +56,7 @@ CREATE TABLE IF NOT EXISTS "Ingredient"
 --
 CREATE TABLE IF NOT EXISTS "RecipeIngredient"
 (
+    `id`           BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     `recipe`    VARCHAR REFERENCES "Recipe"(`guid`),
     `ingredient`    VARCHAR REFERENCES "Ingredient"(`guid`),
     `unit`    VARCHAR REFERENCES "Unit"(`guid`),

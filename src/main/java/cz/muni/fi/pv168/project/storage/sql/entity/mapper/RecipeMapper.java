@@ -47,7 +47,7 @@ public final class RecipeMapper implements EntityMapper<RecipeEntity, Recipe> {
     // TODO Fix?
     @Override
     public RecipeEntity mapNewEntityToDatabase(Recipe entity) {
-        return getRecipeEntity(entity, null);
+        return getRecipeEntity(entity, entity.getGuid());
     }
 
     // TODO Fix?
