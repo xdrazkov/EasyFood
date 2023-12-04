@@ -13,6 +13,14 @@ public class Unit extends Entity {
         this.conversionRate = conversionRate;
     }
 
+    public Unit(String guid, String name, String abbreviation, IngredientType ingredientType, float conversionRate) {
+        super(guid);
+        this.name = name;
+        this.abbreviation = abbreviation;
+        this.ingredientType = ingredientType;
+        this.conversionRate = conversionRate;
+    }
+
     public String getName() {
         return name;
     }

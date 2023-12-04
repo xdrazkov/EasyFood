@@ -8,10 +8,10 @@ import cz.muni.fi.pv168.project.repository.Repository;
 import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.service.export.ExportService;
 import cz.muni.fi.pv168.project.service.export.ImportService;
+import cz.muni.fi.pv168.project.storage.sql.db.DatabaseManager;
 
 public interface DependencyProvider {
-    // TODO DatabaseManager provider
-    // DatabaseManager getDatabaseManager();
+     DatabaseManager getDatabaseManager();
 
     // TODO TransactionManager provider
     // TransactionManager getTransactionManager();

@@ -24,14 +24,14 @@ public class ViewStatisticsAction extends GeneralAction {
     }
 
     @Override
-    public void actionPerformedImpl(ActionEvent e) {
+    protected void actionPerformedImpl(ActionEvent e) {
         JTable table = super.getTable();
         var dialog = new ViewStatisticsDialog(recipeCrudService.findAll(), ingredientCrudService.findAll());
         dialog.show(table, "View Statistics");
     }
 
     @Override
-    protected void setShortDescription() {
+    public void setShortDescription() {
         putValue(SHORT_DESCRIPTION, "View Statistics");
     }
 }

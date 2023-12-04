@@ -16,7 +16,7 @@ import cz.muni.fi.pv168.project.service.validation.CategoryValidator;
 import cz.muni.fi.pv168.project.service.validation.IngredientValidator;
 import cz.muni.fi.pv168.project.service.validation.RecipeValidator;
 import cz.muni.fi.pv168.project.service.validation.UnitValidator;
-import cz.muni.fi.pv168.project.storage.InMemoryRepository;
+import cz.muni.fi.pv168.project.storage.memory.InMemoryRepository;
 import cz.muni.fi.pv168.project.ui.action.*;
 import cz.muni.fi.pv168.project.ui.filters.RecipeTableFilter;
 import cz.muni.fi.pv168.project.ui.filters.values.SpecialFilterCategoryValues;
@@ -26,6 +26,7 @@ import cz.muni.fi.pv168.project.ui.renderers.*;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
 import cz.muni.fi.pv168.project.util.Either;
 import cz.muni.fi.pv168.project.ui.filters.components.FilterComboboxBuilder;
+import cz.muni.fi.pv168.project.wiring.DependencyProvider;
 
 
 import javax.swing.*;
@@ -34,7 +35,6 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,35 +62,15 @@ public class MainWindow {
 
     public static final Dimension SCREEN_SIZE = Toolkit.getDefaultToolkit().getScreenSize();
 
-    public MainWindow() {
+    public MainWindow(DependencyProvider dependencyProvider) {
         frame = createFrame();
         frame.setMinimumSize(new Dimension(1400, 800));
         frame.setIconImage(Icons.APP_ICON);
 
-        // Generate test objects
-        var testDataGenerator = new TestDataGenerator();
-        var categories = testDataGenerator.getCategories();
-        var units = testDataGenerator.getUnits();
-        var ingredients = testDataGenerator.getIngredients();
-        var recipes = testDataGenerator.getRecipes();
-
-        var recipeValidator = new RecipeValidator();
-        var ingredientValidator = new IngredientValidator();
-        var categoryValidator = new CategoryValidator();
-        var unitValidator = new UnitValidator();
-
-        var guidProvider = new UuidGuidProvider();
-
-        var recipeRepository = new InMemoryRepository<>(recipes);
-        var ingredientRepository = new InMemoryRepository<>(ingredients);
-        var categoryRepository = new InMemoryRepository<>(categories);
-        var unitRepository = new InMemoryRepository<>(units);
-
-
-        var recipeCrudService = new GenericCrudService<>(recipeRepository, recipeValidator, guidProvider);
-        var ingredientCrudService = new GenericCrudService<>(ingredientRepository, ingredientValidator, guidProvider);
-        var categoryCrudService = new GenericCrudService<>(categoryRepository, categoryValidator, guidProvider);
-        var unitCrudService = new GenericCrudService<>(unitRepository, unitValidator, guidProvider);
+        var recipeCrudService = dependencyProvider.getRecipeCrudService();
+        var ingredientCrudService = dependencyProvider.getIngredientCrudService();
+        var categoryCrudService = dependencyProvider.getCategoryCrudService();
+        var unitCrudService = dependencyProvider.getUnitCrudService();
 
         recipeCrudService.setGeneralDependencyChecker(new RecipeDependencyChecker());
         ingredientCrudService.setGeneralDependencyChecker(new IngredientDependencyChecker(recipeCrudService));
@@ -102,26 +82,19 @@ public class MainWindow {
         IngredientTableModel ingredientTableModel = new IngredientTableModel(ingredientCrudService);
         CategoryTableModel categoryTableModel = new CategoryTableModel(categoryCrudService);
         UnitTableModel unitTableModel = new UnitTableModel(unitCrudService);
-        List<BasicTableModel<?>> tableModels =
+        List<BasicTableModel<? extends Entity>> tableModels =
                 List.of(recipeTableModel, ingredientTableModel, categoryTableModel, unitTableModel);
 
         // Create panels
-        List<TablePanel> tablePanels = new ArrayList<>();
-        for (var tableModel: tableModels) {
-            tablePanels.add(new TablePanel(tableModel, this::changeActionsState));
-        }
-
-        var recipeTablePanel = tablePanels.get(RECIPE.ordinal());
-        var ingredientTablePanel = tablePanels.get(INGREDIENT.ordinal());
-        var categoryTablePanel = tablePanels.get(CATEGORY.ordinal());
-        var unitTablePanel = tablePanels.get(UNIT.ordinal());
+        var recipeTablePanel = new RecipeTablePanel(recipeTableModel, this::changeActionsState);
+        var ingredientTablePanel = new IngredientTablePanel(ingredientTableModel, this::changeActionsState);;
+        var categoryTablePanel = new CategoryTablePanel(categoryTableModel, this::changeActionsState);
+        var unitTablePanel = new UnitTablePanel(unitTableModel, this::changeActionsState);
+        List<GeneralTablePanel<? extends Entity>> generalTablePanels = List.of(recipeTablePanel, ingredientTablePanel, categoryTablePanel, unitTablePanel);
 
         // Add the panels to tabbed pane
         this.tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("Recipes", recipeTablePanel);
-        tabbedPane.addTab("Ingredients", ingredientTablePanel);
-        tabbedPane.addTab("Categories", categoryTablePanel);
-        tabbedPane.addTab("Units", unitTablePanel);
+        generalTablePanels.forEach(panel -> tabbedPane.addTab(panel.getTablePanelType().getPluralName(), panel));
         tabbedPane.setBorder(padding);
         frame.add(tabbedPane, BorderLayout.CENTER);
 
@@ -149,7 +122,7 @@ public class MainWindow {
 
 
         // Add popup menu, toolbar, menubar, status bar
-        tablePanels.forEach(
+        generalTablePanels.forEach(
                 r -> r.getTable().setComponentPopupMenu(createTablePopupMenu(r.getTablePanelType())));
         JLabel statusBar = createStatusBar();
         setStatusBarName(statusBar);
@@ -173,19 +146,19 @@ public class MainWindow {
         frame.pack();
 
         // maps starting table to all actions
-        setCurrentTableToActions(getCurrentTableFromPanel(tabbedPane));
+        setCurrentTableToActions(getCurrentTablePanelFromPanel(tabbedPane));
         tabbedPane.addChangeListener(new ChangeListener() {
             // when tab changes
             @Override
             public void stateChanged(ChangeEvent e) {
                 JTabbedPane tabPanel = (JTabbedPane) e.getSource();
 
-                var currTable = getCurrentTableFromPanel(tabPanel);
-                setCurrentTableToActions(currTable);
+                var currGeneralTable = getCurrentTablePanelFromPanel(tabPanel);
+                setCurrentTableToActions(currGeneralTable);
                 setToDefaultActionEnablement(getCurrentTableIndex(tabPanel));
 
                 // clear all row selections
-                tablePanels.forEach(r -> r.getTable().clearSelection());
+                generalTablePanels.forEach(r -> r.getTable().clearSelection());
 
                 // filters visible only on recipe tab
                 int currTabIndex = tabPanel.getSelectedIndex();
@@ -285,10 +258,12 @@ public class MainWindow {
         editAction.setEnabled(selectedItemsCount == 1 && isActionAllowed(editAction, currentTabIndex));
         deleteAction.setEnabled(selectedItemsCount >= 1 && isActionAllowed(deleteAction, currentTabIndex));
         exportAction.setEnabled(selectedItemsCount >= 1 && isActionAllowed(exportAction, currentTabIndex));
+
+        actions.forEach(GeneralAction::setShortDescription);
     }
 
-    private void setCurrentTableToActions(JTable table) {
-        this.actions.forEach(x -> x.setTable(table));
+    private <T extends Entity> void setCurrentTableToActions(GeneralTablePanel<T> generalTablePanel) {
+        this.actions.forEach(x -> x.setGeneralTablePanel(generalTablePanel));
     }
 
     private Integer getCurrentTableIndex(JTabbedPane tab) {
@@ -298,6 +273,10 @@ public class MainWindow {
         JPanel panel = (JPanel) tab.getComponentAt(getCurrentTableIndex(tab));
         JScrollPane scrollPane = (JScrollPane) panel.getComponent(0);
         return (JTable) scrollPane.getViewport().getView();
+    }
+
+    private <T extends Entity> GeneralTablePanel<T> getCurrentTablePanelFromPanel(JTabbedPane tab) {
+        return (GeneralTablePanel<T>) tab.getComponentAt(getCurrentTableIndex(tab));
     }
 
     private void setToDefaultActionEnablement(int currentTabIndex) {

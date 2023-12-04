@@ -1,12 +1,9 @@
 package cz.muni.fi.pv168.project.ui.action;
 
-import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Entity;
 import cz.muni.fi.pv168.project.service.validation.ValidationException;
 import cz.muni.fi.pv168.project.ui.FilterToolbar;
-import cz.muni.fi.pv168.project.ui.model.IngredientTableModel;
-import cz.muni.fi.pv168.project.ui.model.RecipeTableModel;
-import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
+import cz.muni.fi.pv168.project.ui.panels.GeneralTablePanel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -15,15 +12,15 @@ import java.awt.event.ActionEvent;
  * provides actions to change their target context (table)
  */
 public abstract class GeneralAction extends AbstractAction {
-    private JTable table;
+    protected GeneralTablePanel<? extends Entity> generalTablePanel;
     private FilterToolbar filterToolbar;
 
     public GeneralAction(String name, Icon icon) {
         super(name, icon);
     }
 
-    public void setTable(JTable table) {
-        this.table = table;
+    public void setGeneralTablePanel(GeneralTablePanel<? extends Entity> generalTablePanel) {
+        this.generalTablePanel = generalTablePanel;
         setShortDescription();
     }
 
@@ -32,19 +29,11 @@ public abstract class GeneralAction extends AbstractAction {
     }
 
     protected String getCurrentTabName() {
-        if (this.table.getModel() instanceof RecipeTableModel) {
-            return "Recipe";
+        int selectedCount = getTable().getSelectionModel().getSelectedItemsCount();
+        if (selectedCount <= 1) {
+            return generalTablePanel.getTablePanelType().getSingularName();
         }
-        if (this.table.getModel() instanceof IngredientTableModel) {
-            return "Ingredient";
-        }
-        if (this.table.getModel() instanceof UnitTableModel) {
-            return "Unit";
-        }
-        if (this.table.getModel() instanceof Category) {
-            return "Category";
-        }
-        return "";
+        return generalTablePanel.getTablePanelType().getPluralName();
     }
 
     @Override
@@ -62,12 +51,12 @@ public abstract class GeneralAction extends AbstractAction {
     /**
      * helper method for actionPerformed
      */
-    public abstract void actionPerformedImpl(ActionEvent e);
+    protected abstract void actionPerformedImpl(ActionEvent e);
 
-    protected abstract void setShortDescription();
+    public abstract void setShortDescription();
 
     public JTable getTable() {
-        return this.table;
+        return this.generalTablePanel.getTable();
     }
 
     protected void openErrorDialog(ValidationException e) {
@@ -82,7 +71,7 @@ public abstract class GeneralAction extends AbstractAction {
         JPanel panel = new JPanel();
         panel.add(new JScrollPane(errorList));
 
-        JOptionPane.showMessageDialog(null, panel,"Action not successful!\n", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, panel,"Action not successful!", JOptionPane.ERROR_MESSAGE);
     }
 
 }

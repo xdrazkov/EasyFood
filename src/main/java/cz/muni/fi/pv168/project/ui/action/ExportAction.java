@@ -3,6 +3,7 @@ package cz.muni.fi.pv168.project.ui.action;
 import cz.muni.fi.pv168.project.service.export.DataManipulationException;
 import cz.muni.fi.pv168.project.service.export.ExportService;
 import cz.muni.fi.pv168.project.service.export.batch.BatchOperationException;
+import cz.muni.fi.pv168.project.service.validation.ValidationException;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
 import cz.muni.fi.pv168.project.util.Filter;
 
@@ -11,7 +12,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 public final class ExportAction extends GeneralAction {
 
@@ -29,7 +32,7 @@ public final class ExportAction extends GeneralAction {
     }
 
     @Override
-    public void actionPerformedImpl(ActionEvent e) {
+    protected void actionPerformedImpl(ActionEvent e) {
         var fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         exportService.getFormats().forEach(f -> fileChooser.addChoosableFileFilter(new Filter(f)));
@@ -43,8 +46,13 @@ public final class ExportAction extends GeneralAction {
             }
 
             try {
-                exportService.exportData(exportFile);
-            } catch (DataManipulationException | BatchOperationException ex) {
+                SwingWorker<List<String>, String> swingWorker = getSwingWorker(exportFile);
+                swingWorker.execute();
+                var  validationErrors = swingWorker.get();
+                if (!validationErrors.isEmpty()) {
+                    throw new ValidationException("", validationErrors);
+                }
+            } catch (DataManipulationException | BatchOperationException| ExecutionException | InterruptedException ex) {
                 JOptionPane.showMessageDialog(parent, "Export has successfully failed.\n" + ex.getMessage());
                 return;
             }
@@ -52,8 +60,25 @@ public final class ExportAction extends GeneralAction {
         }
     }
 
+    private SwingWorker<List<String>, String> getSwingWorker(String exportFile) {
+        SwingWorker<List<String>, String> swingWorker = new SwingWorker<>() {
+            @Override
+            protected List<String> doInBackground() {
+                List<String> validationErrors = List.of();
+                try {
+                    exportService.exportData(exportFile);
+                } catch (ValidationException e) {
+                    validationErrors = e.getValidationErrors();
+                }
+                return validationErrors;
+            }
+        };
+        swingWorker.execute();
+        return swingWorker;
+    }
+
     @Override
-    protected void setShortDescription() {
-        putValue(SHORT_DESCRIPTION, "Export " + super.getCurrentTabName());
+    public void setShortDescription() {
+        putValue(SHORT_DESCRIPTION, "Export " + getCurrentTabName());
     }
 }
