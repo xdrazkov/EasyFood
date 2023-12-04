@@ -8,6 +8,7 @@ import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.ui.dialog.AddUnitDialog;
 import cz.muni.fi.pv168.project.ui.dialog.EditUnitDialog;
 import cz.muni.fi.pv168.project.ui.dialog.OpenUnitDialog;
+import cz.muni.fi.pv168.project.wiring.DependencyProvider;
 
 import javax.swing.*;
 import java.util.HashMap;
@@ -16,8 +17,8 @@ import java.util.List;
 public class UnitTableModel extends BasicTableModel<Unit> {
     private static final HashMap<IngredientType, Unit> baseUnitsMap = new HashMap<>();
     private final CrudService<Unit> crudService;
-    public UnitTableModel(CrudService<Unit> crudService) {
-        super(crudService);
+    public UnitTableModel(DependencyProvider dependencyProvider, CrudService<Unit> crudService) {
+        super(dependencyProvider, crudService);
         this.crudService = crudService;
         setupBaseUnits();
     }

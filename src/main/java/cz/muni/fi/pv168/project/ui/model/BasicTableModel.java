@@ -5,6 +5,9 @@ import cz.muni.fi.pv168.project.model.Entity;
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Unit;
 import cz.muni.fi.pv168.project.service.crud.CrudService;
+import cz.muni.fi.pv168.project.wiring.CommonDependencyProvider;
+import cz.muni.fi.pv168.project.wiring.DependencyProvider;
+import cz.muni.fi.pv168.project.wiring.ProductionDependencyProvider;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -12,11 +15,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BasicTableModel<E extends Entity> extends AbstractTableModel implements EntityTableModel<E> {
+
+    protected final DependencyProvider dependencyProvider;
     private final CrudService<E> entityCrudService;
     private List<E> entities;
     private List<Column<E, ?>> columns = List.of();
 
-    public BasicTableModel(CrudService<E> entityCrudService) {
+    public BasicTableModel(DependencyProvider dependencyProvider, CrudService<E> entityCrudService) {
+        this.dependencyProvider = dependencyProvider;
         this.entityCrudService = entityCrudService;
         this.entities = new ArrayList<>(entityCrudService.findAll());
         setColumns();
@@ -28,6 +34,7 @@ public abstract class BasicTableModel<E extends Entity> extends AbstractTableMod
 
     public abstract List<Column<E, ?>> makeColumns();
 
+    //TODO change to use the CDP
     public abstract void performAddAction(JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units);
 
     public abstract void performEditAction(int[] selectedRows, JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units);
