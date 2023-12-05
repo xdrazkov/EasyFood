@@ -54,25 +54,25 @@ public class GenericImportService implements ImportService {
     }
 
     private void removeAllImport(Batch batch) {
+        recipeCrudService.deleteAll();
         categoryCrudService.deleteAll();
         ingredientCrudService.deleteAll();
-        recipeCrudService.deleteAll();
 
         appendErrorImport(batch);
     }
 
     /** if in memory same entity, fails */
     private void appendErrorImport(Batch batch) {
-        batch.recipes().forEach(e -> createEntity(e, recipeCrudService));
         getUniqueIngredients(batch).forEach(e -> createEntity(e, ingredientCrudService));
         getUniqueCategories(batch).forEach(e -> createEntity(e, categoryCrudService));
+        batch.recipes().forEach(e -> createEntity(e, recipeCrudService));
     }
 
     /** if in memory same entity, continues */
     private void appendSkipImport(Batch batch) {
-        appendSkipEntities(recipeCrudService, batch.recipes());
         appendSkipEntities(ingredientCrudService, getUniqueIngredients(batch));
         appendSkipEntities(categoryCrudService, getUniqueCategories(batch));
+        appendSkipEntities(recipeCrudService, batch.recipes());
     }
 
     private static <E extends Entity> void appendSkipEntities(CrudService<E> crudService, Collection<E> appendCollection) {

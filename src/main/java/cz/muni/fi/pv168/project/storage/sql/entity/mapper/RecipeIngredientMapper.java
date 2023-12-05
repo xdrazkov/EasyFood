@@ -51,12 +51,14 @@ public class RecipeIngredientMapper {
 
     public static ArrayList<RecipeIngredientEntity> getRecipeIngredientEntities(Recipe recipe) {
         ArrayList<RecipeIngredientEntity> result = new ArrayList<>();
-        for (Ingredient ingredient : recipe.getIngredients().keySet()) {
+        for (var entry : recipe.getIngredients().entrySet()) {
+            Ingredient ingredient = entry.getKey();
+            AmountInUnit amountInUnit = entry.getValue();
             result.add(new RecipeIngredientEntity(
                     recipe.getGuid(),
                     ingredient.getGuid(),
-                    recipe.getIngredients().get(ingredient).getUnit().getGuid(),
-                    recipe.getIngredients().get(ingredient).getAmount()));
+                    amountInUnit.getUnit().getGuid(),
+                    amountInUnit.getAmount()));
         }
         return result;
     }

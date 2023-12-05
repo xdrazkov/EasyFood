@@ -13,6 +13,7 @@ import cz.muni.fi.pv168.project.wiring.DependencyProvider;
 import javax.swing.*;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class UnitTableModel extends BasicTableModel<Unit> {
     private static final HashMap<IngredientType, Unit> baseUnitsMap = new HashMap<>();
@@ -32,12 +33,24 @@ public class UnitTableModel extends BasicTableModel<Unit> {
     }
 
     public void setupBaseUnits(){
-        Unit gram = new Unit("grams", "g", IngredientType.WEIGHABLE, 1);
-        Unit milliliter = new Unit("milliliters", "ml", IngredientType.POURABLE, 1);
-        Unit piece = new Unit("pieces", "pcs", IngredientType.COUNTABLE, 1);
-
+        Unit gram = null;
+        Unit milliliter = null;
+        Unit piece = null;
         List<Unit> units = crudService.findAll();
+        for (Unit unit : units) {
+            if (Objects.equals(unit.getName(), "grams")) {
+                gram = unit;
+            } else if (Objects.equals(unit.getName(), "milliliters")) {
+                milliliter = unit;
+            } else if (Objects.equals(unit.getName(), "pieces")) {
+                piece = unit;
+            }
+        }
+
         if (units.isEmpty()) {
+            gram = new Unit("grams", "g", IngredientType.WEIGHABLE, 1);
+            milliliter = new Unit("milliliters", "ml", IngredientType.POURABLE, 1);
+            piece = new Unit("pieces", "pcs", IngredientType.COUNTABLE, 1);
             addRow(gram);
             addRow(milliliter);
             addRow(piece);
