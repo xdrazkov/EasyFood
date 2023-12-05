@@ -7,13 +7,14 @@ import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.ui.dialog.AddCategoryDialog;
 import cz.muni.fi.pv168.project.ui.dialog.EditCategoryDialog;
 import cz.muni.fi.pv168.project.ui.dialog.OpenCategoryDialog;
+import cz.muni.fi.pv168.project.wiring.DependencyProvider;
 
 import javax.swing.*;
 import java.util.List;
 
 public class CategoryTableModel extends BasicTableModel<Category> {
-    public CategoryTableModel(CrudService<Category> categoryCrudService) {
-        super(categoryCrudService);
+    public CategoryTableModel(DependencyProvider dependencyProvider, CrudService<Category> categoryCrudService) {
+        super(dependencyProvider, categoryCrudService);
     }
 
     public List<Column<Category, ?>> makeColumns() {
