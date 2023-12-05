@@ -17,6 +17,7 @@ import cz.muni.fi.pv168.project.service.validation.IngredientValidator;
 import cz.muni.fi.pv168.project.service.validation.RecipeValidator;
 import cz.muni.fi.pv168.project.service.validation.UnitValidator;
 import cz.muni.fi.pv168.project.storage.memory.InMemoryRepository;
+import cz.muni.fi.pv168.project.storage.sql.TransactionalImportService;
 import cz.muni.fi.pv168.project.ui.action.*;
 import cz.muni.fi.pv168.project.ui.filters.RecipeTableFilter;
 import cz.muni.fi.pv168.project.ui.filters.values.SpecialFilterCategoryValues;
@@ -111,9 +112,12 @@ public class MainWindow {
         var exportService = new GenericExportService(recipeRowSorter ,recipeTablePanel, List.of(new BatchJsonExporter(), new BatchPdfExporter()));
         var importService = new GenericImportService(recipeCrudService, ingredientCrudService, categoryCrudService, List.of(new BatchJsonImporter()));
 
+        var transactionalImportService = new TransactionalImportService(importService, dependencyProvider.getTransactionExecutor());
+
         // create import/export actions
         exportAction = new ExportAction(recipeTablePanel, exportService);
-        importAction = new ImportAction(recipeTablePanel, importService, () -> tableModels.forEach(BasicTableModel::refresh));
+        importAction = new ImportAction(recipeTablePanel, transactionalImportService, () -> tableModels.forEach(BasicTableModel::refresh));
+
         viewStatisticsAction = new ViewStatisticsAction(ingredientCrudService, recipeCrudService);
         viewAboutAction = new ViewAboutAction();
         this.actions = List.of(addAction, editAction, deleteAction, openAction, importAction, exportAction, viewAboutAction, viewStatisticsAction);
