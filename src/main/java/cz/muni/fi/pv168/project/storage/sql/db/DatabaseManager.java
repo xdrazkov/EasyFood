@@ -37,9 +37,9 @@ public final class DatabaseManager {
         }
     }
 
-    public TransactionHandler getTransactionHandler() {
+    public Transaction getTransactionHandler() {
         try {
-            return new TransactionHandlerImpl(dataSource.getConnection());
+            return new TransactionImpl(dataSource.getConnection());
         } catch (SQLException e) {
             throw new DataStorageException("Unable to get a new connection", e);
         }

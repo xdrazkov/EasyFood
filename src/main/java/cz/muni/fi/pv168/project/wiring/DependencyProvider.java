@@ -9,12 +9,14 @@ import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.service.export.ExportService;
 import cz.muni.fi.pv168.project.service.export.ImportService;
 import cz.muni.fi.pv168.project.storage.sql.db.DatabaseManager;
+import cz.muni.fi.pv168.project.storage.sql.db.TransactionExecutor;
+import cz.muni.fi.pv168.project.storage.sql.db.TransactionManager;
 
 public interface DependencyProvider {
      DatabaseManager getDatabaseManager();
 
     // TODO TransactionManager provider
-    // TransactionManager getTransactionManager();
+     TransactionManager getTransactionManager();
 
     // TODO Validator<> provider
     Repository<Unit> getUnitRepository();
@@ -30,4 +32,5 @@ public interface DependencyProvider {
     ImportService getImportService();
     ExportService getExportService();
 
+    TransactionExecutor getTransactionExecutor();
 }
