@@ -8,8 +8,8 @@ import javax.swing.*;
 
 public class EditIngredientDialog extends EntityDialog<Ingredient> {
     private final JTextField name = new JTextField();
-    private final JTextField nutritionalValue = FieldMaker.makeFloatField();
-    private final JComboBox<Unit> defaulUnit = new JComboBox<>();
+    private final JFormattedTextField nutritionalValue = FieldMaker.makeIntField();
+    private final JComboBox<Unit> defaultUnit = new JComboBox<>();
     private final UnitTableModel unitTableModel;
     private final Ingredient ingredient;
 
@@ -23,21 +23,21 @@ public class EditIngredientDialog extends EntityDialog<Ingredient> {
     private void setValues() {
         name.setText(ingredient.getName());
         nutritionalValue.setText(Float.toString(ingredient.getCaloriesPerUnit()));
-        defaulUnit.setModel(new javax.swing.DefaultComboBoxModel<>(unitTableModel.getEntities().toArray(new Unit[0])));
-        defaulUnit.getModel().setSelectedItem(ingredient.getDefaultUnit());
+        defaultUnit.setModel(new javax.swing.DefaultComboBoxModel<>(unitTableModel.getEntities().toArray(new Unit[0])));
+        defaultUnit.getModel().setSelectedItem(ingredient.getDefaultUnit());
     }
 
     private void addFields() {
         add("Name:", name, THIN_HEIGHT);
-        add("Default Unit:", defaulUnit, THIN_HEIGHT);
+        add("Default Unit:", defaultUnit, THIN_HEIGHT);
         add("Nutritional value per default ingredient:", nutritionalValue, THIN_HEIGHT);
     }
 
     @Override
     Ingredient getEntity() {
         ingredient.setName(name.getText());
-        ingredient.setDefaultUnit((Unit) defaulUnit.getSelectedItem());
-        ingredient.setCaloriesPerUnit(Float.parseFloat(nutritionalValue.getText().replaceAll(" ", "")));
+        ingredient.setDefaultUnit((Unit) defaultUnit.getSelectedItem());
+        ingredient.setCaloriesPerUnit(FieldMaker.parseIntField(nutritionalValue));
         return ingredient;
     }
 }
