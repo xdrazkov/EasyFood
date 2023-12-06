@@ -1,32 +1,62 @@
 package cz.muni.fi.pv168.project.model;
 
-import org.apache.commons.lang3.tuple.Pair;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import cz.muni.fi.pv168.project.export.json.deserializers.RecipeJsonDeserializer;
+import cz.muni.fi.pv168.project.export.json.seralizers.RecipeJsonSerializer;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
+@JsonSerialize(using = RecipeJsonSerializer.class)
+@JsonDeserialize(using = RecipeJsonDeserializer.class)
 public class Recipe extends Entity {
     private String title;
     private String description;
     private int portionCount;
     private String instructions;
     private int timeToPrepare; // in minutes; import java.util.concurrent.TimeUnit
-    private int nutritionalValue;
     private Category category;
-    /** when modifying, please call {@link Recipe#calculateNutritionalValue()}**/
-    private HashMap<Ingredient, Pair<Unit, Integer>> ingredients;
+    private HashMap<Ingredient, AmountInUnit> ingredients;
 
     public Recipe(){}
-    public Recipe(String guid, String title, String description, int portionCount, String instructions, int timeToPrepare, Category category, HashMap<Ingredient, Pair<Unit, Integer>> ingredientList) {
+    public Recipe(String guid,
+                  String title,
+                  String description,
+                  int portionCount,
+                  String instructions,
+                  int timeToPrepare,
+                  Category category,
+                  HashMap<Ingredient, AmountInUnit> ingredientList) {
         super(guid);
-        this.title = title;
-        this.description = description;
-        this.portionCount = portionCount;
-        this.instructions = instructions;
-        this.timeToPrepare = timeToPrepare;
-        this.category = category;
-        this.ingredients = ingredientList;
-        calculateNutritionalValue();
+        init(title, description, portionCount, instructions, timeToPrepare, category, ingredientList);
+    }
+
+    public Recipe(String title,
+                  String description,
+                  int portionCount,
+                  String instructions,
+                  int timeToPrepare,
+                  Category category,
+                  HashMap<Ingredient, AmountInUnit> ingredientList) {
+        init(title, description, portionCount, instructions, timeToPrepare, category, ingredientList);
+    }
+
+    private void init(String title,
+                      String description,
+                      int portionCount,
+                      String instructions,
+                      int timeToPrepare,
+                      Category category,
+                      HashMap<Ingredient, AmountInUnit> ingredientList) {
+        setTitle(title);
+        setDescription(description);
+        setPortionCount(portionCount);
+        setInstructions(instructions);
+        setTimeToPrepare(timeToPrepare);
+        setCategory(category);
+        setIngredients(ingredientList);
     }
 
     public String getTitle() {
@@ -70,11 +100,7 @@ public class Recipe extends Entity {
     }
 
     public int getNutritionalValue() {
-        return nutritionalValue;
-    }
-
-    public void setNutritionalValue(int nutritionalValue) {
-        this.nutritionalValue = nutritionalValue;
+        return calculateNutritionalValue();
     }
 
     public Category getCategory() {
@@ -85,27 +111,27 @@ public class Recipe extends Entity {
         this.category = category;
     }
 
-    public HashMap<Ingredient, Pair<Unit, Integer>> getIngredients() {
+    public HashMap<Ingredient, AmountInUnit> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(HashMap<Ingredient, Pair<Unit, Integer>> ingredients) {
+    public void setIngredients(HashMap<Ingredient, AmountInUnit> ingredients) {
         this.ingredients = ingredients;
-        calculateNutritionalValue();
     }
-    private void calculateNutritionalValue() {
-        this.nutritionalValue = 0;
-        for (Map.Entry<Ingredient, Pair<Unit, Integer>> entry: ingredients.entrySet()) {
-            Unit unit = entry.getValue().getLeft();
-            int amount = entry.getValue().getRight();
+    private int calculateNutritionalValue() {
+        int nutritionalValue = 0;
+        for (Map.Entry<Ingredient, AmountInUnit> entry: ingredients.entrySet()) {
+            Unit unit = entry.getValue().getUnit();
+            int amount = entry.getValue().getAmount();
             Ingredient ingredient = entry.getKey();
-            this.nutritionalValue += ingredient.getTotalCalories(unit, amount);
+            nutritionalValue += ingredient.getTotalCalories(unit, amount);
         }
+
+        return nutritionalValue;
     }
 
     public void addIngredient(Ingredient ingredient, Unit unit, int amount) {
-        this.ingredients.putIfAbsent(ingredient, Pair.of(unit, amount));
-        calculateNutritionalValue();
+        this.ingredients.putIfAbsent(ingredient, new AmountInUnit(unit, amount));
     }
 
     /**
@@ -113,7 +139,18 @@ public class Recipe extends Entity {
      */
     public boolean deleteIngredient(Ingredient ingredient) {
         var deletedRecord = this.ingredients.remove(ingredient);
-        calculateNutritionalValue();
         return deletedRecord != null;
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (! (o instanceof Recipe that)) {
+            return false;
+        }
+        return this.title.equals(that.title);
+    }
+
+    @Override
+    public String toString(){
+        return this.title;
     }
 }

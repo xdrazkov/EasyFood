@@ -1,16 +1,36 @@
 package cz.muni.fi.pv168.project.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import cz.muni.fi.pv168.project.export.json.deserializers.IngredientJsonDeserializer;
+import cz.muni.fi.pv168.project.export.json.seralizers.IngredientJsonSerializer;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
+import java.util.Objects;
 
-public class Ingredient {
+@JsonSerialize(using = IngredientJsonSerializer.class)
+@JsonDeserialize(using = IngredientJsonDeserializer.class)
+public class Ingredient extends Entity{
     private String name;
-    private Unit defaulUnit;
-    private int caloriesPerUnit;
+    private Unit defaultUnit;
+    private float caloriesPerUnit;
 
-    public Ingredient(String name, Unit defaulUnit, int caloriesPerUnit) {
+    public Ingredient(String guid, String name, Unit defaultUnit, int caloriesPerUnit) {
+        super(guid);
         this.name = name;
-        this.defaulUnit = defaulUnit;
-        this.caloriesPerUnit = caloriesPerUnit;
+        this.defaultUnit = defaultUnit;
+        this.caloriesPerUnit = caloriesPerUnit; // calories per default unit
+    }
+
+    public Ingredient(String name, Unit defaultUnit, int caloriesPerUnit) {
+        this.name = name;
+        this.defaultUnit = defaultUnit;
+        this.caloriesPerUnit = caloriesPerUnit; // calories per default unit
+    }
+
+    public Ingredient() {
     }
 
     public String getName() {
@@ -22,20 +42,19 @@ public class Ingredient {
     }
 
     public Unit getDefaultUnit() {
-        return defaulUnit;
+        return defaultUnit;
     }
 
-    public void setDefaulUnit(Unit defaulUnit) {
-        this.defaulUnit = defaulUnit;
+    public void setDefaultUnit(Unit defaultUnit) {
+        this.defaultUnit = defaultUnit;
     }
 
-    public int getCaloriesPerUnit() {
+    public float getCaloriesPerUnit() {
         return caloriesPerUnit;
     }
 
-    public int getTotalCalories(Unit anyUnit, int amount) { // TODO distinguish type: eg. WEIGHABLE per 100g, COUNTABLE per 1pc
-        float countBase = anyUnit.getConversionRate() * amount;
-        return (int) (countBase * caloriesPerUnit);
+    public int getTotalCalories(Unit anyUnit, int amount) {
+        return (int) (caloriesPerUnit / defaultUnit.getConversionRate() * anyUnit.getConversionRate() * amount);
     }
 
     public int countInstances(List<Recipe> recipes){
@@ -48,8 +67,10 @@ public class Ingredient {
         return count;
     }
 
-    public void setCaloriesPerUnit(int caloriesPerUnit) {
-        this.caloriesPerUnit = caloriesPerUnit;
+    public void setCaloriesPerUnit(float caloriesPerUnit) {
+        BigDecimal bigDecimal = new BigDecimal(Float.toString(caloriesPerUnit));
+        bigDecimal = bigDecimal.setScale(3, RoundingMode.HALF_UP);
+        this.caloriesPerUnit = bigDecimal.floatValue();
     }
 
     @Override
@@ -58,15 +79,11 @@ public class Ingredient {
     }
 
     @Override
-    public int hashCode() {
-        return name.hashCode();
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (! (obj instanceof Ingredient theirs)) {
             return false;
         }
-        return this.name.equals(theirs.name) && this.defaulUnit.equals(theirs.defaulUnit);
+        return Objects.equals(this.name, theirs.name) && Objects.equals(this.defaultUnit, theirs.defaultUnit);
     }
 }
+

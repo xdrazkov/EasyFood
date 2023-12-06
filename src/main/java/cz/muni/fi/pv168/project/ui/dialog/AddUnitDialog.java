@@ -2,8 +2,10 @@ package cz.muni.fi.pv168.project.ui.dialog;
 
 import cz.muni.fi.pv168.project.model.IngredientType;
 import cz.muni.fi.pv168.project.model.Unit;
+import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
 
 import javax.swing.*;
+import java.util.Optional;
 
 public final class AddUnitDialog extends EntityDialog<Unit> {
 
@@ -11,24 +13,33 @@ public final class AddUnitDialog extends EntityDialog<Unit> {
     private final JTextField abbreviation = new JTextField();
     private final JTextField conversionRate = new JTextField();
     private final JComboBox<IngredientType> ingredientType = new JComboBox<>();
+    private final JTable unitTable;
 
-    public AddUnitDialog() {
-        setValues();
+    public AddUnitDialog(JTable unitTable) {
+        this.unitTable = unitTable;
+        setValues("", "", IngredientType.COUNTABLE, 1);
         addFields();
     }
 
-    private void setValues() {
-        name.setText("");
-        abbreviation.setText("");
-        conversionRate.setText("1");
+    public AddUnitDialog(JTable unitTable, String name, String abbreviation, IngredientType ingredientType, float conversionRate) {
+        this.unitTable = unitTable;
+        setValues(name, abbreviation, ingredientType, conversionRate);
+        addFields();
+    }
+
+    private void setValues(String nameValue, String abbreviationValue, IngredientType ingredientTypeValue, float conversionRateValue) {
+        name.setText(nameValue);
+        abbreviation.setText(abbreviationValue);
+        conversionRate.setText(Float.toString(conversionRateValue));
         ingredientType.setModel(new javax.swing.DefaultComboBoxModel<>(IngredientType.values()));
+        ingredientType.getModel().setSelectedItem(ingredientTypeValue);
     }
 
     private void addFields() {
-        add("Name:", name);
-        add("Abbreviation:", abbreviation);
-        add("Unit type:", ingredientType);
-        add("Conversion rate to base unit (g/ml/pcs):", conversionRate);
+        add("Name:", name, THIN_HEIGHT);
+        add("Abbreviation:", abbreviation, THIN_HEIGHT);
+        add("Unit type:", ingredientType, THIN_HEIGHT);
+        add("Conversion rate to base unit (g/ml/pcs):", conversionRate, THIN_HEIGHT);
     }
 
     @Override
@@ -38,7 +49,8 @@ public final class AddUnitDialog extends EntityDialog<Unit> {
             conversionRateFloat = Float.parseFloat(conversionRate.getText().replace(',', '.'));
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(panel, "Conversion rate must be a decimal number", "Error", JOptionPane.ERROR_MESSAGE);
-            return null;
+            var dialog = new AddUnitDialog(unitTable, name.getText(), abbreviation.getText(), (IngredientType) ingredientType.getSelectedItem(), 1);
+            return dialog.show(unitTable, "Add Unit").orElse(null);
         }
         return new Unit(name.getText(), abbreviation.getText(), (IngredientType) ingredientType.getSelectedItem(), conversionRateFloat);
     }

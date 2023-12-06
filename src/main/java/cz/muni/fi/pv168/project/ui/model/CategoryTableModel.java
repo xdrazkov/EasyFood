@@ -1,81 +1,49 @@
 package cz.muni.fi.pv168.project.ui.model;
 
 import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.model.Ingredient;
+import cz.muni.fi.pv168.project.model.Unit;
+import cz.muni.fi.pv168.project.service.crud.CrudService;
+import cz.muni.fi.pv168.project.ui.dialog.AddCategoryDialog;
+import cz.muni.fi.pv168.project.ui.dialog.EditCategoryDialog;
+import cz.muni.fi.pv168.project.ui.dialog.OpenCategoryDialog;
+import cz.muni.fi.pv168.project.wiring.DependencyProvider;
 
-import javax.swing.table.AbstractTableModel;
-import java.util.ArrayList;
+import javax.swing.*;
 import java.util.List;
 
-public class CategoryTableModel extends AbstractTableModel {
+public class CategoryTableModel extends BasicTableModel<Category> {
+    public CategoryTableModel(DependencyProvider dependencyProvider, CrudService<Category> categoryCrudService) {
+        super(dependencyProvider, categoryCrudService);
+    }
 
-    private final List<Category> categories;
-
-    private final List<Column<Category, ?>> columns = List.of(
-            Column.readonly("Name", Category.class, Category::getItself)
-    );
-
-    public CategoryTableModel(List<Category> categories) {
-        this.categories = new ArrayList<>(categories);
+    public List<Column<Category, ?>> makeColumns() {
+        return List.of(
+                Column.readonly("Name", Category.class, Category::getItself)
+        );
     }
 
     @Override
-    public int getRowCount() {
-        return categories.size();
+    public void performAddAction(JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
+        CategoryTableModel categoryTableModel = (CategoryTableModel) table.getModel();
+        var dialog = new AddCategoryDialog();
+        dialog.show(table, "Add Category").ifPresent(categoryTableModel::addRow);
     }
 
     @Override
-    public int getColumnCount() {
-        return columns.size();
+    public void performEditAction(int[] selectedRows, JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
+        int modelRow = table.convertRowIndexToModel(selectedRows[0]);
+        CategoryTableModel categoryTableModel = (CategoryTableModel) table.getModel();
+        var category = categoryTableModel.getEntity(modelRow);
+        var dialog = new EditCategoryDialog(category);
+        dialog.show(table, "Edit Category").ifPresent(categoryTableModel::updateRow);
     }
 
     @Override
-    public Object getValueAt(int rowIndex, int columnIndex) {
-        var category = getEntity(rowIndex);
-        return columns.get(columnIndex).getValue(category);
-    }
-
-    @Override
-    public String getColumnName(int columnIndex) {
-        return columns.get(columnIndex).getName();
-    }
-
-    @Override
-    public Class<?> getColumnClass(int columnIndex) {
-        return columns.get(columnIndex).getColumnType();
-    }
-
-    @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columns.get(columnIndex).isEditable();
-    }
-
-    @Override
-    public void setValueAt(Object value, int rowIndex, int columnIndex) {
-        var recipe = getEntity(rowIndex);
-        columns.get(columnIndex).setValue(value, recipe);
-    }
-
-    public void deleteRow(int rowIndex) {
-        categories.remove(rowIndex);
-        fireTableRowsDeleted(rowIndex, rowIndex);
-    }
-
-    public void addRow(Category recipe) {
-        int newRowIndex = categories.size();
-        categories.add(recipe);
-        fireTableRowsInserted(newRowIndex, newRowIndex);
-    }
-
-    public void updateRow(Category recipe) {
-        int rowIndex = categories.indexOf(recipe);
-        fireTableRowsUpdated(rowIndex, rowIndex);
-    }
-
-    public Category getEntity(int rowIndex) {
-        return categories.get(rowIndex);
-    }
-
-    public List<Category> getCategories() {
-        return categories;
+    public void performOpenAction(JTable table, int modelRow) {
+        CategoryTableModel categoryTableModel = (CategoryTableModel) table.getModel();
+        var category = categoryTableModel.getEntity(modelRow);
+        var dialog = new OpenCategoryDialog(category);
+        dialog.show(table, "Open Category").ifPresent(categoryTableModel::updateRow);
     }
 }

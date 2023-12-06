@@ -1,6 +1,7 @@
 package cz.muni.fi.pv168.project.ui.dialog;
 
 import cz.muni.fi.pv168.project.model.Unit;
+import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
 
 import javax.swing.*;
 
@@ -19,16 +20,15 @@ public class OpenUnitDialog extends EntityDialog<Unit> {
     }
 
     private void setValues() {
-        name.setText(unit.getName() + " (" + unit.getAbbreviation() + ")");
-        conversionRate.setText("Conversion rate to base unit (g/ml/pcs): " + unit.getConversionRate());
-        ingredientType.setText(String.valueOf(unit.getIngredientType()));
-
+        name.setText("<html>" + "<B>" + unit.getName() + " (" + unit.getAbbreviation() + ")" + "</B>" + "</html>");
+        conversionRate.setText("<html>" + "<B>" + "Conversion rate: " + "</B>" + "1 " + unit.getAbbreviation() + " = " + unit.getConversionRate() + " " + unit.getIngredientType().getBaseUnit().getAbbreviation() + "</html>");
+        ingredientType.setText("<html>" + "<B>" + "Unit type: " + "</B>" + unit.getIngredientType() + "</html>");
     }
 
     private void addFields() {
-        panel.add(name);
-        panel.add(conversionRate);
-        panel.add(ingredientType);
+        add(name, THIN_HEIGHT);
+        add(conversionRate, THIN_HEIGHT);
+        add(ingredientType, THIN_HEIGHT);
     }
 
     @Override

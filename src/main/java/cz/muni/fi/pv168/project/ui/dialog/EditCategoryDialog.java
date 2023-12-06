@@ -11,7 +11,7 @@ public class EditCategoryDialog extends EntityDialog<Category> {
     private final JColorChooser color = new JColorChooser();
 
     private final Category category;
-    public EditCategoryDialog(Category category, CategoryTableModel categoryTableModel) {
+    public EditCategoryDialog(Category category) {
         this.category = category;
         setValues();
         addFields();
@@ -23,7 +23,7 @@ public class EditCategoryDialog extends EntityDialog<Category> {
     }
 
     private void addFields() {
-        add("Name:", name);
+        add("Name:", name, THIN_HEIGHT);
         panel.add(color);
     }
 

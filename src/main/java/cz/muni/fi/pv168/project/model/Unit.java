@@ -1,12 +1,20 @@
 package cz.muni.fi.pv168.project.model;
 
-public class Unit {
+public class Unit extends Entity {
     private String name;
     private String abbreviation;
     private IngredientType ingredientType;
     private float conversionRate; // quantity * rate = quantity_base_unit
 
     public Unit(String name, String abbreviation, IngredientType ingredientType, float conversionRate) {
+        this.name = name;
+        this.abbreviation = abbreviation;
+        this.ingredientType = ingredientType;
+        this.conversionRate = conversionRate;
+    }
+
+    public Unit(String guid, String name, String abbreviation, IngredientType ingredientType, float conversionRate) {
+        super(guid);
         this.name = name;
         this.abbreviation = abbreviation;
         this.ingredientType = ingredientType;
@@ -48,5 +56,13 @@ public class Unit {
     @Override
     public String toString() {
         return name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (! (o instanceof Unit that)) {
+            return false;
+        }
+        return this.name.equals(that.name) && this.ingredientType.equals(that.ingredientType);
     }
 }

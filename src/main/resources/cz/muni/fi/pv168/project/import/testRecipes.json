@@ -1,0 +1,526 @@
+[ {
+  "title" : "Chicken Parmesan",
+  "description" : "Classic Italian dish",
+  "portionCount" : 4,
+  "instructions" : "Bread and fry chicken, layer with sauce and cheese, bake to perfection.",
+  "timeToPrepare" : 45,
+  "nutritionalValue" : 45,
+  "category" : {
+    "name" : "Side dishes",
+    "color" : [ 232, 212, 214 ]
+  },
+  "ingredients" : [ {
+    "ingredient" : {
+      "name" : "Salt",
+      "caloriesPerUnit" : 0.008418217
+    },
+    "amountInUnit" : {
+      "unit" : "milliliters",
+      "amount" : 475
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Tomatoes",
+      "caloriesPerUnit" : 0.0044101435
+    },
+    "amountInUnit" : {
+      "unit" : "grams",
+      "amount" : 4000
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Sugar",
+      "caloriesPerUnit" : 0.5
+    },
+    "amountInUnit" : {
+      "unit" : "pieces",
+      "amount" : 48
+    }
+  } ]
+}, {
+  "title" : "Cheese and Tomato Sandwich",
+  "description" : "Simple and tasty",
+  "portionCount" : 1,
+  "instructions" : "Layer cheese and tomatoes between slices of bread. A classic sandwich for any occasion.",
+  "timeToPrepare" : 10,
+  "nutritionalValue" : 60,
+  "category" : {
+    "name" : "Lunch",
+    "color" : [ 239, 206, 206 ]
+  },
+  "ingredients" : [ {
+    "ingredient" : {
+      "name" : "Yeast",
+      "caloriesPerUnit" : 0.0022050717
+    },
+    "amountInUnit" : {
+      "unit" : "grams",
+      "amount" : 3628
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Onions",
+      "caloriesPerUnit" : 0.001
+    },
+    "amountInUnit" : {
+      "unit" : "grams",
+      "amount" : 3174
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Chicken",
+      "caloriesPerUnit" : 0.001
+    },
+    "amountInUnit" : {
+      "unit" : "milliliters",
+      "amount" : 1000
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Sugar",
+      "caloriesPerUnit" : 0.5
+    },
+    "amountInUnit" : {
+      "unit" : "pieces",
+      "amount" : 96
+    }
+  } ]
+}, {
+  "title" : "Spaghetti Bolognese",
+  "description" : "Classic Italian pasta",
+  "portionCount" : 4,
+  "instructions" : "Saute onions and garlic, brown beef, add tomatoes, and simmer. Serve over spaghetti.",
+  "timeToPrepare" : 40,
+  "nutritionalValue" : 8,
+  "category" : {
+    "name" : "Side dishes",
+    "color" : [ 232, 212, 214 ]
+  },
+  "ingredients" : [ {
+    "ingredient" : {
+      "name" : "Butter",
+      "caloriesPerUnit" : 0.5
+    },
+    "amountInUnit" : {
+      "unit" : "pieces",
+      "amount" : 10
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Cheese",
+      "caloriesPerUnit" : 0.002
+    },
+    "amountInUnit" : {
+      "unit" : "milliliters",
+      "amount" : 1900
+    }
+  } ]
+}, {
+  "title" : "Chocolate Cake",
+  "description" : "Rich and decadent",
+  "portionCount" : 8,
+  "instructions" : "Combine ingredients, bake, and enjoy this indulgent treat.",
+  "timeToPrepare" : 60,
+  "nutritionalValue" : 51,
+  "category" : {
+    "name" : "Appetizers and snacks",
+    "color" : [ 192, 219, 145 ]
+  },
+  "ingredients" : [ {
+    "ingredient" : {
+      "name" : "Yeast",
+      "caloriesPerUnit" : 0.0022050717
+    },
+    "amountInUnit" : {
+      "unit" : "grams",
+      "amount" : 3000
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Onions",
+      "caloriesPerUnit" : 0.001
+    },
+    "amountInUnit" : {
+      "unit" : "grams",
+      "amount" : 2267
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Butter",
+      "caloriesPerUnit" : 0.5
+    },
+    "amountInUnit" : {
+      "unit" : "pieces",
+      "amount" : 2
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Sugar",
+      "caloriesPerUnit" : 0.5
+    },
+    "amountInUnit" : {
+      "unit" : "pieces",
+      "amount" : 84
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Milk",
+      "caloriesPerUnit" : 0.083333336
+    },
+    "amountInUnit" : {
+      "unit" : "pieces",
+      "amount" : 4
+    }
+  } ]
+}, {
+  "title" : "Blueberry Pancakes",
+  "description" : "Fluffy breakfast delight",
+  "portionCount" : 4,
+  "instructions" : "Mix batter, add blueberries, and cook until golden. Serve with maple syrup.",
+  "timeToPrepare" : 30,
+  "nutritionalValue" : 18,
+  "category" : {
+    "name" : "Lunch",
+    "color" : [ 239, 206, 206 ]
+  },
+  "ingredients" : [ {
+    "ingredient" : {
+      "name" : "Water",
+      "caloriesPerUnit" : 0.008418217
+    },
+    "amountInUnit" : {
+      "unit" : "milliliters",
+      "amount" : 475
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Chicken",
+      "caloriesPerUnit" : 0.001
+    },
+    "amountInUnit" : {
+      "unit" : "milliliters",
+      "amount" : 475
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Eggs",
+      "caloriesPerUnit" : 0.16666667
+    },
+    "amountInUnit" : {
+      "unit" : "pieces",
+      "amount" : 84
+    }
+  } ]
+}, {
+  "title" : "Garlic Butter Shrimp",
+  "description" : "Succulent seafood",
+  "portionCount" : 3,
+  "instructions" : "Saute shrimp in garlic butter, sprinkle with parsley, and serve over pasta or rice.",
+  "timeToPrepare" : 20,
+  "nutritionalValue" : 8,
+  "category" : {
+    "name" : "Soups",
+    "color" : [ 222, 212, 237 ]
+  },
+  "ingredients" : [ {
+    "ingredient" : {
+      "name" : "Sugar",
+      "caloriesPerUnit" : 0.5
+    },
+    "amountInUnit" : {
+      "unit" : "pieces",
+      "amount" : 16
+    }
+  } ]
+}, {
+  "title" : "Pasta Salad",
+  "description" : "Refreshing side",
+  "portionCount" : 6,
+  "instructions" : "Boil pasta, mix with veggies, and toss in dressing. Perfect for picnics and barbecues.",
+  "timeToPrepare" : 20,
+  "nutritionalValue" : 29,
+  "category" : {
+    "name" : "Side dishes",
+    "color" : [ 232, 212, 214 ]
+  },
+  "ingredients" : [ {
+    "ingredient" : {
+      "name" : "Onions",
+      "caloriesPerUnit" : 0.001
+    },
+    "amountInUnit" : {
+      "unit" : "grams",
+      "amount" : 1814
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Butter",
+      "caloriesPerUnit" : 0.5
+    },
+    "amountInUnit" : {
+      "unit" : "pieces",
+      "amount" : 20
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Tomatoes",
+      "caloriesPerUnit" : 0.0044101435
+    },
+    "amountInUnit" : {
+      "unit" : "grams",
+      "amount" : 2267
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Milk",
+      "caloriesPerUnit" : 0.083333336
+    },
+    "amountInUnit" : {
+      "unit" : "pieces",
+      "amount" : 96
+    }
+  } ]
+}, {
+  "title" : "Fruit Smoothie",
+  "description" : "Healthy and vibrant",
+  "portionCount" : 2,
+  "instructions" : "Blend fruits and yogurt until smooth. A refreshing and nutritious way to start the day.",
+  "timeToPrepare" : 5,
+  "nutritionalValue" : 11,
+  "category" : {
+    "name" : "Appetizers and snacks",
+    "color" : [ 192, 219, 145 ]
+  },
+  "ingredients" : [ {
+    "ingredient" : {
+      "name" : "Butter",
+      "caloriesPerUnit" : 0.5
+    },
+    "amountInUnit" : {
+      "unit" : "pieces",
+      "amount" : 12
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Cheese",
+      "caloriesPerUnit" : 0.002
+    },
+    "amountInUnit" : {
+      "unit" : "milliliters",
+      "amount" : 2375
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Eggs",
+      "caloriesPerUnit" : 0.16666667
+    },
+    "amountInUnit" : {
+      "unit" : "pieces",
+      "amount" : 10
+    }
+  } ]
+}, {
+  "title" : "Mango Salsa",
+  "description" : "Sweet and spicy",
+  "portionCount" : 6,
+  "instructions" : "Dice mango, tomato, onion, and cilantro. Mix with lime juice and chili. Serve with chips.",
+  "timeToPrepare" : 15,
+  "nutritionalValue" : 99,
+  "category" : {
+    "name" : "Appetizers and snacks",
+    "color" : [ 192, 219, 145 ]
+  },
+  "ingredients" : [ {
+    "ingredient" : {
+      "name" : "Onions",
+      "caloriesPerUnit" : 0.001
+    },
+    "amountInUnit" : {
+      "unit" : "grams",
+      "amount" : 907
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Butter",
+      "caloriesPerUnit" : 0.5
+    },
+    "amountInUnit" : {
+      "unit" : "pieces",
+      "amount" : 108
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Flour",
+      "caloriesPerUnit" : 0.002
+    },
+    "amountInUnit" : {
+      "unit" : "milliliters",
+      "amount" : 10000
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Tomatoes",
+      "caloriesPerUnit" : 0.0044101435
+    },
+    "amountInUnit" : {
+      "unit" : "grams",
+      "amount" : 5000
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Eggs",
+      "caloriesPerUnit" : 0.16666667
+    },
+    "amountInUnit" : {
+      "unit" : "pieces",
+      "amount" : 20
+    }
+  } ]
+}, {
+  "title" : "Homemade Bread",
+  "description" : "Delicious bread",
+  "portionCount" : 1,
+  "instructions" : "Mix ingredients and bake until golden brown. Serve warm.",
+  "timeToPrepare" : 120,
+  "nutritionalValue" : 1,
+  "category" : {
+    "name" : "Bread recipes",
+    "color" : [ 239, 164, 199 ]
+  },
+  "ingredients" : [ {
+    "ingredient" : {
+      "name" : "Milk",
+      "caloriesPerUnit" : 0.083333336
+    },
+    "amountInUnit" : {
+      "unit" : "pieces",
+      "amount" : 12
+    }
+  } ]
+}, {
+  "title" : "Fluffy Omelette",
+  "description" : "Quick and easy",
+  "portionCount" : 2,
+  "instructions" : "Whisk eggs, pour into hot pan, add ingredients, flip, and serve. Breakfast made simple.",
+  "timeToPrepare" : 15,
+  "nutritionalValue" : 107,
+  "category" : {
+    "name" : "Lunch",
+    "color" : [ 239, 206, 206 ]
+  },
+  "ingredients" : [ {
+    "ingredient" : {
+      "name" : "Water",
+      "caloriesPerUnit" : 0.008418217
+    },
+    "amountInUnit" : {
+      "unit" : "milliliters",
+      "amount" : 7000
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Butter",
+      "caloriesPerUnit" : 0.5
+    },
+    "amountInUnit" : {
+      "unit" : "pieces",
+      "amount" : 96
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Chicken",
+      "caloriesPerUnit" : 0.001
+    },
+    "amountInUnit" : {
+      "unit" : "milliliters",
+      "amount" : 1663
+    }
+  } ]
+}, {
+  "title" : "Grilled Chicken Salad",
+  "description" : "Light and flavorful",
+  "portionCount" : 2,
+  "instructions" : "Grill chicken, toss with fresh veggies, and drizzle with vinaigrette. Perfect for a quick lunch.",
+  "timeToPrepare" : 25,
+  "nutritionalValue" : 11,
+  "category" : {
+    "name" : "Soups",
+    "color" : [ 222, 212, 237 ]
+  },
+  "ingredients" : [ {
+    "ingredient" : {
+      "name" : "Yeast",
+      "caloriesPerUnit" : 0.0022050717
+    },
+    "amountInUnit" : {
+      "unit" : "grams",
+      "amount" : 2267
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Cheese",
+      "caloriesPerUnit" : 0.002
+    },
+    "amountInUnit" : {
+      "unit" : "milliliters",
+      "amount" : 2000
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Chicken",
+      "caloriesPerUnit" : 0.001
+    },
+    "amountInUnit" : {
+      "unit" : "milliliters",
+      "amount" : 2375
+    }
+  } ]
+}, {
+  "title" : "Vegetable Soup",
+  "description" : "Healthy and hearty",
+  "portionCount" : 4,
+  "instructions" : "Chop, boil, and season. Perfect for a cozy evening.",
+  "timeToPrepare" : 30,
+  "nutritionalValue" : 83,
+  "category" : {
+    "name" : "Soups",
+    "color" : [ 222, 212, 237 ]
+  },
+  "ingredients" : [ {
+    "ingredient" : {
+      "name" : "Salt",
+      "caloriesPerUnit" : 0.008418217
+    },
+    "amountInUnit" : {
+      "unit" : "milliliters",
+      "amount" : 1000
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Butter",
+      "caloriesPerUnit" : 0.5
+    },
+    "amountInUnit" : {
+      "unit" : "pieces",
+      "amount" : 120
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Chicken",
+      "caloriesPerUnit" : 0.001
+    },
+    "amountInUnit" : {
+      "unit" : "milliliters",
+      "amount" : 1663
+    }
+  }, {
+    "ingredient" : {
+      "name" : "Tomatoes",
+      "caloriesPerUnit" : 0.0044101435
+    },
+    "amountInUnit" : {
+      "unit" : "grams",
+      "amount" : 3174
+    }
+  } ]
+} ]

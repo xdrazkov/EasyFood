@@ -1,96 +1,61 @@
 package cz.muni.fi.pv168.project.ui.model;
 
+import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.IngredientType;
 import cz.muni.fi.pv168.project.model.Unit;
+import cz.muni.fi.pv168.project.service.crud.CrudService;
+import cz.muni.fi.pv168.project.ui.dialog.AddUnitDialog;
+import cz.muni.fi.pv168.project.ui.dialog.EditUnitDialog;
+import cz.muni.fi.pv168.project.ui.dialog.OpenUnitDialog;
+import cz.muni.fi.pv168.project.wiring.DependencyProvider;
 
-import javax.swing.table.AbstractTableModel;
-import java.util.ArrayList;
+import javax.swing.*;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
-public class UnitTableModel extends AbstractTableModel {
-
-    private final List<Unit> units;
-    private final HashMap<IngredientType, Unit> baseUnitsMap = new HashMap<IngredientType, Unit>();
-
-    private final List<Column<Unit, ?>> columns = List.of(
-            Column.readonly("Name", String.class, Unit::getName),
-            Column.readonly("Abbreviation", String.class, Unit::getAbbreviation)
-    );
-
-    public UnitTableModel(List<Unit> units) {
-        this.units = new ArrayList<>(units);
+public class UnitTableModel extends BasicTableModel<Unit> {
+    private static final HashMap<IngredientType, Unit> baseUnitsMap = new HashMap<>();
+    private final CrudService<Unit> crudService;
+    public UnitTableModel(DependencyProvider dependencyProvider, CrudService<Unit> crudService) {
+        super(dependencyProvider, crudService);
+        this.crudService = crudService;
         setupBaseUnits();
     }
 
-    @Override
-    public int getRowCount() {
-        return units.size();
-    }
-
-    @Override
-    public int getColumnCount() {
-        return columns.size();
-    }
-
-    @Override
-    public Object getValueAt(int rowIndex, int columnIndex) {
-        var unit = getEntity(rowIndex);
-        return columns.get(columnIndex).getValue(unit);
-    }
-
-    @Override
-    public String getColumnName(int columnIndex) {
-        return columns.get(columnIndex).getName();
-    }
-
-    @Override
-    public Class<?> getColumnClass(int columnIndex) {
-        return columns.get(columnIndex).getColumnType();
-    }
-
-    @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columns.get(columnIndex).isEditable();
-    }
-
-    @Override
-    public void setValueAt(Object value, int rowIndex, int columnIndex) {
-        var recipe = getEntity(rowIndex);
-        columns.get(columnIndex).setValue(value, recipe);
-    }
-
-    public List<Unit> getUnits() {
-        return units;
-    }
-
-    public void deleteRow(int rowIndex) {
-        units.remove(rowIndex);
-        fireTableRowsDeleted(rowIndex, rowIndex);
-    }
-
-    public void addRow(Unit recipe) {
-        int newRowIndex = units.size();
-        units.add(recipe);
-        fireTableRowsInserted(newRowIndex, newRowIndex);
-    }
-
-    public void updateRow(Unit recipe) {
-        int rowIndex = units.indexOf(recipe);
-        fireTableRowsUpdated(rowIndex, rowIndex);
-    }
-
-    public Unit getEntity(int rowIndex) {
-        return units.get(rowIndex);
+    public List<Column<Unit, ?>> makeColumns() {
+        return List.of(
+                Column.readonly("Name", String.class, Unit::getName),
+                Column.readonly("Abbreviation", String.class, Unit::getAbbreviation),
+                Column.readonly("Conversion Rate", Float.class, Unit::getConversionRate)
+        );
     }
 
     public void setupBaseUnits(){
-        Unit gram = new Unit("grams", "g", IngredientType.WEIGHABLE, 1);
-        Unit milliliter = new Unit("milliliters", "ml", IngredientType.POURABLE, 1);
-        Unit piece = new Unit("pieces", "pcs", IngredientType.COUNTABLE, 1);
-        units.add(gram);
-        units.add(milliliter);
-        units.add(piece);
+        Unit gram = null;
+        Unit milliliter = null;
+        Unit piece = null;
+        List<Unit> units = crudService.findAll();
+        for (Unit unit : units) {
+            if (Objects.equals(unit.getName(), "grams")) {
+                gram = unit;
+            } else if (Objects.equals(unit.getName(), "milliliters")) {
+                milliliter = unit;
+            } else if (Objects.equals(unit.getName(), "pieces")) {
+                piece = unit;
+            }
+        }
+
+        if (units.isEmpty()) {
+            gram = new Unit("grams", "g", IngredientType.WEIGHABLE, 1);
+            milliliter = new Unit("milliliters", "ml", IngredientType.POURABLE, 1);
+            piece = new Unit("pieces", "pcs", IngredientType.COUNTABLE, 1);
+            addRow(gram);
+            addRow(milliliter);
+            addRow(piece);
+        }
+
         baseUnitsMap.put(IngredientType.WEIGHABLE, gram);
         baseUnitsMap.put(IngredientType.POURABLE, milliliter);
         baseUnitsMap.put(IngredientType.COUNTABLE, piece);
@@ -98,5 +63,32 @@ public class UnitTableModel extends AbstractTableModel {
 
     public HashMap<IngredientType, Unit> getBaseUnitsMap() {
         return baseUnitsMap;
+    }
+
+    @Override
+    public void performAddAction(JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
+        UnitTableModel unitTable = (UnitTableModel) table.getModel();
+        var dialog = new AddUnitDialog(table);
+        dialog.show(table, "Edit Unit").ifPresent(unitTable::addRow);
+    }
+
+    @Override
+    public void performEditAction(int[] selectedRows, JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
+        int modelRow = table.convertRowIndexToModel(selectedRows[0]);
+        var unit = unitTableModel.getEntity(modelRow);
+        var dialog = new EditUnitDialog(unit, table);
+        dialog.show(table, "Edit Unit").ifPresent(unitTableModel::updateRow);
+    }
+
+    @Override
+    public void performOpenAction(JTable table, int modelRow) {
+        UnitTableModel unitTableModel = (UnitTableModel) table.getModel();
+        var unit = unitTableModel.getEntity(modelRow);
+        var dialog = new OpenUnitDialog(unit);
+        dialog.show(table, "Open Unit").ifPresent(unitTableModel::updateRow);
+    }
+
+    public static Unit getBaseUnit(IngredientType ingredientType) {
+        return baseUnitsMap.get(ingredientType);
     }
 }

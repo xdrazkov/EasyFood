@@ -1,86 +1,52 @@
 package cz.muni.fi.pv168.project.ui.model;
 
-import cz.muni.fi.pv168.project.model.Ingredient;
+import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Unit;
+import cz.muni.fi.pv168.project.service.crud.CrudService;
+import cz.muni.fi.pv168.project.ui.dialog.AddIngredientDialog;
+import cz.muni.fi.pv168.project.ui.dialog.EditIngredientDialog;
+import cz.muni.fi.pv168.project.ui.dialog.OpenIngredientDialog;
+import cz.muni.fi.pv168.project.wiring.DependencyProvider;
 
-import javax.swing.AbstractListModel;
-import javax.swing.table.AbstractTableModel;
-import java.util.ArrayList;
+import javax.swing.*;
 import java.util.List;
 
-public class IngredientTableModel extends AbstractTableModel {
-
-    public List<Ingredient> getIngredients() {
-        return ingredients;
+public class IngredientTableModel extends BasicTableModel<Ingredient> {
+    public IngredientTableModel(DependencyProvider dependencyProvider, CrudService<Ingredient> ingredientCrudService) {
+        super(dependencyProvider, ingredientCrudService);
     }
 
-    private final List<Ingredient> ingredients;
-
-    private final List<Column<Ingredient, ?>> columns = List.of(
-            Column.readonly("Name", String.class, Ingredient::getName),
-            Column.readonly("Default unit", Unit.class, Ingredient::getDefaultUnit),
-            Column.readonly("Nutritional value (kcal)", Integer.class, Ingredient::getCaloriesPerUnit)
-    );
-
-    public IngredientTableModel(List<Ingredient> ingredients) {
-        this.ingredients = new ArrayList<>(ingredients);
+    public List<Column<Ingredient, ?>> makeColumns() {
+        return List.of(
+                Column.readonly("Name", String.class, Ingredient::getName),
+                Column.readonly("Default unit", Unit.class, Ingredient::getDefaultUnit),
+                Column.readonly("Nutritional value (kcal)", Float.class, Ingredient::getCaloriesPerUnit),
+                Column.readonly("Used in * recipe(s))", Integer.class, ingredient -> ingredient.countInstances(dependencyProvider.getRecipeCrudService().findAll()))
+        );
     }
 
     @Override
-    public int getRowCount() {
-        return ingredients.size();
+    public void performAddAction(JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
+        IngredientTableModel ingredientTableModel = (IngredientTableModel) table.getModel();
+        var dialog = new AddIngredientDialog(unitTableModel);
+        dialog.show(table, "Add Ingredient").ifPresent(ingredientTableModel::addRow);
     }
 
     @Override
-    public int getColumnCount() {
-        return columns.size();
+    public void performEditAction(int[] selectedRows, JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
+        int modelRow = table.convertRowIndexToModel(selectedRows[0]);
+        IngredientTableModel ingredientTableModel = (IngredientTableModel) table.getModel();
+        var ingredient = ingredientTableModel.getEntity(modelRow);
+        var dialog = new EditIngredientDialog(ingredient, unitTableModel);
+        dialog.show(table, "Edit Ingredient").ifPresent(ingredientTableModel::updateRow);
     }
 
     @Override
-    public Object getValueAt(int rowIndex, int columnIndex) {
-        var ingredient = getEntity(rowIndex);
-        return columns.get(columnIndex).getValue(ingredient);
-    }
-
-    @Override
-    public String getColumnName(int columnIndex) {
-        return columns.get(columnIndex).getName();
-    }
-
-    @Override
-    public Class<?> getColumnClass(int columnIndex) {
-        return columns.get(columnIndex).getColumnType();
-    }
-
-    @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columns.get(columnIndex).isEditable();
-    }
-
-    @Override
-    public void setValueAt(Object value, int rowIndex, int columnIndex) {
-        var recipe = getEntity(rowIndex);
-        columns.get(columnIndex).setValue(value, recipe);
-    }
-
-    public void deleteRow(int rowIndex) {
-        ingredients.remove(rowIndex);
-        fireTableRowsDeleted(rowIndex, rowIndex);
-    }
-
-    public void addRow(Ingredient recipe) {
-        int newRowIndex = ingredients.size();
-        ingredients.add(recipe);
-        fireTableRowsInserted(newRowIndex, newRowIndex);
-    }
-
-    public void updateRow(Ingredient recipe) {
-        int rowIndex = ingredients.indexOf(recipe);
-        fireTableRowsUpdated(rowIndex, rowIndex);
-    }
-
-    public Ingredient getEntity(int rowIndex) {
-        return ingredients.get(rowIndex);
+    public void performOpenAction(JTable table, int modelRow) {
+        IngredientTableModel ingredientTableModel = (IngredientTableModel) table.getModel();
+        var ingredient = ingredientTableModel.getEntity(modelRow);
+        var dialog = new OpenIngredientDialog(ingredient);
+        dialog.show(table, "Open Ingredient").ifPresent(ingredientTableModel::updateRow);
     }
 }

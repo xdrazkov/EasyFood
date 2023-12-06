@@ -2,32 +2,31 @@ package cz.muni.fi.pv168.project.ui;
 
 import cz.muni.fi.pv168.project.data.TestDataGenerator;
 import cz.muni.fi.pv168.project.export.json.BatchJsonExporter;
+import cz.muni.fi.pv168.project.export.json.BatchJsonImporter;
 import cz.muni.fi.pv168.project.export.pdf.BatchPdfExporter;
-import cz.muni.fi.pv168.project.model.Category;
-import cz.muni.fi.pv168.project.model.Ingredient;
-import cz.muni.fi.pv168.project.model.Recipe;
-import cz.muni.fi.pv168.project.model.UuidGuidProvider;
-import cz.muni.fi.pv168.project.service.crud.RecipeCrudService;
+import cz.muni.fi.pv168.project.model.*;
+import cz.muni.fi.pv168.project.service.CategoryDependencyChecker;
+import cz.muni.fi.pv168.project.service.IngredientDependencyChecker;
+import cz.muni.fi.pv168.project.service.RecipeDependencyChecker;
+import cz.muni.fi.pv168.project.service.UnitDependencyChecker;
+import cz.muni.fi.pv168.project.service.crud.GenericCrudService;
 import cz.muni.fi.pv168.project.service.export.GenericExportService;
+import cz.muni.fi.pv168.project.service.export.GenericImportService;
+import cz.muni.fi.pv168.project.service.validation.CategoryValidator;
+import cz.muni.fi.pv168.project.service.validation.IngredientValidator;
 import cz.muni.fi.pv168.project.service.validation.RecipeValidator;
-import cz.muni.fi.pv168.project.storage.InMemoryRepository;
+import cz.muni.fi.pv168.project.service.validation.UnitValidator;
+import cz.muni.fi.pv168.project.storage.memory.InMemoryRepository;
 import cz.muni.fi.pv168.project.ui.action.*;
 import cz.muni.fi.pv168.project.ui.filters.RecipeTableFilter;
-import cz.muni.fi.pv168.project.ui.filters.components.FilterListModelBuilder;
 import cz.muni.fi.pv168.project.ui.filters.values.SpecialFilterCategoryValues;
-import cz.muni.fi.pv168.project.ui.filters.values.SpecialFilterIngredientValues;
-import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
-import cz.muni.fi.pv168.project.ui.model.IngredientTableModel;
-import cz.muni.fi.pv168.project.ui.model.RecipeTableModel;
-import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
+import cz.muni.fi.pv168.project.ui.model.*;
 import cz.muni.fi.pv168.project.ui.panels.*;
-import cz.muni.fi.pv168.project.ui.rangeSlider.RangeSlider;
-import cz.muni.fi.pv168.project.ui.rangeSlider.RecipeRangeSliderChangeListener;
 import cz.muni.fi.pv168.project.ui.renderers.*;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
 import cz.muni.fi.pv168.project.util.Either;
 import cz.muni.fi.pv168.project.ui.filters.components.FilterComboboxBuilder;
-import org.apache.commons.lang3.tuple.Pair;
+import cz.muni.fi.pv168.project.wiring.DependencyProvider;
 
 
 import javax.swing.*;
@@ -36,16 +35,12 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableRowSorter;
+
+import static cz.muni.fi.pv168.project.ui.panels.TablePanelType.*;
 
 public class MainWindow {
     private final JFrame frame;
@@ -63,76 +58,63 @@ public class MainWindow {
     private final Map<GeneralAction, List<Integer>> forbiddenActionsInTabs = new HashMap<>();
 
     private final JTabbedPane tabbedPane;
-    private final Border padding = new EmptyBorder(0, 5, 0, 5);
+    private final Border padding = new EmptyBorder(0, 10, 0, 10);
 
-    public MainWindow() {
+    public static final Dimension SCREEN_SIZE = Toolkit.getDefaultToolkit().getScreenSize();
+
+    public MainWindow(DependencyProvider dependencyProvider) {
         frame = createFrame();
-        frame.setMinimumSize(new Dimension(800, 800));
+        frame.setMinimumSize(new Dimension(1400, 800));
         frame.setIconImage(Icons.APP_ICON);
 
-        // Generate test objects
-        var testDataGenerator = new TestDataGenerator();
-        var categories = testDataGenerator.createTestCategories(5);
-        var units = testDataGenerator.createTestUnits(5);
-        var ingredients = testDataGenerator.createTestIngredients(5, units);
-        var recipes = testDataGenerator.createTestRecipes(20, categories, ingredients, units);
+        var recipeCrudService = dependencyProvider.getRecipeCrudService();
+        var ingredientCrudService = dependencyProvider.getIngredientCrudService();
+        var categoryCrudService = dependencyProvider.getCategoryCrudService();
+        var unitCrudService = dependencyProvider.getUnitCrudService();
 
-        var recipeValidator = new RecipeValidator();
-
-        var guidProvider = new UuidGuidProvider();
-
-        var recipeRepository = new InMemoryRepository<>(recipes);
-
-        var recipeCrudService = new RecipeCrudService(recipeRepository, recipeValidator, guidProvider);
+        recipeCrudService.setGeneralDependencyChecker(new RecipeDependencyChecker());
+        ingredientCrudService.setGeneralDependencyChecker(new IngredientDependencyChecker(recipeCrudService));
+        categoryCrudService.setGeneralDependencyChecker(new CategoryDependencyChecker(recipeCrudService));
+        unitCrudService.setGeneralDependencyChecker(new UnitDependencyChecker(recipeCrudService, ingredientCrudService));
 
         // Create models
-        RecipeTableModel recipeTableModel = new RecipeTableModel(recipes);
-        IngredientTableModel ingredientTableModel = new IngredientTableModel(ingredients);
-        CategoryTableModel categoryTableModel = new CategoryTableModel(categories);
-        UnitTableModel unitTableModel = new UnitTableModel(units);
-        List<AbstractTableModel> tableModels =
+        RecipeTableModel recipeTableModel = new RecipeTableModel(dependencyProvider, recipeCrudService);
+        IngredientTableModel ingredientTableModel = new IngredientTableModel(dependencyProvider, ingredientCrudService);
+        CategoryTableModel categoryTableModel = new CategoryTableModel(dependencyProvider, categoryCrudService);
+        UnitTableModel unitTableModel = new UnitTableModel(dependencyProvider, unitCrudService);
+        List<BasicTableModel<? extends Entity>> tableModels =
                 List.of(recipeTableModel, ingredientTableModel, categoryTableModel, unitTableModel);
 
         // Create panels
-        List<TablePanel> tablePanels = new ArrayList<>();
-        for (var tableModel: tableModels) {
-            tablePanels.add(new TablePanel(tableModel, this::changeActionsState));
-        }
-
-        var recipeTablePanel = tablePanels.get(TablePanelType.RECIPE.ordinal());
-        var ingredientTablePanel = tablePanels.get(TablePanelType.INGREDIENT.ordinal());
-        var categoryTablePanel = tablePanels.get(TablePanelType.CATEGORY.ordinal());
-        var unitTablePanel = tablePanels.get(TablePanelType.UNIT.ordinal());
+        var recipeTablePanel = new RecipeTablePanel(recipeTableModel, this::changeActionsState);
+        var ingredientTablePanel = new IngredientTablePanel(ingredientTableModel, this::changeActionsState);;
+        var categoryTablePanel = new CategoryTablePanel(categoryTableModel, this::changeActionsState);
+        var unitTablePanel = new UnitTablePanel(unitTableModel, this::changeActionsState);
+        List<GeneralTablePanel<? extends Entity>> generalTablePanels = List.of(recipeTablePanel, ingredientTablePanel, categoryTablePanel, unitTablePanel);
 
         // Add the panels to tabbed pane
         this.tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("Recipes", recipeTablePanel);
-        tabbedPane.addTab("Ingredients", ingredientTablePanel);
-        tabbedPane.addTab("Categories", categoryTablePanel);
-        tabbedPane.addTab("Units", unitTablePanel);
+        generalTablePanels.forEach(panel -> tabbedPane.addTab(panel.getTablePanelType().getPluralName(), panel));
         tabbedPane.setBorder(padding);
         frame.add(tabbedPane, BorderLayout.CENTER);
 
         // Set up actions for recipe table
-        addAction = new AddAction(categoryTableModel.getCategories(), ingredientTableModel.getIngredients(), unitTableModel.getUnits(), unitTableModel);
-        deleteAction = new DeleteAction(recipeTablePanel.getTable(), ingredientTablePanel.getTable(), categoryTablePanel.getTable(), unitTablePanel.getTable());
-        editAction = new EditAction(categoryTableModel.getCategories(), ingredientTableModel.getIngredients(), unitTableModel.getUnits(), unitTableModel);
+        addAction = new AddAction(unitTableModel, ingredientCrudService, categoryCrudService, unitCrudService);
+        deleteAction = new DeleteAction();
+        editAction = new EditAction(unitTableModel, ingredientCrudService, categoryCrudService, unitCrudService);
         openAction = new OpenAction();
 
         // Add row sorters
-        var recipeRowSorter = new TableRowSorter<>(recipeTableModel);
-        var categoryRowSorter = new TableRowSorter<>(categoryTableModel);
-        var ingredientRowSorter = new TableRowSorter<>(ingredientTableModel);
-        var unitRowSorter = new TableRowSorter<>(unitTableModel);
+        var recipeRowSorter = (TableRowSorter<RecipeTableModel>)  recipeTablePanel.getTable().getRowSorter();
 
-        var exportService = new GenericExportService(recipeRowSorter, recipeTablePanel , List.of(new BatchJsonExporter(), new BatchPdfExporter()));
-//        var importService = new GenericImportService(tableContext, List.of(new BatchJsonImporter(), new BatchXmlImporter()));
+        // TODO exporters by DAO
+        var exportService = new GenericExportService(recipeRowSorter ,recipeTablePanel, List.of(new BatchJsonExporter(), new BatchPdfExporter()));
+        var importService = new GenericImportService(recipeCrudService, ingredientCrudService, categoryCrudService, List.of(new BatchJsonImporter()));
 
         // create import/export actions
-
         exportAction = new ExportAction(recipeTablePanel, exportService);
-        importAction = new ImportAction();
-        viewStatisticsAction = new ViewStatisticsAction(recipeTableModel.getRecipes(), ingredientTableModel.getIngredients());
+        importAction = new ImportAction(recipeTablePanel, importService, () -> tableModels.forEach(BasicTableModel::refresh));
+        viewStatisticsAction = new ViewStatisticsAction(ingredientCrudService, recipeCrudService);
         viewAboutAction = new ViewAboutAction();
         this.actions = List.of(addAction, editAction, deleteAction, openAction, importAction, exportAction, viewAboutAction, viewStatisticsAction);
         setForbiddenActionsInTabs();
@@ -140,43 +122,20 @@ public class MainWindow {
 
 
         // Add popup menu, toolbar, menubar, status bar
-        tablePanels.forEach(
+        generalTablePanels.forEach(
                 r -> r.getTable().setComponentPopupMenu(createTablePopupMenu(r.getTablePanelType())));
         JLabel statusBar = createStatusBar();
         setStatusBarName(statusBar);
 
-        // set all row sorters
-        recipeTablePanel.getTable().setRowSorter(recipeRowSorter);
-        categoryTablePanel.getTable().setRowSorter(categoryRowSorter);
-        ingredientTablePanel.getTable().setRowSorter(ingredientRowSorter);
-        unitTablePanel.getTable().setRowSorter(unitRowSorter);
-
         // adding listener to change text of status bar when filtering rows
         recipeRowSorter.addRowSorterListener(e -> setStatusBarName(statusBar));
 
-        var recipeTableFilter = new RecipeTableFilter(recipeRowSorter);
-        var categoryFilter = createCategoryFilter(recipeTableFilter, categoryTableModel);
-        var ingredientFilter = createIngredientFilter(recipeTableFilter, ingredientTableModel);
-
-        var preparationTimeSlider =
-                getRangeSlider(recipeTableModel, recipeTableFilter::filterPreparationTime,
-                        Recipe::getTimeToPrepare, "Preparation time (min)");
-
-        var nutritionalValuesSlider =
-                getRangeSlider(recipeTableModel, recipeTableFilter::filterNutritionalValues,
-                        Recipe::getNutritionalValue, "Nutritional values (kcal)");
-
-        // paints rows in recipe and category tab by their category color
-        var recipeRowColorRenderer = new RecipeCategoryRenderer(2);
-        recipeTablePanel.getTable().setDefaultRenderer(Object.class, recipeRowColorRenderer);
-        recipeTablePanel.getTable().setDefaultRenderer(Integer.class, recipeRowColorRenderer);
-        categoryTablePanel.getTable().setDefaultRenderer(Object.class, new RecipeCategoryRenderer(0));
+        var filterToolBar = new FilterToolbar(recipeCrudService, ingredientCrudService, categoryCrudService, unitCrudService, recipeRowSorter);
+        actions.forEach(a -> a.setFilterToolbar(filterToolBar));
 
         JPanel toolbarPanel = new JPanel(new GridLayout(2, 1));
-        JPanel preparationPanel = createSliderPanel(nutritionalValuesSlider);
-        JPanel nutritionalPanel = createSliderPanel(preparationTimeSlider);
         var toolbar = createToolbar();
-        var filtersToolbar = createToolbar(categoryFilter, new JScrollPane(ingredientFilter), preparationPanel, nutritionalPanel);
+        var filtersToolbar = filterToolBar.getFilterToolBar();
         toolbarPanel.add(toolbar);
         toolbarPanel.add(filtersToolbar);
         toolbarPanel.setBorder(padding);
@@ -187,100 +146,39 @@ public class MainWindow {
         frame.pack();
 
         // maps starting table to all actions
-        setCurrentTableToActions(getCurrentTableFromPanel(tabbedPane));
+        setCurrentTableToActions(getCurrentTablePanelFromPanel(tabbedPane));
         tabbedPane.addChangeListener(new ChangeListener() {
             // when tab changes
             @Override
             public void stateChanged(ChangeEvent e) {
                 JTabbedPane tabPanel = (JTabbedPane) e.getSource();
 
-                var currTable = getCurrentTableFromPanel(tabPanel);
-                setCurrentTableToActions(currTable);
+                var currGeneralTable = getCurrentTablePanelFromPanel(tabPanel);
+                setCurrentTableToActions(currGeneralTable);
                 setToDefaultActionEnablement(getCurrentTableIndex(tabPanel));
 
                 // clear all row selections
-                tablePanels.forEach(r -> r.getTable().clearSelection());
+                generalTablePanels.forEach(r -> r.getTable().clearSelection());
 
                 // filters visible only on recipe tab
                 int currTabIndex = tabPanel.getSelectedIndex();
-                filtersToolbar.setVisible(currTabIndex == TablePanelType.RECIPE.ordinal());
+                filtersToolbar.setVisible(currTabIndex == RECIPE.ordinal());
 
                 setStatusBarName(statusBar);
 
-                // reset filter selection
-                categoryFilter.setSelectedIndex(0);
-                ingredientFilter.setSelectedIndex(0);
-
-                // reset sliders
-                nutritionalValuesSlider.resetSlider();
-                preparationTimeSlider.resetSlider();
+                filterToolBar.resetFilters();
             }
         });
     }
 
-    private void refresh() {
-//        recipeTableModel.refresh();
-    }
-
     private static JComboBox<Either<SpecialFilterCategoryValues, Category>> createCategoryFilter(
             RecipeTableFilter recipeTableFilter, CategoryTableModel categoryTableModel) {
-        return FilterComboboxBuilder.create(SpecialFilterCategoryValues.class, categoryTableModel.getCategories().toArray(new Category[0]))
+        return FilterComboboxBuilder.create(SpecialFilterCategoryValues.class, categoryTableModel.getEntities().toArray(new Category[0]))
                 .setSelectedItem(SpecialFilterCategoryValues.ALL)
                 .setSpecialValuesRenderer(new SpecialFilterCategoryValuesRenderer())
                 .setValuesRenderer(new CategoryRenderer())
                 .setFilter(recipeTableFilter::filterCategory)
                 .build();
-    }
-
-    private static JList<Either<SpecialFilterIngredientValues, Ingredient>> createIngredientFilter(
-            RecipeTableFilter recipeTableFilter, IngredientTableModel ingredientTableModel) {
-        ListModel<Ingredient> listModel = new AbstractListModel<>() {
-            @Override
-            public int getSize() {
-                return ingredientTableModel.getIngredients().size();
-            }
-
-            @Override
-            public Ingredient getElementAt(int index) {
-                return ingredientTableModel.getIngredients().get(index);
-            }
-        };
-
-        return FilterListModelBuilder.create(SpecialFilterIngredientValues.class, listModel)
-                .setSelectedIndex(0)
-                .setVisibleRowsCount(3)
-                .setSpecialValuesRenderer(new SpecialFilterIngredientValuesRenderer())
-                .setValuesRenderer(new IngredientRenderer())
-                .setFilter(recipeTableFilter::filterIngredient)
-                .build();
-    }
-
-    private static <T>RangeSlider getRangeSlider(RecipeTableModel recipeTableModel,
-                                                 Consumer<Either<T, Pair<Integer, Integer>>> filterFunction,
-                                                 Function<Recipe,Integer> mapperFunction,
-                                                 String description) {
-        List<Integer> values = recipeTableModel.getRecipes().stream()
-                .map(mapperFunction)
-                .toList();
-
-        int minValue = values.stream().mapToInt(Integer::intValue).min().orElse(0);
-        int maxValue = values.stream().mapToInt(Integer::intValue).max().orElse(0);
-
-        RangeSlider slider = new RangeSlider(minValue, maxValue);
-
-        slider.setMajorTickSpacing((maxValue - minValue) / 10);
-        slider.setMinorTickSpacing((maxValue - minValue) / 20);
-
-        slider.setPaintTicks(true);
-        slider.setPaintLabels(true);
-
-        slider.setToolTipText(description);
-        slider.setValue(minValue);
-        slider.setUpperValue(maxValue);
-
-        slider.addChangeListener(new RecipeRangeSliderChangeListener<>(filterFunction));
-
-        return slider;
     }
 
     public void show() {
@@ -341,15 +239,6 @@ public class MainWindow {
         return toolbar;
     }
 
-    private JToolBar createToolbar(Component... components) {
-        var toolbar = new JToolBar();
-        for (var component : components) {
-            toolbar.add(component);
-        }
-
-        return toolbar;
-    }
-
     private JLabel createStatusBar() {
         JPanel statusPanel = new JPanel();
         statusPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
@@ -369,10 +258,12 @@ public class MainWindow {
         editAction.setEnabled(selectedItemsCount == 1 && isActionAllowed(editAction, currentTabIndex));
         deleteAction.setEnabled(selectedItemsCount >= 1 && isActionAllowed(deleteAction, currentTabIndex));
         exportAction.setEnabled(selectedItemsCount >= 1 && isActionAllowed(exportAction, currentTabIndex));
+
+        actions.forEach(GeneralAction::setShortDescription);
     }
 
-    private void setCurrentTableToActions(JTable table) {
-        this.actions.forEach(x -> x.setTable(table));
+    private <T extends Entity> void setCurrentTableToActions(GeneralTablePanel<T> generalTablePanel) {
+        this.actions.forEach(x -> x.setGeneralTablePanel(generalTablePanel));
     }
 
     private Integer getCurrentTableIndex(JTabbedPane tab) {
@@ -382,6 +273,10 @@ public class MainWindow {
         JPanel panel = (JPanel) tab.getComponentAt(getCurrentTableIndex(tab));
         JScrollPane scrollPane = (JScrollPane) panel.getComponent(0);
         return (JTable) scrollPane.getViewport().getView();
+    }
+
+    private <T extends Entity> GeneralTablePanel<T> getCurrentTablePanelFromPanel(JTabbedPane tab) {
+        return (GeneralTablePanel<T>) tab.getComponentAt(getCurrentTableIndex(tab));
     }
 
     private void setToDefaultActionEnablement(int currentTabIndex) {
@@ -402,9 +297,9 @@ public class MainWindow {
             this.forbiddenActionsInTabs.put(action, List.of());
         }
         List<Integer> forbidden = List.of(
-                TablePanelType.INGREDIENT.ordinal(),
-                TablePanelType.CATEGORY.ordinal(),
-                TablePanelType.UNIT.ordinal());
+                INGREDIENT.ordinal(),
+                CATEGORY.ordinal(),
+                UNIT.ordinal());
         this.forbiddenActionsInTabs.put(exportAction, forbidden);
         this.forbiddenActionsInTabs.put(importAction, forbidden);
     }
@@ -428,25 +323,5 @@ public class MainWindow {
                 currTabTitle
         ));
         statusBar.setBorder(new EmptyBorder(0, 10, 0, 10));
-    }
-
-    private static JPanel createSliderPanel(RangeSlider slider) {
-        Button resetButton = new Button("Reset slider");
-        resetButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                slider.resetSlider();
-            }
-        });
-        JPanel buttonTextPanel = new JPanel(new GridLayout(1, 2));
-        buttonTextPanel.add(resetButton);
-        buttonTextPanel.add(new JLabel(slider.getToolTipText(), SwingConstants.CENTER));
-
-        JPanel finalPanel = new JPanel(new GridLayout(2, 1));
-        finalPanel.add(slider);
-        finalPanel.add(buttonTextPanel);
-
-        finalPanel.setBorder(new EmptyBorder(0, 10, 0, 10));
-        return finalPanel;
     }
 }

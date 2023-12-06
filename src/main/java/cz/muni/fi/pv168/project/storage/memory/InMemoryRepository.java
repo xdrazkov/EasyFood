@@ -1,4 +1,4 @@
-package cz.muni.fi.pv168.project.storage;
+package cz.muni.fi.pv168.project.storage.memory;
 
 import cz.muni.fi.pv168.project.model.Entity;
 import cz.muni.fi.pv168.project.repository.Repository;
@@ -13,6 +13,7 @@ public class InMemoryRepository<T extends Entity> implements Repository<T> {
 
     private Map<String, T> data = new HashMap<>();
 
+    // TODO remove completely useless
     public InMemoryRepository(Collection<T> initEntities) {
         initEntities.forEach(this::create);
     }

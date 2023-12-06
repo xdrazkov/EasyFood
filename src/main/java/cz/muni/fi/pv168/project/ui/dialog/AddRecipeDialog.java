@@ -1,11 +1,7 @@
 package cz.muni.fi.pv168.project.ui.dialog;
 
-import cz.muni.fi.pv168.project.model.Category;
-import cz.muni.fi.pv168.project.model.Ingredient;
-import cz.muni.fi.pv168.project.model.Recipe;
-import cz.muni.fi.pv168.project.model.Unit;
+import cz.muni.fi.pv168.project.model.*;
 import net.miginfocom.swing.MigLayout;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,8 +21,7 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
     private final JComboBox<Category> category = new JComboBox<>();
     private final JLabel ingredientsLabel = new JLabel();
     private final JButton newButton = new JButton();
-    private JScrollPane scroll;
-    private final JPanel test = new JPanel();
+    private final JPanel ingredientsPanel = new JPanel();
 
     private final List<Category> categories;
     private final List<Ingredient> ingredients;
@@ -40,11 +35,9 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
         this.units = units;
         setValues();
         addFields();
-        addIngredients();
     }
 
     private void setValues() {
-        panel.setPreferredSize(new Dimension(330, 560));
         title.setText("");
         description.setText("");
         portionCount.setText("1");
@@ -54,27 +47,18 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
         ingredientsLabel.setText("Ingredients");
         newButton.setText("New Ingredient");
         newButton.addActionListener(new AddIngredient());
-        test.setLayout(new MigLayout("wrap 1"));
+        ingredientsPanel.setLayout(new MigLayout("wrap 1"));
     }
 
     private void addFields() {
-        add("Title:", title);
-        add("Description:", description);
-        add("Portions:", portionCount);
-        JScrollPane scrollInstructions = new JScrollPane(instructions);
-        scrollInstructions.setMinimumSize(new Dimension(300,100));
-        add("Instructions:", scrollInstructions);
-        add("Time to prepare(min):", timeToPrepare);
-        add("Category:", category);
-        panel.add(ingredientsLabel);
-        panel.add(newButton);
-        scroll = new JScrollPane(test);
-        scroll.setMinimumSize(new Dimension(300,150));
-        panel.add(scroll);
-    }
-
-    private void addIngredients() {
-        addIngredient(null, "0", null);
+        add("Title:", title, THIN_HEIGHT);
+        add("Description:", description, THIN_HEIGHT);
+        add("Portions:", portionCount, THIN_HEIGHT);
+        add("Instructions:", new JScrollPane(instructions), THICC_HEIGHT);
+        add("Time to prepare(min):", timeToPrepare, THIN_HEIGHT);
+        add("Category:", category, THIN_HEIGHT);
+        add("Ingredients:", new JScrollPane(ingredientsPanel), THICC_HEIGHT);
+        add("", newButton, THIN_HEIGHT);
     }
 
     public void addIngredient(Object selectedIngredient, String count, Object selectedUnit){
@@ -107,17 +91,17 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
         xButton.addActionListener(new DeleteIngredient());
         newIngredient.add(xButton);
 
-        test.add(newIngredient);
+        ingredientsPanel.add(newIngredient);
     }
 
     public void deleteIngredient(JButton source){
-        test.remove(source.getParent());
+        ingredientsPanel.remove(source.getParent());
     }
 
     @Override
     Recipe getEntity() {
         Recipe recipe = new Recipe();
-        HashMap<Ingredient, Pair<Unit, Integer>> newIgredients = getAllIngredients();
+        HashMap<Ingredient, AmountInUnit> newIgredients = getAllIngredients();
         if(newIgredients == null){
             return null;
         }
@@ -131,9 +115,9 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
         return recipe;
     }
 
-    public HashMap<Ingredient, Pair<Unit, Integer>> getAllIngredients(){
-        HashMap<Ingredient, Pair<Unit, Integer>> newIgredients = new HashMap<>();
-        for (Component component : test.getComponents()){
+    public HashMap<Ingredient, AmountInUnit> getAllIngredients(){
+        HashMap<Ingredient, AmountInUnit> newIgredients = new HashMap<>();
+        for (Component component : ingredientsPanel.getComponents()){
             Ingredient ingredient = (Ingredient)((JComboBox<Ingredient>)((JPanel)component).getComponent(0)).getSelectedItem();
             int count = Integer.parseInt(((JTextField)((JPanel)component).getComponent(1)).getText());
             Unit unit = (Unit)((JComboBox<Unit>)((JPanel)component).getComponent(2)).getSelectedItem();
@@ -141,13 +125,13 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
                 JOptionPane.showConfirmDialog(null, "There are some duplicities in your ingredients.\nNot possible to save.", "Warning", JOptionPane.CLOSED_OPTION);
                 return null;
             }
-            newIgredients.put(ingredient, Pair.of(unit, count));
+            newIgredients.put(ingredient, new AmountInUnit(unit, count));
         }
         return newIgredients;
     }
 
     public Unit[] filterUnits(JComboBox<Ingredient> source){
-        Ingredient selectedIngredient = (Ingredient)source.getSelectedItem();;
+        Ingredient selectedIngredient = (Ingredient)source.getSelectedItem();
         ArrayList<Unit> filteredUnits = new ArrayList<>();
         for(Unit unit : units){
             if (selectedIngredient != null && selectedIngredient.getDefaultUnit().getIngredientType() == unit.getIngredientType()){

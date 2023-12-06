@@ -18,7 +18,7 @@ public class SpecialFilterIngredientValuesRenderer extends AbstractRenderer<Spec
     }
 
     private static void renderAll(JLabel label) {
-        label.setText("(ALL)");
+        label.setText("All ingredients");
         label.setFont(label.getFont().deriveFont(Font.ITALIC));
         label.setForeground(Color.GRAY);
     }
