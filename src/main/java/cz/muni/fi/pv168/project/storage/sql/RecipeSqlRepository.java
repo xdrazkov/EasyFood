@@ -84,8 +84,8 @@ public class RecipeSqlRepository implements Repository<Recipe> {
 
     @Override
     public void deleteAll() {
-        recipeDao.deleteAll();
         recipeIngredientDao.deleteAll();
+        recipeDao.deleteAll();
     }
 
     @Override

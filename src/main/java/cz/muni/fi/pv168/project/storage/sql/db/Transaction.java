@@ -5,7 +5,7 @@ import java.io.Closeable;
 /**
  * Transaction Handling
  */
-public interface TransactionHandler extends Closeable {
+public interface Transaction extends Closeable {
 
     /**
      * @return active {@link ConnectionHandler} instance
@@ -21,4 +21,6 @@ public interface TransactionHandler extends Closeable {
      * Closes active connection
      */
     void close();
+
+    boolean isClosed();
 }
