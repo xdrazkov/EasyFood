@@ -5,7 +5,6 @@ import cz.muni.fi.pv168.project.export.json.BatchJsonImporter;
 import cz.muni.fi.pv168.project.export.pdf.BatchPdfExporter;
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Ingredient;
-import cz.muni.fi.pv168.project.model.IngredientType;
 import cz.muni.fi.pv168.project.model.Recipe;
 import cz.muni.fi.pv168.project.model.Unit;
 import cz.muni.fi.pv168.project.model.UuidGuidProvider;
@@ -32,6 +31,7 @@ import cz.muni.fi.pv168.project.storage.sql.entity.mapper.IngredientMapper;
 import cz.muni.fi.pv168.project.storage.sql.entity.mapper.RecipeIngredientMapper;
 import cz.muni.fi.pv168.project.storage.sql.entity.mapper.RecipeMapper;
 import cz.muni.fi.pv168.project.storage.sql.entity.mapper.UnitMapper;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.List;
 
@@ -47,9 +47,7 @@ public class CommonDependencyProvider implements DependencyProvider {
     private final CrudService<Unit> unitCrudService;
 
     private final ImportService importService;
-
-    // TODO: implement export service
-    private final ExportService exportService = null;
+    private final ExportService exportService;
 
     private final DatabaseManager databaseManager;
 
@@ -70,31 +68,28 @@ public class CommonDependencyProvider implements DependencyProvider {
         UnitDao unitDao = new UnitDao(databaseManager::getConnectionHandler);
         UnitMapper unitMapper = new UnitMapper();
         unitRepository = new UnitSqlRepository(unitDao, unitMapper);
-        unitCrudService = new GenericCrudService<Unit>(unitRepository, unitValidator, guidProvider);
+        unitCrudService = new GenericCrudService<>(unitRepository, unitValidator, guidProvider);
 
         IngredientDao ingredientDao = new IngredientDao(transactionConnectionSupplier);
         IngredientMapper ingredientMapper = new IngredientMapper(unitDao, unitMapper);
         ingredientRepository = new IngredientSqlRepository(ingredientDao, ingredientMapper);
-        ingredientCrudService = new GenericCrudService<Ingredient>(ingredientRepository, ingredientValidator, guidProvider);
+        ingredientCrudService = new GenericCrudService<>(ingredientRepository, ingredientValidator, guidProvider);
 
         CategoryDao categoryDao = new CategoryDao(transactionConnectionSupplier);
         CategoryMapper categoryMapper = new CategoryMapper();
         categoryRepository = new CategorySqlRepository(categoryDao, categoryMapper);
-        categoryCrudService = new GenericCrudService<Category>(categoryRepository, categoryValidator, guidProvider);
+        categoryCrudService = new GenericCrudService<>(categoryRepository, categoryValidator, guidProvider);
 
         RecipeIngredientDao recipeIngredientDao = new RecipeIngredientDao(transactionConnectionSupplier);
         RecipeIngredientMapper recipeIngredientMapper = new RecipeIngredientMapper(ingredientDao, unitDao, ingredientMapper, unitMapper);
         RecipeDao recipeDao = new RecipeDao(transactionConnectionSupplier);
         RecipeMapper recipeMapper = new RecipeMapper(categoryDao, categoryMapper);
         recipeRepository = new RecipeSqlRepository(recipeDao, recipeIngredientDao, recipeMapper, recipeIngredientMapper);
-        recipeCrudService = new GenericCrudService<Recipe>(recipeRepository, recipeValidator, guidProvider);
+        recipeCrudService = new GenericCrudService<>(recipeRepository, recipeValidator, guidProvider);
 
         importService = new GenericImportService(recipeCrudService, ingredientCrudService, categoryCrudService,
                 List.of(new BatchJsonImporter()));
-
-//        exportService = new GenericExportService(recipeCrudServicerecipeRowSorter ,recipeTablePanel, List.of(new BatchJsonExporter(), new BatchPdfExporter()));
-//        var genericImportService = new GenericImportService(recipeCrudService, ingredientCrudService, categoryCrudService,
-//                List.of(new BatchJsonImporter()));
+        exportService = new GenericExportService(List.of(new BatchJsonExporter(), new BatchPdfExporter()), recipeCrudService);
 //        importService = new TransactionalImportService(genericImportService, transactionExecutor);
     }
 
@@ -105,7 +100,7 @@ public class CommonDependencyProvider implements DependencyProvider {
 
     @Override
     public TransactionManager getTransactionManager() {
-        return getTransactionManager();
+        throw new NotImplementedException();
     }
 
     @Override

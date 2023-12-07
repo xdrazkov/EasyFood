@@ -1,5 +1,6 @@
 package cz.muni.fi.pv168.project.ui.action;
 
+import cz.muni.fi.pv168.project.model.Entity;
 import cz.muni.fi.pv168.project.service.export.DataManipulationException;
 import cz.muni.fi.pv168.project.service.export.ExportService;
 import cz.muni.fi.pv168.project.service.export.batch.BatchOperationException;
@@ -15,6 +16,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 public final class ExportAction extends GeneralAction {
 
@@ -66,7 +68,8 @@ public final class ExportAction extends GeneralAction {
             protected List<String> doInBackground() {
                 List<String> validationErrors = List.of();
                 try {
-                    exportService.exportData(exportFile);
+                    var exportGuids = ExportAction.super.getSelectedEntities().stream().map(Entity::getGuid).toList();
+                    exportService.exportData(exportFile, exportGuids);
                 } catch (ValidationException e) {
                     validationErrors = e.getValidationErrors();
                 }

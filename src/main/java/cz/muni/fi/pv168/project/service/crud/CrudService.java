@@ -5,6 +5,7 @@ import cz.muni.fi.pv168.project.service.GeneralDependencyChecker;
 import cz.muni.fi.pv168.project.service.validation.ValidationResult;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service for creation, read, update, and delete operations.
@@ -41,5 +42,7 @@ public interface CrudService<T extends Entity> {
     void deleteAll();
 
     void setGeneralDependencyChecker(GeneralDependencyChecker<T> generalDependencyChecker);
+
+    Optional<T> findByGuid(String guid);
 }
 

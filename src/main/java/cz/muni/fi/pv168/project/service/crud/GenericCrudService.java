@@ -80,4 +80,9 @@ public class GenericCrudService <T extends Entity> implements CrudService<T> {
     public void setGeneralDependencyChecker(GeneralDependencyChecker<T> generalDependencyChecker) {
         this.generalDependencyChecker = generalDependencyChecker;
     }
+
+    @Override
+    public Optional<T> findByGuid(String guid) {
+        return entityRepository.findByGuid(guid);
+    }
 }

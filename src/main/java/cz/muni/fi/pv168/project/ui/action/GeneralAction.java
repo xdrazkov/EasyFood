@@ -3,10 +3,15 @@ package cz.muni.fi.pv168.project.ui.action;
 import cz.muni.fi.pv168.project.model.Entity;
 import cz.muni.fi.pv168.project.service.validation.ValidationException;
 import cz.muni.fi.pv168.project.ui.FilterToolbar;
+import cz.muni.fi.pv168.project.ui.model.BasicTableModel;
 import cz.muni.fi.pv168.project.ui.panels.GeneralTablePanel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * provides actions to change their target context (table)
@@ -74,4 +79,11 @@ public abstract class GeneralAction extends AbstractAction {
         JOptionPane.showMessageDialog(null, panel,"Action not successful!", JOptionPane.ERROR_MESSAGE);
     }
 
+    protected <T extends Entity> Collection<T> getSelectedEntities() {
+        BasicTableModel<T> model = (BasicTableModel <T>) getTable().getModel();
+        return Arrays.stream(generalTablePanel.getTable().getSelectedRows())
+                .mapToObj(row -> model.getEntity(getTable().getRowSorter().convertRowIndexToModel(row)))
+                .collect(Collectors.toList());
+
+    }
 }

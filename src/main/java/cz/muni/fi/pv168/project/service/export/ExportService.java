@@ -14,10 +14,10 @@ public interface ExportService {
      * Exports data to a file.
      *
      * @param filePath absolute path of the export file (to be created or overwritten)
-     *
+     * @param guids
      * @throws BatchOperationException if the export cannot be done
      */
-    void exportData(String filePath);
+    void exportData(String filePath, Collection<String> guids);
 
     /**
      * Gets all available formats for export.

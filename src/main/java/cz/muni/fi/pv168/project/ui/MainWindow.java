@@ -1,32 +1,15 @@
 package cz.muni.fi.pv168.project.ui;
 
-import cz.muni.fi.pv168.project.data.TestDataGenerator;
-import cz.muni.fi.pv168.project.export.json.BatchJsonExporter;
-import cz.muni.fi.pv168.project.export.json.BatchJsonImporter;
-import cz.muni.fi.pv168.project.export.pdf.BatchPdfExporter;
 import cz.muni.fi.pv168.project.model.*;
 import cz.muni.fi.pv168.project.service.CategoryDependencyChecker;
 import cz.muni.fi.pv168.project.service.IngredientDependencyChecker;
 import cz.muni.fi.pv168.project.service.RecipeDependencyChecker;
 import cz.muni.fi.pv168.project.service.UnitDependencyChecker;
-import cz.muni.fi.pv168.project.service.crud.GenericCrudService;
-import cz.muni.fi.pv168.project.service.export.GenericExportService;
-import cz.muni.fi.pv168.project.service.export.GenericImportService;
-import cz.muni.fi.pv168.project.service.validation.CategoryValidator;
-import cz.muni.fi.pv168.project.service.validation.IngredientValidator;
-import cz.muni.fi.pv168.project.service.validation.RecipeValidator;
-import cz.muni.fi.pv168.project.service.validation.UnitValidator;
-import cz.muni.fi.pv168.project.storage.memory.InMemoryRepository;
 import cz.muni.fi.pv168.project.storage.sql.TransactionalImportService;
 import cz.muni.fi.pv168.project.ui.action.*;
-import cz.muni.fi.pv168.project.ui.filters.RecipeTableFilter;
-import cz.muni.fi.pv168.project.ui.filters.values.SpecialFilterCategoryValues;
 import cz.muni.fi.pv168.project.ui.model.*;
 import cz.muni.fi.pv168.project.ui.panels.*;
-import cz.muni.fi.pv168.project.ui.renderers.*;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
-import cz.muni.fi.pv168.project.util.Either;
-import cz.muni.fi.pv168.project.ui.filters.components.FilterComboboxBuilder;
 import cz.muni.fi.pv168.project.wiring.DependencyProvider;
 
 
@@ -72,6 +55,8 @@ public class MainWindow {
         var ingredientCrudService = dependencyProvider.getIngredientCrudService();
         var categoryCrudService = dependencyProvider.getCategoryCrudService();
         var unitCrudService = dependencyProvider.getUnitCrudService();
+        var exportService = dependencyProvider.getExportService();
+        var importService = dependencyProvider.getImportService();
 
         recipeCrudService.setGeneralDependencyChecker(new RecipeDependencyChecker());
         ingredientCrudService.setGeneralDependencyChecker(new IngredientDependencyChecker(recipeCrudService));
@@ -88,7 +73,7 @@ public class MainWindow {
 
         // Create panels
         var recipeTablePanel = new RecipeTablePanel(recipeTableModel, this::changeActionsState);
-        var ingredientTablePanel = new IngredientTablePanel(ingredientTableModel, this::changeActionsState);;
+        var ingredientTablePanel = new IngredientTablePanel(ingredientTableModel, this::changeActionsState);
         var categoryTablePanel = new CategoryTablePanel(categoryTableModel, this::changeActionsState);
         var unitTablePanel = new UnitTablePanel(unitTableModel, this::changeActionsState);
         List<GeneralTablePanel<? extends Entity>> generalTablePanels = List.of(recipeTablePanel, ingredientTablePanel, categoryTablePanel, unitTablePanel);
@@ -98,7 +83,6 @@ public class MainWindow {
         generalTablePanels.forEach(panel -> tabbedPane.addTab(panel.getTablePanelType().getPluralName(), panel));
         tabbedPane.setBorder(padding);
         frame.add(tabbedPane, BorderLayout.CENTER);
-
 
         // Add popup menu, toolbar, menubar, status bar
         generalTablePanels.forEach(
@@ -119,22 +103,16 @@ public class MainWindow {
         editAction = new EditAction(unitTableModel, ingredientCrudService, categoryCrudService, unitCrudService);
         openAction = new OpenAction();
 
-        // TODO exporters by DAO
-        var exportService = new GenericExportService(recipeRowSorter ,recipeTablePanel, List.of(new BatchJsonExporter(), new BatchPdfExporter()));
-        var importService = new GenericImportService(recipeCrudService, ingredientCrudService, categoryCrudService, List.of(new BatchJsonImporter()));
-
         var transactionalImportService = new TransactionalImportService(importService, dependencyProvider.getTransactionExecutor());
-
         // create import/export actions
         exportAction = new ExportAction(recipeTablePanel, exportService);
         final Runnable importCallback = () -> {tableModels.forEach(BasicTableModel::refresh); filterToolBar.updateFilters();};
         importAction = new ImportAction(recipeTablePanel, transactionalImportService,  importCallback);
-
         viewStatisticsAction = new ViewStatisticsAction(ingredientCrudService, recipeCrudService);
         viewAboutAction = new ViewAboutAction();
         this.actions = List.of(addAction, editAction, deleteAction, openAction, importAction, exportAction, viewAboutAction, viewStatisticsAction);
         actions.forEach(a -> a.setFilterToolbar(filterToolBar));
-        setForbiddenActionsInTabs();
+        setForbiddenActionsInTabs(); // TODO via GeneralAction
         setToDefaultActionEnablement(getCurrentTableIndex(tabbedPane));
 
         JPanel toolbarPanel = new JPanel(new GridLayout(2, 1));

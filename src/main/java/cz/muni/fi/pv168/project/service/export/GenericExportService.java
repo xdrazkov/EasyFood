@@ -1,35 +1,25 @@
 package cz.muni.fi.pv168.project.service.export;
 
 import cz.muni.fi.pv168.project.model.Recipe;
+import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.service.export.batch.Batch;
 import cz.muni.fi.pv168.project.service.export.batch.BatchExporter;
 import cz.muni.fi.pv168.project.service.export.batch.BatchOperationException;
 import cz.muni.fi.pv168.project.service.export.format.Format;
 import cz.muni.fi.pv168.project.service.export.format.FormatMapping;
-import cz.muni.fi.pv168.project.ui.model.RecipeTableModel;
-import cz.muni.fi.pv168.project.ui.panels.GeneralTablePanel;
 
-import javax.swing.*;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Generic synchronous implementation of the {@link ExportService}
  */
 public class GenericExportService implements ExportService {
-
     private final FormatMapping<BatchExporter> exporters;
+    private final CrudService<Recipe> recipeCrudService;
 
-    private final RowSorter<RecipeTableModel> recipeRowSorter;
-
-    private final GeneralTablePanel generalTablePanel;
-
-    public GenericExportService(RowSorter<RecipeTableModel> recipeRowSorter, GeneralTablePanel generalTablePanel, Collection<BatchExporter> exporters) {
+    public GenericExportService(Collection<BatchExporter> exporters, CrudService<Recipe> recipeCrudService) {
         this.exporters = new FormatMapping<>(exporters);
-        this.recipeRowSorter = recipeRowSorter;
-        this.generalTablePanel = generalTablePanel;
+        this.recipeCrudService = recipeCrudService;
     }
 
     @Override
@@ -38,15 +28,9 @@ public class GenericExportService implements ExportService {
     }
 
     @Override
-    public void exportData(String filePath) {
+    public void exportData(String filePath, Collection<String> guids) {
         var exporter = getExporter(filePath);
-
-        List<Recipe> selectedRecipes = Arrays.stream(generalTablePanel.getTable().getSelectedRows())
-                .mapToObj(row -> recipeRowSorter.getModel().getEntity(recipeRowSorter.convertRowIndexToModel(row)))
-                .collect(Collectors.toList());
-
-
-        var batch = new Batch(selectedRecipes);
+        var batch = new Batch(guids.stream().map(guid -> recipeCrudService.findByGuid(guid).get()).toList());
         exporter.exportBatch(batch, filePath);
     }
 
