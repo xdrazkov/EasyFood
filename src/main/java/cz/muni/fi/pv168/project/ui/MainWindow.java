@@ -99,14 +99,25 @@ public class MainWindow {
         tabbedPane.setBorder(padding);
         frame.add(tabbedPane, BorderLayout.CENTER);
 
+
+        // Add popup menu, toolbar, menubar, status bar
+        generalTablePanels.forEach(
+                r -> r.getTable().setComponentPopupMenu(createTablePopupMenu(r.getTablePanelType())));
+        JLabel statusBar = createStatusBar();
+        setStatusBarName(statusBar);
+
+        // Add row sorters
+        var recipeRowSorter = (TableRowSorter<RecipeTableModel>)  recipeTablePanel.getTable().getRowSorter();
+        // adding listener to change text of status bar when filtering rows
+        recipeRowSorter.addRowSorterListener(e -> setStatusBarName(statusBar));
+
+        var filterToolBar = new FilterToolbar(recipeCrudService, ingredientCrudService, categoryCrudService, unitCrudService, recipeRowSorter);
+
         // Set up actions for recipe table
         addAction = new AddAction(unitTableModel, ingredientCrudService, categoryCrudService, unitCrudService);
         deleteAction = new DeleteAction();
         editAction = new EditAction(unitTableModel, ingredientCrudService, categoryCrudService, unitCrudService);
         openAction = new OpenAction();
-
-        // Add row sorters
-        var recipeRowSorter = (TableRowSorter<RecipeTableModel>)  recipeTablePanel.getTable().getRowSorter();
 
         // TODO exporters by DAO
         var exportService = new GenericExportService(recipeRowSorter ,recipeTablePanel, List.of(new BatchJsonExporter(), new BatchPdfExporter()));
@@ -116,26 +127,15 @@ public class MainWindow {
 
         // create import/export actions
         exportAction = new ExportAction(recipeTablePanel, exportService);
-        importAction = new ImportAction(recipeTablePanel, transactionalImportService, () -> tableModels.forEach(BasicTableModel::refresh));
+        final Runnable importCallback = () -> {tableModels.forEach(BasicTableModel::refresh); filterToolBar.updateFilters();};
+        importAction = new ImportAction(recipeTablePanel, transactionalImportService,  importCallback);
 
         viewStatisticsAction = new ViewStatisticsAction(ingredientCrudService, recipeCrudService);
         viewAboutAction = new ViewAboutAction();
         this.actions = List.of(addAction, editAction, deleteAction, openAction, importAction, exportAction, viewAboutAction, viewStatisticsAction);
+        actions.forEach(a -> a.setFilterToolbar(filterToolBar));
         setForbiddenActionsInTabs();
         setToDefaultActionEnablement(getCurrentTableIndex(tabbedPane));
-
-
-        // Add popup menu, toolbar, menubar, status bar
-        generalTablePanels.forEach(
-                r -> r.getTable().setComponentPopupMenu(createTablePopupMenu(r.getTablePanelType())));
-        JLabel statusBar = createStatusBar();
-        setStatusBarName(statusBar);
-
-        // adding listener to change text of status bar when filtering rows
-        recipeRowSorter.addRowSorterListener(e -> setStatusBarName(statusBar));
-
-        var filterToolBar = new FilterToolbar(recipeCrudService, ingredientCrudService, categoryCrudService, unitCrudService, recipeRowSorter);
-        actions.forEach(a -> a.setFilterToolbar(filterToolBar));
 
         JPanel toolbarPanel = new JPanel(new GridLayout(2, 1));
         var toolbar = createToolbar();
@@ -173,16 +173,6 @@ public class MainWindow {
                 filterToolBar.resetFilters();
             }
         });
-    }
-
-    private static JComboBox<Either<SpecialFilterCategoryValues, Category>> createCategoryFilter(
-            RecipeTableFilter recipeTableFilter, CategoryTableModel categoryTableModel) {
-        return FilterComboboxBuilder.create(SpecialFilterCategoryValues.class, categoryTableModel.getEntities().toArray(new Category[0]))
-                .setSelectedItem(SpecialFilterCategoryValues.ALL)
-                .setSpecialValuesRenderer(new SpecialFilterCategoryValuesRenderer())
-                .setValuesRenderer(new CategoryRenderer())
-                .setFilter(recipeTableFilter::filterCategory)
-                .build();
     }
 
     public void show() {
