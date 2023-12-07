@@ -18,7 +18,7 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
     private final JTextField description = new JTextField();
     private final JFormattedTextField portionCount = FieldMaker.makeIntField();
     private final JTextArea instructions = new JTextArea();
-    private final JTextField timeToPrepare = FieldMaker.makeIntField();
+    private final JFormattedTextField timeToPrepare = FieldMaker.makeIntField();
     private final JComboBox<Category> category = new JComboBox<>();
     private final JButton newButton = new JButton();
     private final JPanel ingredientsPanel = new JPanel();
@@ -118,9 +118,9 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
         recipe.setIngredients(newIgredients);
         recipe.setTitle(title.getText());
         recipe.setDescription(description.getText());
-        recipe.setPortionCount(Integer.parseInt(portionCount.getText().replaceAll(" ", "")));
+        recipe.setPortionCount(FieldMaker.parseIntField(portionCount));
         recipe.setInstructions(instructions.getText());
-        recipe.setTimeToPrepare(Integer.parseInt(timeToPrepare.getText().replaceAll(" ", "")));
+        recipe.setTimeToPrepare(FieldMaker.parseIntField(timeToPrepare));
         recipe.setCategory((Category) category.getSelectedItem());
         return recipe;
     }
@@ -129,7 +129,7 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
         HashMap<Ingredient, AmountInUnit> newIgredients = new HashMap<>();
         for (Component component : ingredientsPanel.getComponents()){
             Ingredient ingredient = (Ingredient)((JComboBox<Ingredient>)((JPanel)component).getComponent(0)).getSelectedItem();
-            int count = Integer.parseInt(((JTextField)((JPanel)component).getComponent(1)).getText());
+            int count = FieldMaker.parseIntField((JFormattedTextField) ((JPanel)component).getComponent(1));
             Unit unit = (Unit)((JComboBox<Unit>)((JPanel)component).getComponent(2)).getSelectedItem();
             if (newIgredients.containsKey(ingredient)){
                 JOptionPane.showConfirmDialog(null, "There are some duplicities in your ingredients.\nNot possible to save.", "Warning", JOptionPane.CLOSED_OPTION);
