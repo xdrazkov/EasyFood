@@ -137,11 +137,4 @@ public final class TestDataGenerator {
     public void setGuid(List<? extends Entity> entityList) {
         entityList.forEach(r ->  r.setGuid(guidProvider.newGuid()));
     }
-
-    public TestDataGenerator() {
-        setGuid(units);
-        setGuid(categories);
-        setGuid(ingredients);
-        setGuid(recipes);
-    }
 }

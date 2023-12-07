@@ -28,11 +28,6 @@ public class TransactionalImportService implements ImportService {
         transactionExecutor.executeInTransaction(() -> importService.importData(filePath, importStrategy));
     }
 
-//    @Override
-//    public void importData(String filePath, ImportStrategy importStrategy) {
-//
-//    }
-
     @Override
     public Collection<Format> getFormats() {
         return importService.getFormats();

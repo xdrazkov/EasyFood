@@ -1,17 +1,13 @@
 package cz.muni.fi.pv168.project.ui;
 
+import cz.muni.fi.pv168.project.data.TestDataGenerator;
 import cz.muni.fi.pv168.project.model.*;
-import cz.muni.fi.pv168.project.service.CategoryDependencyChecker;
-import cz.muni.fi.pv168.project.service.IngredientDependencyChecker;
-import cz.muni.fi.pv168.project.service.RecipeDependencyChecker;
-import cz.muni.fi.pv168.project.service.UnitDependencyChecker;
 import cz.muni.fi.pv168.project.storage.sql.TransactionalImportService;
 import cz.muni.fi.pv168.project.ui.action.*;
 import cz.muni.fi.pv168.project.ui.model.*;
 import cz.muni.fi.pv168.project.ui.panels.*;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
 import cz.muni.fi.pv168.project.wiring.DependencyProvider;
-
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -58,11 +54,6 @@ public class MainWindow {
         var exportService = dependencyProvider.getExportService();
         var importService = dependencyProvider.getImportService();
 
-        recipeCrudService.setGeneralDependencyChecker(new RecipeDependencyChecker());
-        ingredientCrudService.setGeneralDependencyChecker(new IngredientDependencyChecker(recipeCrudService));
-        categoryCrudService.setGeneralDependencyChecker(new CategoryDependencyChecker(recipeCrudService));
-        unitCrudService.setGeneralDependencyChecker(new UnitDependencyChecker(recipeCrudService, ingredientCrudService));
-
         // Create models
         RecipeTableModel recipeTableModel = new RecipeTableModel(dependencyProvider, recipeCrudService);
         IngredientTableModel ingredientTableModel = new IngredientTableModel(dependencyProvider, ingredientCrudService);
@@ -70,6 +61,12 @@ public class MainWindow {
         UnitTableModel unitTableModel = new UnitTableModel(dependencyProvider, unitCrudService);
         List<BasicTableModel<? extends Entity>> tableModels =
                 List.of(recipeTableModel, ingredientTableModel, categoryTableModel, unitTableModel);
+
+//        var testDataGenerator = new TestDataGenerator();
+//        testDataGenerator.getUnits().forEach(unitCrudService::create);
+//        testDataGenerator.getCategories().forEach(categoryCrudService::create);
+//        testDataGenerator.getIngredients().forEach(ingredientCrudService::create);
+//        testDataGenerator.getRecipes().forEach(recipeCrudService::create);
 
         // Create panels
         var recipeTablePanel = new RecipeTablePanel(recipeTableModel, this::changeActionsState);

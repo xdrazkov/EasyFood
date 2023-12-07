@@ -17,14 +17,14 @@ public class Ingredient extends Entity{
     private Unit defaultUnit;
     private float caloriesPerUnit;
 
-    public Ingredient(String guid, String name, Unit defaultUnit, int caloriesPerUnit) {
+    public Ingredient(String guid, String name, Unit defaultUnit, float caloriesPerUnit) {
         super(guid);
         this.name = name;
         this.defaultUnit = defaultUnit;
         this.caloriesPerUnit = caloriesPerUnit; // calories per default unit
     }
 
-    public Ingredient(String name, Unit defaultUnit, int caloriesPerUnit) {
+    public Ingredient(String name, Unit defaultUnit, float caloriesPerUnit) {
         this.name = name;
         this.defaultUnit = defaultUnit;
         this.caloriesPerUnit = caloriesPerUnit; // calories per default unit
@@ -54,7 +54,8 @@ public class Ingredient extends Entity{
     }
 
     public int getTotalCalories(Unit anyUnit, int amount) {
-        return (int) (caloriesPerUnit / defaultUnit.getConversionRate() * anyUnit.getConversionRate() * amount);
+        float result = caloriesPerUnit / defaultUnit.getConversionRate() * anyUnit.getConversionRate() * amount;
+        return (int) result;
     }
 
     public int countInstances(List<Recipe> recipes){

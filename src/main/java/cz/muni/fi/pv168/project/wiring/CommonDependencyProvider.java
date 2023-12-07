@@ -9,6 +9,10 @@ import cz.muni.fi.pv168.project.model.Recipe;
 import cz.muni.fi.pv168.project.model.Unit;
 import cz.muni.fi.pv168.project.model.UuidGuidProvider;
 import cz.muni.fi.pv168.project.repository.Repository;
+import cz.muni.fi.pv168.project.service.CategoryDependencyChecker;
+import cz.muni.fi.pv168.project.service.IngredientDependencyChecker;
+import cz.muni.fi.pv168.project.service.RecipeDependencyChecker;
+import cz.muni.fi.pv168.project.service.UnitDependencyChecker;
 import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.service.crud.GenericCrudService;
 import cz.muni.fi.pv168.project.service.export.ExportService;
@@ -91,6 +95,11 @@ public class CommonDependencyProvider implements DependencyProvider {
                 List.of(new BatchJsonImporter()));
         exportService = new GenericExportService(List.of(new BatchJsonExporter(), new BatchPdfExporter()), recipeCrudService);
 //        importService = new TransactionalImportService(genericImportService, transactionExecutor);
+
+        recipeCrudService.setGeneralDependencyChecker(new RecipeDependencyChecker());
+        ingredientCrudService.setGeneralDependencyChecker(new IngredientDependencyChecker(recipeCrudService));
+        categoryCrudService.setGeneralDependencyChecker(new CategoryDependencyChecker(recipeCrudService));
+        unitCrudService.setGeneralDependencyChecker(new UnitDependencyChecker(recipeCrudService, ingredientCrudService));
     }
 
     @Override

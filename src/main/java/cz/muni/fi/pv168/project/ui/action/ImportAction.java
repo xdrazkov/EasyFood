@@ -34,7 +34,6 @@ public final class ImportAction extends GeneralAction {
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         importService.getFormats().forEach(f -> fileChooser.addChoosableFileFilter(new Filter(f)));
 
-        // TODO import strategy (delete all / add to existing)
         int dialogResult = fileChooser.showOpenDialog(recipeTablePanel);
 
         if (dialogResult == JFileChooser.APPROVE_OPTION) {
