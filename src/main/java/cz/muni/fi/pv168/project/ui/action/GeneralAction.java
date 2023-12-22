@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -55,25 +56,16 @@ public abstract class GeneralAction extends AbstractAction {
         return this.generalTablePanel.getTable();
     }
 
-    public static void openErrorDialog(ValidationException e) {
-        DefaultListModel<String> listModel = new DefaultListModel<>();
-
-        for (String validationError : e.getValidationErrors()) {
-            listModel.addElement(validationError);
-        }
-
-        JList<String> errorList = new JList<>(listModel);
-
-        JPanel panel = new JPanel();
-        panel.add(new JScrollPane(errorList));
-
-        JOptionPane.showMessageDialog(null, panel,"Action not successful!", JOptionPane.ERROR_MESSAGE);
+    public static void openErrorDialog(ValidationResult validationResult) {
+        openErrorDialog(validationResult.getValidationErrors());
     }
-
-    public static void openErrorDialog(ValidationResult e) {
+    public static void openErrorDialog(String errorMessage) {
+        openErrorDialog(List.of(errorMessage));
+    }
+    public static void openErrorDialog(Collection<String> validationErrors) {
         DefaultListModel<String> listModel = new DefaultListModel<>();
 
-        for (String validationError : e.getValidationErrors()) {
+        for (String validationError : validationErrors) {
             listModel.addElement(validationError);
         }
 

@@ -39,37 +39,44 @@ public final class ImportAction extends GeneralAction {
         if (dialogResult == JFileChooser.APPROVE_OPTION) {
             File importFile = fileChooser.getSelectedFile();
             ImportStrategy importStrategy = showAppendImportDecisionDialog();
-            SwingWorker<List<String>, File> swingWorker = getSwingWorker(importFile, importStrategy);
-            try {
-                var validationErrors = swingWorker.get();
-                if (!validationErrors.isEmpty()) {
-                    throw new ValidationException("", validationErrors);
-                }
-            } catch (InterruptedException |  ExecutionException ex) {
-                throw new RuntimeException(ex);
-            }
+            var swingWorker = getSwingWorker(importFile, importStrategy);
 
-            JOptionPane.showMessageDialog(recipeTablePanel, "Import was done");
+            swingWorker.execute();
         }
     }
 
-    private SwingWorker<List<String>, File> getSwingWorker(File importFile, ImportStrategy importStrategy) {
-        SwingWorker<List<String>, File> swingWorker = new SwingWorker<>() {
+    private SwingWorker<List<String>, Void> getSwingWorker(File importFile, ImportStrategy importStrategy) {
+        return new SwingWorker<>() {
             @Override
-            protected List<String> doInBackground() {
-                List<String> validationErrors = List.of();
+            protected List<String> doInBackground() throws Exception {
                 try {
+                    Thread.sleep(5); // set to any number (5000) to see effect
                     importService.importData(importFile.getAbsolutePath(), importStrategy);
-                } catch (ValidationException e) {
-                    validationErrors = e.getValidationErrors();
+                } catch (ValidationException validationException) {
+                    return validationException.getValidationErrors();
                 }
-                callback.run();
-                return validationErrors;
+                return List.of();
             }
 
+            @Override
+            protected void done() {
+                super.done();
+                List<String> validationErrors = List.of();
+                try {
+                    validationErrors = get();
+                } catch (ExecutionException | InterruptedException ex) {
+                    GeneralAction.openErrorDialog("Unexpected error during import: " + ex.getMessage());
+                }
+
+                if (validationErrors.isEmpty()) {
+                    JOptionPane.showMessageDialog(recipeTablePanel, "Import was done");
+                } else {
+                    GeneralAction.openErrorDialog(validationErrors);
+                }
+
+                callback.run();
+            }
         };
-        swingWorker.execute();
-        return swingWorker;
     }
 
     @Override
