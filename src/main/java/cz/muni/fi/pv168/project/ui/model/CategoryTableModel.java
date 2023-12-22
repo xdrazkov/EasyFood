@@ -14,7 +14,7 @@ import java.util.List;
 
 public class CategoryTableModel extends BasicTableModel<Category> {
     public CategoryTableModel(DependencyProvider dependencyProvider, CrudService<Category> categoryCrudService) {
-        super(dependencyProvider, categoryCrudService);
+        super(dependencyProvider, dependencyProvider.getCategoryValidator(), categoryCrudService);
     }
 
     public List<Column<Category, ?>> makeColumns() {
@@ -26,7 +26,7 @@ public class CategoryTableModel extends BasicTableModel<Category> {
     @Override
     public void performAddAction(JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
         CategoryTableModel categoryTableModel = (CategoryTableModel) table.getModel();
-        var dialog = new AddCategoryDialog();
+        var dialog = new AddCategoryDialog(entityValidator);
         dialog.show(table, "Add Category").ifPresent(categoryTableModel::addRow);
     }
 
@@ -35,7 +35,7 @@ public class CategoryTableModel extends BasicTableModel<Category> {
         int modelRow = table.convertRowIndexToModel(selectedRows[0]);
         CategoryTableModel categoryTableModel = (CategoryTableModel) table.getModel();
         var category = categoryTableModel.getEntity(modelRow);
-        var dialog = new EditCategoryDialog(category);
+        var dialog = new EditCategoryDialog(category, entityValidator);
         dialog.show(table, "Edit Category").ifPresent(categoryTableModel::updateRow);
     }
 

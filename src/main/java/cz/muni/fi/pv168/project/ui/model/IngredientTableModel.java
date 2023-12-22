@@ -14,7 +14,7 @@ import java.util.List;
 
 public class IngredientTableModel extends BasicTableModel<Ingredient> {
     public IngredientTableModel(DependencyProvider dependencyProvider, CrudService<Ingredient> ingredientCrudService) {
-        super(dependencyProvider, ingredientCrudService);
+        super(dependencyProvider, dependencyProvider.getIngredientValidator(), ingredientCrudService);
     }
 
     public List<Column<Ingredient, ?>> makeColumns() {
@@ -29,7 +29,7 @@ public class IngredientTableModel extends BasicTableModel<Ingredient> {
     @Override
     public void performAddAction(JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
         IngredientTableModel ingredientTableModel = (IngredientTableModel) table.getModel();
-        var dialog = new AddIngredientDialog(unitTableModel);
+        var dialog = new AddIngredientDialog(unitTableModel, entityValidator);
         dialog.show(table, "Add Ingredient").ifPresent(ingredientTableModel::addRow);
     }
 
@@ -38,7 +38,7 @@ public class IngredientTableModel extends BasicTableModel<Ingredient> {
         int modelRow = table.convertRowIndexToModel(selectedRows[0]);
         IngredientTableModel ingredientTableModel = (IngredientTableModel) table.getModel();
         var ingredient = ingredientTableModel.getEntity(modelRow);
-        var dialog = new EditIngredientDialog(ingredient, unitTableModel);
+        var dialog = new EditIngredientDialog(ingredient, unitTableModel, entityValidator);
         dialog.show(table, "Edit Ingredient").ifPresent(ingredientTableModel::updateRow);
     }
 

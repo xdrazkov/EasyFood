@@ -5,9 +5,8 @@ import cz.muni.fi.pv168.project.model.Entity;
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Unit;
 import cz.muni.fi.pv168.project.service.crud.CrudService;
-import cz.muni.fi.pv168.project.wiring.CommonDependencyProvider;
+import cz.muni.fi.pv168.project.service.validation.Validator;
 import cz.muni.fi.pv168.project.wiring.DependencyProvider;
-import cz.muni.fi.pv168.project.wiring.ProductionDependencyProvider;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -17,12 +16,14 @@ import java.util.List;
 public abstract class BasicTableModel<E extends Entity> extends AbstractTableModel implements EntityTableModel<E> {
 
     protected final DependencyProvider dependencyProvider;
+    protected final Validator<E> entityValidator;
     private final CrudService<E> entityCrudService;
     private List<E> entities;
     private List<Column<E, ?>> columns = List.of();
 
-    public BasicTableModel(DependencyProvider dependencyProvider, CrudService<E> entityCrudService) {
+    public BasicTableModel(DependencyProvider dependencyProvider, Validator<E> entityValidator, CrudService<E> entityCrudService) {
         this.dependencyProvider = dependencyProvider;
+        this.entityValidator = entityValidator;
         this.entityCrudService = entityCrudService;
         this.entities = new ArrayList<>(entityCrudService.findAll());
         setColumns();

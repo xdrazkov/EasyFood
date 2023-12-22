@@ -19,10 +19,7 @@ import cz.muni.fi.pv168.project.service.export.ExportService;
 import cz.muni.fi.pv168.project.service.export.GenericExportService;
 import cz.muni.fi.pv168.project.service.export.GenericImportService;
 import cz.muni.fi.pv168.project.service.export.ImportService;
-import cz.muni.fi.pv168.project.service.validation.CategoryValidator;
-import cz.muni.fi.pv168.project.service.validation.IngredientValidator;
-import cz.muni.fi.pv168.project.service.validation.RecipeValidator;
-import cz.muni.fi.pv168.project.service.validation.UnitValidator;
+import cz.muni.fi.pv168.project.service.validation.*;
 import cz.muni.fi.pv168.project.storage.sql.*;
 import cz.muni.fi.pv168.project.storage.sql.dao.CategoryDao;
 import cz.muni.fi.pv168.project.storage.sql.dao.IngredientDao;
@@ -54,15 +51,21 @@ public class CommonDependencyProvider implements DependencyProvider {
     private final ExportService exportService;
 
     private final DatabaseManager databaseManager;
+    private final Validator<Recipe> recipeValidator;
+    private final Validator<Ingredient> ingredientValidator;
+    private final Validator<Category> categoryValidator;
+    private final Validator<Unit> unitValidator;
 
     public CommonDependencyProvider(DatabaseManager databaseManager) {
+
         this.databaseManager = databaseManager;
         var transactionManager = new TransactionManagerImpl(databaseManager);
 
-        var recipeValidator = new RecipeValidator();
-        var ingredientValidator = new IngredientValidator();
-        var categoryValidator = new CategoryValidator();
-        var unitValidator = new UnitValidator();
+        recipeValidator = new RecipeValidator();
+        ingredientValidator = new IngredientValidator();
+        categoryValidator = new CategoryValidator();
+        unitValidator = new UnitValidator();
+
         var guidProvider = new UuidGuidProvider();
 
         this.transactionExecutor = new TransactionExecutorImpl(transactionManager::beginTransaction);
@@ -165,5 +168,21 @@ public class CommonDependencyProvider implements DependencyProvider {
     @Override
     public TransactionExecutor getTransactionExecutor() {
         return transactionExecutor;
+    }
+    @Override
+    public Validator<Recipe> getRecipeValidator() {
+        return recipeValidator;
+    }
+    @Override
+    public Validator<Ingredient> getIngredientValidator() {
+        return ingredientValidator;
+    }
+    @Override
+    public Validator<Category> getCategoryValidator() {
+        return categoryValidator;
+    }
+    @Override
+    public Validator<Unit> getUnitValidator() {
+        return unitValidator;
     }
 }

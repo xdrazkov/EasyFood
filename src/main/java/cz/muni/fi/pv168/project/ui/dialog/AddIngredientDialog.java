@@ -2,6 +2,7 @@ package cz.muni.fi.pv168.project.ui.dialog;
 
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Unit;
+import cz.muni.fi.pv168.project.service.validation.Validator;
 import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
 
 import javax.swing.*;
@@ -12,7 +13,8 @@ public class AddIngredientDialog extends EntityDialog<Ingredient> {
     private final JComboBox<Unit> defaultUnit = new JComboBox<>();
     private final UnitTableModel unitTableModel;
 
-    public AddIngredientDialog(UnitTableModel unitTableModel) {
+    public AddIngredientDialog(UnitTableModel unitTableModel, Validator<Ingredient> ingredientValidator) {
+        super(ingredientValidator);
         this.unitTableModel = unitTableModel;
         setValues();
         addFields();

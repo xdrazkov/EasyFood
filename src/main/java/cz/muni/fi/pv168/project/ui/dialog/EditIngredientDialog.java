@@ -2,6 +2,7 @@ package cz.muni.fi.pv168.project.ui.dialog;
 
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Unit;
+import cz.muni.fi.pv168.project.service.validation.Validator;
 import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
 
 import javax.swing.*;
@@ -13,7 +14,8 @@ public class EditIngredientDialog extends EntityDialog<Ingredient> {
     private final UnitTableModel unitTableModel;
     private final Ingredient ingredient;
 
-    public EditIngredientDialog(Ingredient ingredient, UnitTableModel unitTableModel) {
+    public EditIngredientDialog(Ingredient ingredient, UnitTableModel unitTableModel, Validator<Ingredient> ingredientValidator) {
+        super(ingredientValidator);
         this.ingredient = ingredient;
         this.unitTableModel = unitTableModel;
         setValues();

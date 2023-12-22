@@ -1,13 +1,13 @@
 package cz.muni.fi.pv168.project.ui.dialog;
 
 import cz.muni.fi.pv168.project.model.*;
+import cz.muni.fi.pv168.project.service.validation.Validator;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +30,8 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
 
 
 
-    public AddRecipeDialog(List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
+    public AddRecipeDialog(List<Category> categories, List<Ingredient> ingredients, List<Unit> units, Validator<Recipe> recipeValidator) {
+        super(recipeValidator);
         this.categories = categories;
         this.ingredients = ingredients;
         this.units = units;

@@ -19,7 +19,7 @@ public class UnitTableModel extends BasicTableModel<Unit> {
     private static final HashMap<IngredientType, Unit> baseUnitsMap = new HashMap<>();
     private final CrudService<Unit> crudService;
     public UnitTableModel(DependencyProvider dependencyProvider, CrudService<Unit> crudService) {
-        super(dependencyProvider, crudService);
+        super(dependencyProvider, dependencyProvider.getUnitValidator(), crudService);
         this.crudService = crudService;
         setupBaseUnits();
     }
@@ -68,7 +68,7 @@ public class UnitTableModel extends BasicTableModel<Unit> {
     @Override
     public void performAddAction(JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
         UnitTableModel unitTable = (UnitTableModel) table.getModel();
-        var dialog = new AddUnitDialog(table);
+        var dialog = new AddUnitDialog(table, entityValidator);
         dialog.show(table, "Edit Unit").ifPresent(unitTable::addRow);
     }
 
@@ -76,7 +76,7 @@ public class UnitTableModel extends BasicTableModel<Unit> {
     public void performEditAction(int[] selectedRows, JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
         int modelRow = table.convertRowIndexToModel(selectedRows[0]);
         var unit = unitTableModel.getEntity(modelRow);
-        var dialog = new EditUnitDialog(unit, table);
+        var dialog = new EditUnitDialog(unit, table, entityValidator);
         dialog.show(table, "Edit Unit").ifPresent(unitTableModel::updateRow);
     }
 

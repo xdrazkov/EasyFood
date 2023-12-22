@@ -2,10 +2,9 @@ package cz.muni.fi.pv168.project.ui.dialog;
 
 import cz.muni.fi.pv168.project.model.IngredientType;
 import cz.muni.fi.pv168.project.model.Unit;
-import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
+import cz.muni.fi.pv168.project.service.validation.Validator;
 
 import javax.swing.*;
-import java.util.Optional;
 
 public final class AddUnitDialog extends EntityDialog<Unit> {
 
@@ -15,13 +14,15 @@ public final class AddUnitDialog extends EntityDialog<Unit> {
     private final JComboBox<IngredientType> ingredientType = new JComboBox<>();
     private final JTable unitTable;
 
-    public AddUnitDialog(JTable unitTable) {
+    public AddUnitDialog(JTable unitTable, Validator<Unit> unitValidator) {
+        super(unitValidator);
         this.unitTable = unitTable;
         setValues("", "", IngredientType.COUNTABLE, 1);
         addFields();
     }
 
-    public AddUnitDialog(JTable unitTable, String name, String abbreviation, IngredientType ingredientType, float conversionRate) {
+    public AddUnitDialog(JTable unitTable, String name, String abbreviation, IngredientType ingredientType, float conversionRate, Validator<Unit> unitValidator) {
+        super(unitValidator);
         this.unitTable = unitTable;
         setValues(name, abbreviation, ingredientType, conversionRate);
         addFields();
@@ -49,7 +50,7 @@ public final class AddUnitDialog extends EntityDialog<Unit> {
             conversionRateFloat = Float.parseFloat(conversionRate.getText().replace(',', '.'));
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(panel, "Conversion rate must be a decimal number", "Error", JOptionPane.ERROR_MESSAGE);
-            var dialog = new AddUnitDialog(unitTable, name.getText(), abbreviation.getText(), (IngredientType) ingredientType.getSelectedItem(), 1);
+            var dialog = new AddUnitDialog(unitTable, name.getText(), abbreviation.getText(), (IngredientType) ingredientType.getSelectedItem(), 1, entityValidator);
             return dialog.show(unitTable, "Add Unit").orElse(null);
         }
         return new Unit(name.getText(), abbreviation.getText(), (IngredientType) ingredientType.getSelectedItem(), conversionRateFloat);

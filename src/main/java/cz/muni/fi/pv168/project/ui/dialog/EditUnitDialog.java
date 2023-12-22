@@ -2,6 +2,7 @@ package cz.muni.fi.pv168.project.ui.dialog;
 
 import cz.muni.fi.pv168.project.model.IngredientType;
 import cz.muni.fi.pv168.project.model.Unit;
+import cz.muni.fi.pv168.project.service.validation.Validator;
 import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
 
 import javax.swing.*;
@@ -16,14 +17,16 @@ public class EditUnitDialog extends EntityDialog<Unit> {
     private final Unit unit;
     private final JTable unitTable;
 
-    public EditUnitDialog(Unit unit, JTable unitTable) {
+    public EditUnitDialog(Unit unit, JTable unitTable, Validator<Unit> unitValidator) {
+        super(unitValidator);
         this.unit = unit;
         this.unitTable = unitTable;
         setValues(unit.getName(), unit.getAbbreviation(), unit.getIngredientType(), unit.getConversionRate());
         addFields();
     }
 
-    public EditUnitDialog(Unit unit, JTable unitTable, String name, String abbreviation, IngredientType ingredientType, float conversionRate) {
+    public EditUnitDialog(Unit unit, JTable unitTable, String name, String abbreviation, IngredientType ingredientType, float conversionRate, Validator<Unit> unitValidator) {
+        super(unitValidator);
         this.unit = unit;
         this.unitTable = unitTable;
         setValues(name, abbreviation, ingredientType, conversionRate);
@@ -58,7 +61,7 @@ public class EditUnitDialog extends EntityDialog<Unit> {
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(panel, "Conversion rate must be a decimal number", "Error", JOptionPane.ERROR_MESSAGE);
 
-            var dialog = new EditUnitDialog(unit, unitTable, name.getText(), abbreviation.getText(), (IngredientType) ingredientType.getSelectedItem(), unit.getConversionRate());
+            var dialog = new EditUnitDialog(unit, unitTable, name.getText(), abbreviation.getText(), (IngredientType) ingredientType.getSelectedItem(), unit.getConversionRate(), entityValidator);
             UnitTableModel unitTableModel = (UnitTableModel) unitTable.getModel();
             dialog.show(unitTable, "Edit Unit").ifPresent(unitTableModel::updateRow);
 

@@ -15,7 +15,7 @@ import java.util.List;
 
 public class RecipeTableModel extends BasicTableModel<Recipe> {
     public RecipeTableModel(DependencyProvider dependencyProvider, CrudService<Recipe> recipeCrudService) {
-        super(dependencyProvider, recipeCrudService);
+        super(dependencyProvider, dependencyProvider.getRecipeValidator(), recipeCrudService);
     }
 
     public List<Column<Recipe, ?>> makeColumns() {
@@ -31,7 +31,7 @@ public class RecipeTableModel extends BasicTableModel<Recipe> {
     @Override
     public void performAddAction(JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
         RecipeTableModel recipeTableModel = (RecipeTableModel) table.getModel();
-        var dialog = new AddRecipeDialog(categories, ingredients, units);
+        var dialog = new AddRecipeDialog(categories, ingredients, units, entityValidator);
         dialog.show(table, "Add Recipe").ifPresent(recipeTableModel::addRow);
     }
 
@@ -40,7 +40,7 @@ public class RecipeTableModel extends BasicTableModel<Recipe> {
         int modelRow = table.convertRowIndexToModel(selectedRows[0]);
         RecipeTableModel recipeTableModel = (RecipeTableModel) table.getModel();
         var recipe = recipeTableModel.getEntity(modelRow);
-        var dialog = new EditRecipeDialog(recipe, categories, ingredients, units);
+        var dialog = new EditRecipeDialog(recipe, categories, ingredients, units, entityValidator);
         dialog.show(table, "Edit Recipe").ifPresent(recipeTableModel::updateRow);
     }
 

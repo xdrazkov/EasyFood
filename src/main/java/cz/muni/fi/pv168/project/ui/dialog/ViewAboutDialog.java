@@ -1,10 +1,6 @@
 package cz.muni.fi.pv168.project.ui.dialog;
 
-import cz.muni.fi.pv168.project.model.Ingredient;
-import cz.muni.fi.pv168.project.model.Recipe;
-
 import javax.swing.*;
-import java.util.List;
 
 public class ViewAboutDialog extends EntityDialog<String> {
 

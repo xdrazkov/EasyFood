@@ -2,6 +2,7 @@ package cz.muni.fi.pv168.project.ui.action;
 
 import cz.muni.fi.pv168.project.model.Entity;
 import cz.muni.fi.pv168.project.service.validation.ValidationException;
+import cz.muni.fi.pv168.project.service.validation.ValidationResult;
 import cz.muni.fi.pv168.project.ui.FilterToolbar;
 import cz.muni.fi.pv168.project.ui.model.BasicTableModel;
 import cz.muni.fi.pv168.project.ui.panels.GeneralTablePanel;
@@ -64,7 +65,22 @@ public abstract class GeneralAction extends AbstractAction {
         return this.generalTablePanel.getTable();
     }
 
-    protected void openErrorDialog(ValidationException e) {
+    public static void openErrorDialog(ValidationException e) {
+        DefaultListModel<String> listModel = new DefaultListModel<>();
+
+        for (String validationError : e.getValidationErrors()) {
+            listModel.addElement(validationError);
+        }
+
+        JList<String> errorList = new JList<>(listModel);
+
+        JPanel panel = new JPanel();
+        panel.add(new JScrollPane(errorList));
+
+        JOptionPane.showMessageDialog(null, panel,"Action not successful!", JOptionPane.ERROR_MESSAGE);
+    }
+
+    public static void openErrorDialog(ValidationResult e) {
         DefaultListModel<String> listModel = new DefaultListModel<>();
 
         for (String validationError : e.getValidationErrors()) {
