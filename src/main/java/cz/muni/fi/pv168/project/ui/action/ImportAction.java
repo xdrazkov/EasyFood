@@ -2,6 +2,7 @@ package cz.muni.fi.pv168.project.ui.action;
 
 import cz.muni.fi.pv168.project.service.export.ImportService;
 import cz.muni.fi.pv168.project.service.validation.ValidationException;
+import cz.muni.fi.pv168.project.ui.dialog.EntityDialog;
 import cz.muni.fi.pv168.project.ui.panels.GeneralTablePanel;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
 import cz.muni.fi.pv168.project.util.Filter;
@@ -61,17 +62,18 @@ public final class ImportAction extends GeneralAction {
             @Override
             protected void done() {
                 super.done();
-                List<String> validationErrors = List.of();
+                List<String> validationErrors;
                 try {
                     validationErrors = get();
                 } catch (ExecutionException | InterruptedException ex) {
-                    GeneralAction.openErrorDialog("Unexpected error during import: " + ex.getMessage());
+                    EntityDialog.openErrorDialog("Unexpected error during import: " + ex.getMessage());
+                    return;
                 }
 
                 if (validationErrors.isEmpty()) {
                     JOptionPane.showMessageDialog(recipeTablePanel, "Import was done");
                 } else {
-                    GeneralAction.openErrorDialog(validationErrors);
+                    EntityDialog.openErrorDialog(validationErrors);
                 }
 
                 callback.run();

@@ -1,22 +1,21 @@
 package cz.muni.fi.pv168.project.ui.dialog;
 
+import cz.muni.fi.pv168.project.service.validation.ValidationResult;
 import cz.muni.fi.pv168.project.service.validation.Validator;
 import cz.muni.fi.pv168.project.ui.MainWindow;
-import cz.muni.fi.pv168.project.ui.action.GeneralAction;
 import net.miginfocom.swing.MigLayout;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.*;
 import java.awt.*;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import static javax.swing.JOptionPane.OK_CANCEL_OPTION;
 import static javax.swing.JOptionPane.OK_OPTION;
 import static javax.swing.JOptionPane.PLAIN_MESSAGE;
 
-abstract class EntityDialog<E> {
+public abstract class EntityDialog<E> {
 
     protected final JPanel panel = new JPanel();
     protected final Validator<E> entityValidator;
@@ -66,7 +65,7 @@ abstract class EntityDialog<E> {
                 return Optional.of(entity);
             }
 
-            GeneralAction.openErrorDialog(validation);
+            openErrorDialog(validation);
             result = showOptionDialog(parentComponent, title);
         }
         return Optional.empty();
@@ -77,5 +76,28 @@ abstract class EntityDialog<E> {
                 parentComponent, panel, title, OK_CANCEL_OPTION, PLAIN_MESSAGE,
                 null, null, null
         );
+    }
+
+    public static void openErrorDialog(ValidationResult validationResult) {
+        openErrorDialog(validationResult.getValidationErrors());
+    }
+
+    public static void openErrorDialog(String errorMessage) {
+        openErrorDialog(List.of(errorMessage));
+    }
+
+    public static void openErrorDialog(Collection<String> validationErrors) {
+        DefaultListModel<String> listModel = new DefaultListModel<>();
+
+        for (String validationError : validationErrors) {
+            listModel.addElement(validationError);
+        }
+
+        JList<String> errorList = new JList<>(listModel);
+
+        JPanel panel = new JPanel();
+        panel.add(new JScrollPane(errorList));
+
+        JOptionPane.showMessageDialog(null, panel,"Action not successful!", JOptionPane.ERROR_MESSAGE);
     }
 }
