@@ -32,7 +32,7 @@ public final class AddAction extends GeneralAction {
     }
 
     @Override
-    protected void actionPerformedImpl(ActionEvent e) {
+    public void actionPerformed(ActionEvent e) {
         JTable table = super.getTable();
         if (table.isEditing()) {
             table.getCellEditor().cancelCellEditing();
@@ -40,7 +40,7 @@ public final class AddAction extends GeneralAction {
 
         BasicTableModel model = (BasicTableModel) table.getModel();
         model.performAddAction(table, unitTableModel, categoryCrudService.findAll(), ingredientCrudService.findAll(), unitCrudService.findAll());
-
+        refresh();
     }
 
     @Override

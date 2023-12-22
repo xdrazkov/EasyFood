@@ -9,7 +9,6 @@ import cz.muni.fi.pv168.project.ui.panels.GeneralTablePanel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -43,22 +42,13 @@ public abstract class GeneralAction extends AbstractAction {
     }
 
     @Override
-    public final void actionPerformed(ActionEvent e) {
-        try {
-            actionPerformedImpl(e);
-        } catch (ValidationException exception) {
-            openErrorDialog(exception);
-        }
+    public abstract void actionPerformed(ActionEvent e);
+
+    protected void refresh() {
         if (filterToolbar != null) {
             filterToolbar.updateFilters();
         }
     }
-
-    /**
-     * helper method for actionPerformed
-     */
-    protected abstract void actionPerformedImpl(ActionEvent e);
-
     public abstract void setShortDescription();
 
     public JTable getTable() {

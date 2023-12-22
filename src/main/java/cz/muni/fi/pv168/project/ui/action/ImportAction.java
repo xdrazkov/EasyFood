@@ -29,7 +29,7 @@ public final class ImportAction extends GeneralAction {
     }
 
     @Override
-    protected void actionPerformedImpl(ActionEvent e) {
+    public void actionPerformed(ActionEvent e) {
         var fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         importService.getFormats().forEach(f -> fileChooser.addChoosableFileFilter(new Filter(f)));

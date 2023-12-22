@@ -29,7 +29,7 @@ public final class EditAction extends GeneralAction {
     }
 
     @Override
-    protected void actionPerformedImpl(ActionEvent e) {
+    public void actionPerformed(ActionEvent e) {
         JTable table = super.getTable();
         int[] selectedRows = table.getSelectedRows();
         if (selectedRows.length != 1) {
@@ -41,6 +41,7 @@ public final class EditAction extends GeneralAction {
 
         BasicTableModel model = (BasicTableModel) table.getModel();
         model.performEditAction(selectedRows, table, unitTableModel, categoryCrudService.findAll(), ingredientCrudService.findAll(), unitCrudService.findAll());
+        refresh();
     }
 
     @Override

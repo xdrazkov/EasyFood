@@ -19,7 +19,7 @@ public final class DeleteAction extends GeneralAction {
     }
 
     @Override
-    protected void actionPerformedImpl(ActionEvent e) {
+    public void actionPerformed(ActionEvent e) {
         int dialogButton = JOptionPane.YES_NO_OPTION;
         int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure you want to delete selected item(s)?","Warning",dialogButton);
         if (dialogResult != JOptionPane.YES_OPTION){
@@ -35,6 +35,7 @@ public final class DeleteAction extends GeneralAction {
         .boxed()
         .sorted(Comparator.reverseOrder())
         .forEach(deleteFunction);
+        refresh();
     }
 
     @Override
