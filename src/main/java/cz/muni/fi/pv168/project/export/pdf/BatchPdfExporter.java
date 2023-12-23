@@ -18,6 +18,10 @@ import java.util.List;
 import java.util.Map;
 
 public class BatchPdfExporter implements BatchExporter {
+    private enum ALIGN {
+        LEFT,
+        CENTER
+    }
 
     private static final Format FORMAT = new Format("PDF", List.of("pdf"));
     private static final float MARGIN = 50;
@@ -27,6 +31,7 @@ public class BatchPdfExporter implements BatchExporter {
     private PDPageContentStream contentStream;
     private float yPosition;
     private float xPosition;
+    private ALIGN currAlign;
 
     @Override
     public Format getFormat() {
@@ -41,8 +46,9 @@ public class BatchPdfExporter implements BatchExporter {
             int leftTab = 20;
 
             for (Recipe recipe : batch.recipes()) {
-                writeLine(document, "Title:", FONT_BOLD, textFontSize);
-                writeLine(document, recipe.getTitle(), FONT, textFontSize, leftTab);
+                currAlign = ALIGN.CENTER;
+                writeLine(document, recipe.getTitle(), FONT_BOLD, textFontSize);
+                currAlign = ALIGN.LEFT;
                 writeLine(document, "Description:", FONT_BOLD, textFontSize);
                 writeLine(document, recipe.getDescription(), FONT, textFontSize, leftTab);
                 writeLine(document, "Portion Count:", FONT_BOLD, textFontSize);
@@ -98,16 +104,27 @@ public class BatchPdfExporter implements BatchExporter {
 
         String[] words = text.split(" ");
         StringBuilder stringBuilder = new StringBuilder();
+        float leftBanking;
         for (String word : words) {
             if (isLeftOverFlow(stringBuilder + word, font, fontSize, usablePageWidth)) {
-                writeOneLine(document, stringBuilder.toString(),  font, fontSize, leftTab);
+                var printString = stringBuilder.toString();
+                leftBanking = getLeftBanking(font, fontSize, leftTab, usablePageWidth, printString);
+                writeOneLine(document, printString,  font, fontSize, leftBanking);
                 stringBuilder.setLength(0);
             }
             stringBuilder.append(word);
             stringBuilder.append(" ");
         }
+        var printString = stringBuilder.toString();
+        leftBanking = getLeftBanking(font, fontSize, leftTab, usablePageWidth, printString);
+        writeOneLine(document, stringBuilder.toString(),  font, fontSize, leftBanking);
+    }
 
-        writeOneLine(document, stringBuilder.toString(),  font, fontSize, leftTab);
+    private float getLeftBanking(PDFont font, int fontSize, float leftTab, float usablePageWidth, String printString) throws IOException {
+        return switch (currAlign) {
+            case LEFT -> leftTab;
+            case CENTER -> (usablePageWidth - getStringWidth(font, printString, fontSize)) / 2;
+        };
     }
 
 
