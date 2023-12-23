@@ -142,6 +142,7 @@ public class MainWindow {
 
                 // filters visible only on recipe tab
                 int currTabIndex = tabPanel.getSelectedIndex();
+                tableModels.get(currTabIndex).refresh();
                 filtersToolbar.setVisible(currTabIndex == RECIPE.ordinal());
 
                 setStatusBarName(statusBar);
