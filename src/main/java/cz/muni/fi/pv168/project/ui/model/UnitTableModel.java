@@ -78,10 +78,7 @@ public class UnitTableModel extends BasicTableModel<Unit> {
         var unit = unitTableModel.getEntity(modelRow);
         var dialog = new EditUnitDialog(unit.deepClone(), table, entityValidator);
         var optional = dialog.show(table, "Edit Unit");
-        if (optional.isPresent()) {
-            unit.setAll(optional.get());
-            unitTableModel.updateRow(unit);
-        }
+        setAndUpdate(optional, unit);
     }
 
     @Override

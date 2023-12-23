@@ -5,6 +5,7 @@ import cz.muni.fi.pv168.project.model.Entity;
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Unit;
 import cz.muni.fi.pv168.project.service.crud.CrudService;
+import cz.muni.fi.pv168.project.service.validation.ValidationException;
 import cz.muni.fi.pv168.project.service.validation.Validator;
 import cz.muni.fi.pv168.project.wiring.DependencyProvider;
 
@@ -12,6 +13,7 @@ import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public abstract class BasicTableModel<E extends Entity> extends AbstractTableModel implements EntityTableModel<E> {
 
@@ -117,5 +119,20 @@ public abstract class BasicTableModel<E extends Entity> extends AbstractTableMod
 
     public E getEntity(int rowIndex) {
         return entities.get(rowIndex);
+    }
+
+    protected void setAndUpdate(Optional<E> optional, E entity) {
+        if (optional.isPresent()) {
+            E gotEntity = optional.get();
+
+            long countOfEquivalentEntities = entityCrudService.findAll().stream()
+                    .filter(e -> e.equals(gotEntity) && ! e.getGuid().equals(gotEntity.getGuid())).count();
+            if (countOfEquivalentEntities != 0) {
+                throw new ValidationException("", List.of(gotEntity + " already exists in memory"));
+            }
+
+            entity.setAll(gotEntity);
+            this.updateRow(entity);
+        }
     }
 }

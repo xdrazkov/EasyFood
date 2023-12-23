@@ -40,10 +40,7 @@ public class IngredientTableModel extends BasicTableModel<Ingredient> {
         var ingredient = ingredientTableModel.getEntity(modelRow);
         var dialog = new EditIngredientDialog(ingredient.deepClone(), unitTableModel, entityValidator);
         var optional = dialog.show(table, "Edit Ingredient");
-        if (optional.isPresent()) {
-            ingredient.setAll(optional.get());
-            ingredientTableModel.updateRow(ingredient);
-        }
+        setAndUpdate(optional, ingredient);
     }
 
     @Override

@@ -1,9 +1,12 @@
 package cz.muni.fi.pv168.project.ui.action;
 
 import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.model.Entity;
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Unit;
 import cz.muni.fi.pv168.project.service.crud.CrudService;
+import cz.muni.fi.pv168.project.service.validation.ValidationException;
+import cz.muni.fi.pv168.project.ui.dialog.EntityDialog;
 import cz.muni.fi.pv168.project.ui.model.BasicTableModel;
 import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
@@ -40,9 +43,13 @@ public final class EditAction extends GeneralAction {
         }
 
         BasicTableModel model = (BasicTableModel) table.getModel();
-        // TODO check error when updating
-        model.performEditAction(selectedRows, table, unitTableModel, categoryCrudService.findAll(), ingredientCrudService.findAll(), unitCrudService.findAll());
-        refresh();
+        try {
+            model.performEditAction(selectedRows, table, unitTableModel, categoryCrudService.findAll(), ingredientCrudService.findAll(), unitCrudService.findAll());
+        } catch (ValidationException ex) {
+            EntityDialog.openErrorDialog(ex.getValidationErrors());
+        } finally {
+            refresh();
+        }
     }
 
     @Override
