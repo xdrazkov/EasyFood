@@ -38,8 +38,12 @@ public class IngredientTableModel extends BasicTableModel<Ingredient> {
         int modelRow = table.convertRowIndexToModel(selectedRows[0]);
         IngredientTableModel ingredientTableModel = (IngredientTableModel) table.getModel();
         var ingredient = ingredientTableModel.getEntity(modelRow);
-        var dialog = new EditIngredientDialog(ingredient, unitTableModel, entityValidator);
-        dialog.show(table, "Edit Ingredient").ifPresent(ingredientTableModel::updateRow);
+        var dialog = new EditIngredientDialog(ingredient.deepClone(), unitTableModel, entityValidator);
+        var optional = dialog.show(table, "Edit Ingredient");
+        if (optional.isPresent()) {
+            ingredient.setAll(optional.get());
+            ingredientTableModel.updateRow(ingredient);
+        }
     }
 
     @Override

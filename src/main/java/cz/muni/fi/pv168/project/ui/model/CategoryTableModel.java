@@ -35,8 +35,12 @@ public class CategoryTableModel extends BasicTableModel<Category> {
         int modelRow = table.convertRowIndexToModel(selectedRows[0]);
         CategoryTableModel categoryTableModel = (CategoryTableModel) table.getModel();
         var category = categoryTableModel.getEntity(modelRow);
-        var dialog = new EditCategoryDialog(category, entityValidator);
-        dialog.show(table, "Edit Category").ifPresent(categoryTableModel::updateRow);
+        var dialog = new EditCategoryDialog(category.deepClone(), entityValidator);
+        var optional = dialog.show(table, "Edit Category");
+        if (optional.isPresent()) {
+            category.setAll(optional.get());
+            categoryTableModel.updateRow(category);
+        }
     }
 
     @Override

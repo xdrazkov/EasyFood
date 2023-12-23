@@ -65,4 +65,20 @@ public class Unit extends Entity {
         }
         return this.name.equals(that.name) && this.ingredientType.equals(that.ingredientType);
     }
+
+    @Override
+    public Unit deepClone() {
+        return new Unit(getGuid(), getName(), getAbbreviation(), getIngredientType(), getConversionRate());
+    }
+
+    @Override
+    public void setAll(Entity setObject) {
+        if (!(setObject instanceof Unit setUnit)) {
+            return;
+        }
+        this.setName(setUnit.getName());
+        this.setAbbreviation(setUnit.getAbbreviation());
+        this.setIngredientType(setUnit.getIngredientType());
+        this.setConversionRate(setUnit.getConversionRate());
+    }
 }

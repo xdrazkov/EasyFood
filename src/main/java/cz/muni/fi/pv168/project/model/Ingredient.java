@@ -12,7 +12,7 @@ import java.util.Objects;
 
 @JsonSerialize(using = IngredientJsonSerializer.class)
 @JsonDeserialize(using = IngredientJsonDeserializer.class)
-public class Ingredient extends Entity{
+public class Ingredient extends Entity {
     private String name;
     private Unit defaultUnit;
     private float caloriesPerUnit;
@@ -85,6 +85,22 @@ public class Ingredient extends Entity{
             return false;
         }
         return Objects.equals(this.name, theirs.name) && Objects.equals(this.defaultUnit, theirs.defaultUnit);
+    }
+
+    @Override
+    public Ingredient deepClone() {
+        return new Ingredient(getGuid(), getName(), getDefaultUnit(), getCaloriesPerUnit());
+    }
+
+    @Override
+    public void setAll(Entity setObject) {
+        if (!(setObject instanceof Ingredient setIngredient)) {
+            return;
+        }
+
+        this.setName(setIngredient.getName());
+        this.setDefaultUnit(setIngredient.getDefaultUnit());
+        this.setCaloriesPerUnit(setIngredient.getCaloriesPerUnit());
     }
 }
 

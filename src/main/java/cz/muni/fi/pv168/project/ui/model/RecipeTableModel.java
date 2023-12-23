@@ -40,8 +40,12 @@ public class RecipeTableModel extends BasicTableModel<Recipe> {
         int modelRow = table.convertRowIndexToModel(selectedRows[0]);
         RecipeTableModel recipeTableModel = (RecipeTableModel) table.getModel();
         var recipe = recipeTableModel.getEntity(modelRow);
-        var dialog = new EditRecipeDialog(recipe, categories, ingredients, units, entityValidator);
-        dialog.show(table, "Edit Recipe").ifPresent(recipeTableModel::updateRow);
+        var dialog = new EditRecipeDialog(recipe.deepClone(), categories, ingredients, units, entityValidator);
+        var optional = dialog.show(table, "Edit Recipe");
+        if (optional.isPresent()) {
+            recipe.setAll(optional.get());
+            recipeTableModel.updateRow(recipe);
+        }
     }
 
     @Override

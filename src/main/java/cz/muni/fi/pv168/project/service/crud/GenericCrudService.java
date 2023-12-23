@@ -50,6 +50,9 @@ public class GenericCrudService <T extends Entity> implements CrudService<T> {
     @Override
     public ValidationResult update(T entity) {
         var validationResult = entityValidator.validate(entity);
+        if (findAll().contains(entity)) {
+            validationResult.add(entity + " already exists in memory");
+        }
         if (validationResult.isValid()) {
             entityRepository.update(entity);
         }

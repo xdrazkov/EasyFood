@@ -40,6 +40,7 @@ public final class EditAction extends GeneralAction {
         }
 
         BasicTableModel model = (BasicTableModel) table.getModel();
+        // TODO check error when updating
         model.performEditAction(selectedRows, table, unitTableModel, categoryCrudService.findAll(), ingredientCrudService.findAll(), unitCrudService.findAll());
         refresh();
     }

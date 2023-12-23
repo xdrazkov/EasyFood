@@ -76,8 +76,12 @@ public class UnitTableModel extends BasicTableModel<Unit> {
     public void performEditAction(int[] selectedRows, JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
         int modelRow = table.convertRowIndexToModel(selectedRows[0]);
         var unit = unitTableModel.getEntity(modelRow);
-        var dialog = new EditUnitDialog(unit, table, entityValidator);
-        dialog.show(table, "Edit Unit").ifPresent(unitTableModel::updateRow);
+        var dialog = new EditUnitDialog(unit.deepClone(), table, entityValidator);
+        var optional = dialog.show(table, "Edit Unit");
+        if (optional.isPresent()) {
+            unit.setAll(optional.get());
+            unitTableModel.updateRow(unit);
+        }
     }
 
     @Override
