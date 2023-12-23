@@ -69,7 +69,7 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
 
         JComboBox<Ingredient> ingredient = new JComboBox<>();
         ingredient.setModel(new javax.swing.DefaultComboBoxModel<>(ingredients.toArray(new Ingredient[ingredients.size()])));
-        if (selectedIngredient != null){
+        if (selectedIngredient != null) {
             ingredient.setSelectedItem(selectedIngredient);
         } else {
             ingredient.setSelectedIndex(-1);
@@ -83,7 +83,7 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
 
         JComboBox<Unit> unitBox = new JComboBox<>();
         filterUnits(ingredient);
-        if (selectedUnit != null){
+        if (selectedUnit != null) {
             unitBox.setSelectedItem(selectedUnit);
         }
         newIngredient.add(unitBox);
@@ -123,8 +123,8 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
             Ingredient ingredient = (Ingredient)((JComboBox<Ingredient>)((JPanel)component).getComponent(0)).getSelectedItem();
             int count = FieldMaker.parseIntField((JFormattedTextField) ((JPanel)component).getComponent(1));
             Unit unit = (Unit)((JComboBox<Unit>)((JPanel)component).getComponent(2)).getSelectedItem();
-            if (newIgredients.containsKey(ingredient)){
-                JOptionPane.showConfirmDialog(null, "There are some duplicities in your ingredients.\nNot possible to save.", "Warning", JOptionPane.CLOSED_OPTION);
+            if (newIgredients.containsKey(ingredient)) {
+                EntityDialog.openErrorDialog("There are some duplicities in your ingredients.\nNot possible to save.");
                 return null;
             }
             newIgredients.put(ingredient, new AmountInUnit(unit, count));

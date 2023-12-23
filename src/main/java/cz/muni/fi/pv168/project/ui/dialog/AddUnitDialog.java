@@ -3,8 +3,10 @@ package cz.muni.fi.pv168.project.ui.dialog;
 import cz.muni.fi.pv168.project.model.IngredientType;
 import cz.muni.fi.pv168.project.model.Unit;
 import cz.muni.fi.pv168.project.service.validation.Validator;
+import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
 
 import javax.swing.*;
+import java.util.Objects;
 
 public final class AddUnitDialog extends EntityDialog<Unit> {
 
@@ -18,13 +20,6 @@ public final class AddUnitDialog extends EntityDialog<Unit> {
         super(unitValidator);
         this.unitTable = unitTable;
         setValues("", "", IngredientType.COUNTABLE, 1);
-        addFields();
-    }
-
-    public AddUnitDialog(JTable unitTable, String name, String abbreviation, IngredientType ingredientType, float conversionRate, Validator<Unit> unitValidator) {
-        super(unitValidator);
-        this.unitTable = unitTable;
-        setValues(name, abbreviation, ingredientType, conversionRate);
         addFields();
     }
 
@@ -49,11 +44,16 @@ public final class AddUnitDialog extends EntityDialog<Unit> {
         try {
             conversionRateFloat = Float.parseFloat(conversionRate.getText().replace(',', '.'));
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(panel, "Conversion rate must be a decimal number", "Error", JOptionPane.ERROR_MESSAGE);
-            var dialog = new AddUnitDialog(unitTable, name.getText(), abbreviation.getText(), (IngredientType) ingredientType.getSelectedItem(), 1, entityValidator);
-            return dialog.show(unitTable, "Add Unit").orElse(null);
+            EntityDialog.openErrorDialog("Conversion rate must be a decimal number");
+            return null;
         }
-        return new Unit(name.getText(), abbreviation.getText(), (IngredientType) ingredientType.getSelectedItem(), conversionRateFloat);
+        Unit unit = new Unit(name.getText(), abbreviation.getText(), (IngredientType) ingredientType.getSelectedItem(), conversionRateFloat);
+        // name of unit equals name of base unit of given ingredient type
+        if (UnitTableModel.hasBaseUnitName(unit.getName())) {
+            EntityDialog.openErrorDialog("Cannot add base unit");
+            return null;
+        }
+        return unit;
     }
 }
 

@@ -69,7 +69,7 @@ public class UnitTableModel extends BasicTableModel<Unit> {
     public void performAddAction(JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
         UnitTableModel unitTable = (UnitTableModel) table.getModel();
         var dialog = new AddUnitDialog(table, entityValidator);
-        dialog.show(table, "Edit Unit").ifPresent(unitTable::addRow);
+        dialog.show(table, "Add Unit").ifPresent(unitTable::addRow);
     }
 
     @Override
@@ -90,5 +90,9 @@ public class UnitTableModel extends BasicTableModel<Unit> {
 
     public static Unit getBaseUnit(IngredientType ingredientType) {
         return baseUnitsMap.get(ingredientType);
+    }
+
+    public static boolean hasBaseUnitName(String unitName) {
+        return baseUnitsMap.values().stream().anyMatch(baseUnit -> baseUnit.getName().equals(unitName));
     }
 }

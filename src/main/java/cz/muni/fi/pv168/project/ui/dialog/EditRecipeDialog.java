@@ -128,18 +128,18 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
     }
 
     public HashMap<Ingredient, AmountInUnit> getAllIngredients(){
-        HashMap<Ingredient, AmountInUnit> newIgredients = new HashMap<>();
+        HashMap<Ingredient, AmountInUnit> newIngredients = new HashMap<>();
         for (Component component : ingredientsPanel.getComponents()){
             Ingredient ingredient = (Ingredient)((JComboBox<Ingredient>)((JPanel)component).getComponent(0)).getSelectedItem();
             int count = FieldMaker.parseIntField((JFormattedTextField) ((JPanel)component).getComponent(1));
             Unit unit = (Unit)((JComboBox<Unit>)((JPanel)component).getComponent(2)).getSelectedItem();
-            if (newIgredients.containsKey(ingredient)){
-                JOptionPane.showConfirmDialog(null, "There are some duplicities in your ingredients.\nNot possible to save.", "Warning", JOptionPane.CLOSED_OPTION);
+            if (newIngredients.containsKey(ingredient)) {
+                EntityDialog.openErrorDialog("There are some duplicities in your ingredients.\nNot possible to save.");
                 return null;
             }
-            newIgredients.put(ingredient, new AmountInUnit(unit, count));
+            newIngredients.put(ingredient, new AmountInUnit(unit, count));
         }
-        return newIgredients;
+        return newIngredients;
     }
 
     public Unit[] filterUnits(JComboBox<Ingredient> source){

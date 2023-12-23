@@ -52,8 +52,11 @@ public abstract class EntityDialog<E> {
         int result = showOptionDialog(parentComponent, title);
         while (result == OK_OPTION) {
             E entity = getEntity();
+
+            // null entity means error, dialog is being called at upper
             if (entity == null) {
-                return Optional.empty();
+                result = showOptionDialog(parentComponent, title);
+                continue;
             }
 
             if (entityValidator == null) {
