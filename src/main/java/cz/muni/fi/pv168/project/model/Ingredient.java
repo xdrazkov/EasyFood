@@ -84,7 +84,7 @@ public class Ingredient extends Entity {
         if (! (obj instanceof Ingredient theirs)) {
             return false;
         }
-        return Objects.equals(this.name, theirs.name) && Objects.equals(this.defaultUnit, theirs.defaultUnit);
+        return Objects.equals(this.name, theirs.name);
     }
 
     @Override
