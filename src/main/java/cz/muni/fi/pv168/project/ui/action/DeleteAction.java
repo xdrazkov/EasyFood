@@ -1,5 +1,7 @@
 package cz.muni.fi.pv168.project.ui.action;
 
+import cz.muni.fi.pv168.project.service.validation.ValidationException;
+import cz.muni.fi.pv168.project.ui.dialog.EntityDialog;
 import cz.muni.fi.pv168.project.ui.model.BasicTableModel;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
 
@@ -30,13 +32,16 @@ public final class DeleteAction extends GeneralAction {
         BasicTableModel model = (BasicTableModel) table.getModel();
         Consumer<Integer> deleteFunction = model::deleteRow;
 
-        // TODO error dependency check
-        Arrays.stream(table.getSelectedRows())
-        .map(table::convertRowIndexToModel)
-        .boxed()
-        .sorted(Comparator.reverseOrder())
-        .forEach(deleteFunction);
-        refresh();
+        try {
+            Arrays.stream(table.getSelectedRows())
+                    .map(table::convertRowIndexToModel)
+                    .boxed()
+                    .sorted(Comparator.reverseOrder())
+                    .forEach(deleteFunction);
+            refresh();
+        } catch (ValidationException ex) {
+            EntityDialog.openErrorDialog(ex.getValidationErrors());
+        }
     }
 
     @Override

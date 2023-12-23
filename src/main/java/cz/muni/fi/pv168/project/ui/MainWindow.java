@@ -62,6 +62,7 @@ public class MainWindow {
         List<BasicTableModel<? extends Entity>> tableModels =
                 List.of(recipeTableModel, ingredientTableModel, categoryTableModel, unitTableModel);
 
+        // DO NOT MOVE THIS BLOCK UPPER
 //        var testDataGenerator = new TestDataGenerator();
 //        testDataGenerator.getUnits().forEach(unitCrudService::create);
 //        testDataGenerator.getCategories().forEach(categoryCrudService::create);
