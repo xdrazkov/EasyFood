@@ -12,4 +12,18 @@ public enum IngredientType {
     public Unit getBaseUnit(){
         return UnitTableModel.getBaseUnit(this);
     }
+
+    @Override
+    public String toString() {
+        switch(this) {
+            case POURABLE:
+                return "Ⓟ";
+            case WEIGHABLE:
+                return "Ⓦ";
+            case COUNTABLE:
+                return "Ⓒ";
+            default:
+                return "○";
+        }
+    }
 }
