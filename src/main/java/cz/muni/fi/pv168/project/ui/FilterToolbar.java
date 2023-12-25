@@ -94,7 +94,7 @@ public class FilterToolbar {
     /**
      * updates contents of all filters in recipe tab whenever any action is applied
      */
-    public void updateFilters() {
+    public void updateFilters(boolean isRecipes) {
 //        resetFilters();
 //        updateSliderRange(preparationTimeSlider, Recipe::getTimeToPrepare);
 //        updateSliderRange(nutritionalValuesSlider, Recipe::getNutritionalValue);
@@ -111,7 +111,9 @@ public class FilterToolbar {
         addFiltersToToolbar();
         // DO NOT ASK ANY QUESTIONS
         filterToolBar.setVisible(false);
-        filterToolBar.setVisible(true);
+        if (isRecipes) {
+            filterToolBar.setVisible(true);
+        }
 
     }
 

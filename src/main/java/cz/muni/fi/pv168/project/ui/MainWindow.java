@@ -104,7 +104,7 @@ public class MainWindow {
         var transactionalImportService = new TransactionalImportService(importService, dependencyProvider.getTransactionExecutor());
         // create import/export actions
         exportAction = new ExportAction(recipeTablePanel, exportService);
-        final Runnable importCallback = () -> {tableModels.forEach(BasicTableModel::refresh); filterToolBar.updateFilters();};
+        final Runnable importCallback = () -> {tableModels.forEach(BasicTableModel::refresh); filterToolBar.updateFilters(true);};
         importAction = new ImportAction(recipeTablePanel, transactionalImportService,  importCallback);
         viewStatisticsAction = new ViewStatisticsAction(ingredientCrudService, recipeCrudService);
         viewAboutAction = new ViewAboutAction();

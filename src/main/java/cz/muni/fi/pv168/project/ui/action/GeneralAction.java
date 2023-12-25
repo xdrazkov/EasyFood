@@ -44,8 +44,8 @@ public abstract class GeneralAction extends AbstractAction {
     public abstract void actionPerformed(ActionEvent e);
 
     protected void refresh() {
-        if (filterToolbar != null && generalTablePanel.getTablePanelType() == TablePanelType.RECIPE) {
-            filterToolbar.updateFilters();
+        if (filterToolbar != null) {
+            filterToolbar.updateFilters(generalTablePanel.getTablePanelType() == TablePanelType.RECIPE);
         }
     }
     public abstract void setShortDescription();
