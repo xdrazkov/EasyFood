@@ -1,6 +1,6 @@
-# PV168 Project: {{ EASY FOOD }}
+# PV168 Project: EASY FOOD
 
-{{ Desktop application (mainly for Windows). Target users: young people who like cooking. Implementation of basic recipe management application. }}
+Desktop application (mainly for Windows). Target users: young people who like cooking. Implementation of basic recipe management application.
 
 ## Team Information
 
