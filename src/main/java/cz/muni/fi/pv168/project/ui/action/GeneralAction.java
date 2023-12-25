@@ -4,6 +4,7 @@ import cz.muni.fi.pv168.project.model.Entity;
 import cz.muni.fi.pv168.project.ui.FilterToolbar;
 import cz.muni.fi.pv168.project.ui.model.BasicTableModel;
 import cz.muni.fi.pv168.project.ui.panels.GeneralTablePanel;
+import cz.muni.fi.pv168.project.ui.panels.TablePanelType;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -43,7 +44,7 @@ public abstract class GeneralAction extends AbstractAction {
     public abstract void actionPerformed(ActionEvent e);
 
     protected void refresh() {
-        if (filterToolbar != null) {
+        if (filterToolbar != null && generalTablePanel.getTablePanelType() == TablePanelType.RECIPE) {
             filterToolbar.updateFilters();
         }
     }
