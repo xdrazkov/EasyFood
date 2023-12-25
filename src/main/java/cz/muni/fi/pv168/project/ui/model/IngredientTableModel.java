@@ -13,8 +13,8 @@ import javax.swing.*;
 import java.util.List;
 
 public class IngredientTableModel extends BasicTableModel<Ingredient> {
-    public IngredientTableModel(DependencyProvider dependencyProvider, CrudService<Ingredient> ingredientCrudService) {
-        super(dependencyProvider, ingredientCrudService);
+    public IngredientTableModel(DependencyProvider dependencyProvider) {
+        super(dependencyProvider, dependencyProvider.getIngredientCrudService());
     }
 
     public List<Column<Ingredient, ?>> makeColumns() {

@@ -79,10 +79,10 @@ public class MainWindow {
         unitCrudService.setGeneralDependencyChecker(new UnitDependencyChecker(recipeCrudService, ingredientCrudService));
 
         // Create models
-        RecipeTableModel recipeTableModel = new RecipeTableModel(dependencyProvider, recipeCrudService);
-        IngredientTableModel ingredientTableModel = new IngredientTableModel(dependencyProvider, ingredientCrudService);
-        CategoryTableModel categoryTableModel = new CategoryTableModel(dependencyProvider, categoryCrudService);
-        UnitTableModel unitTableModel = new UnitTableModel(dependencyProvider, unitCrudService);
+        RecipeTableModel recipeTableModel = new RecipeTableModel(dependencyProvider);
+        IngredientTableModel ingredientTableModel = new IngredientTableModel(dependencyProvider);
+        CategoryTableModel categoryTableModel = new CategoryTableModel(dependencyProvider);
+        UnitTableModel unitTableModel = new UnitTableModel(dependencyProvider);
         List<BasicTableModel<? extends Entity>> tableModels =
                 List.of(recipeTableModel, ingredientTableModel, categoryTableModel, unitTableModel);
 

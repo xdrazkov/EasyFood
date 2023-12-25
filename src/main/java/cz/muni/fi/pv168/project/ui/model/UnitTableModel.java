@@ -17,10 +17,8 @@ import java.util.Objects;
 
 public class UnitTableModel extends BasicTableModel<Unit> {
     private static final HashMap<IngredientType, Unit> baseUnitsMap = new HashMap<>();
-    private final CrudService<Unit> crudService;
-    public UnitTableModel(DependencyProvider dependencyProvider, CrudService<Unit> crudService) {
-        super(dependencyProvider, crudService);
-        this.crudService = crudService;
+    public UnitTableModel(DependencyProvider dependencyProvider) {
+        super(dependencyProvider, dependencyProvider.getUnitCrudService());
         setupBaseUnits();
     }
 
@@ -36,7 +34,7 @@ public class UnitTableModel extends BasicTableModel<Unit> {
         Unit gram = null;
         Unit milliliter = null;
         Unit piece = null;
-        List<Unit> units = crudService.findAll();
+        List<Unit> units = dependencyProvider.getUnitCrudService().findAll();
         for (Unit unit : units) {
             if (Objects.equals(unit.getName(), "grams")) {
                 gram = unit;

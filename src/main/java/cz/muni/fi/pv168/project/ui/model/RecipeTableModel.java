@@ -14,8 +14,8 @@ import javax.swing.*;
 import java.util.List;
 
 public class RecipeTableModel extends BasicTableModel<Recipe> {
-    public RecipeTableModel(DependencyProvider dependencyProvider, CrudService<Recipe> recipeCrudService) {
-        super(dependencyProvider, recipeCrudService);
+    public RecipeTableModel(DependencyProvider dependencyProvider) {
+        super(dependencyProvider, dependencyProvider.getRecipeCrudService());
     }
 
     public List<Column<Recipe, ?>> makeColumns() {
