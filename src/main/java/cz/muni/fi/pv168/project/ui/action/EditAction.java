@@ -10,23 +10,18 @@ import cz.muni.fi.pv168.project.ui.dialog.EntityDialog;
 import cz.muni.fi.pv168.project.ui.model.BasicTableModel;
 import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
+import cz.muni.fi.pv168.project.wiring.DependencyProvider;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 public final class EditAction extends GeneralAction {
-    private final UnitTableModel unitTableModel;
-    private final CrudService<Ingredient> ingredientCrudService;
-    private final CrudService<Category> categoryCrudService;
-    private final CrudService<Unit> unitCrudService;
+    private final DependencyProvider dependencyProvider;
 
-    public EditAction(UnitTableModel unitTableModel, CrudService<Ingredient> ingredientCrudService, CrudService<Category> categoryCrudService, CrudService<Unit> unitCrudService) {
+    public EditAction(DependencyProvider dependencyProvider) {
         super("Edit", Icons.EDIT_ICON);
-        this.ingredientCrudService = ingredientCrudService;
-        this.categoryCrudService = categoryCrudService;
-        this.unitCrudService = unitCrudService;
-        this.unitTableModel = unitTableModel;
+        this.dependencyProvider = dependencyProvider;
         putValue(MNEMONIC_KEY, KeyEvent.VK_E);
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl E"));
     }
@@ -44,7 +39,7 @@ public final class EditAction extends GeneralAction {
 
         BasicTableModel model = (BasicTableModel) table.getModel();
         try {
-            model.performEditAction(selectedRows, table, unitTableModel, categoryCrudService.findAll(), ingredientCrudService.findAll(), unitCrudService.findAll());
+            model.performEditAction(selectedRows, table);
         } catch (ValidationException ex) {
             EntityDialog.openErrorDialog(ex.getValidationErrors());
         } finally {

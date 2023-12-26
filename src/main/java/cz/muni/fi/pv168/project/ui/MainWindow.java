@@ -53,10 +53,10 @@ public class MainWindow {
         var importService = dependencyProvider.getImportService();
 
         // Create models
-        RecipeTableModel recipeTableModel = new RecipeTableModel(dependencyProvider, recipeCrudService);
-        IngredientTableModel ingredientTableModel = new IngredientTableModel(dependencyProvider, ingredientCrudService);
-        CategoryTableModel categoryTableModel = new CategoryTableModel(dependencyProvider, categoryCrudService);
-        UnitTableModel unitTableModel = new UnitTableModel(dependencyProvider, unitCrudService);
+        RecipeTableModel recipeTableModel = new RecipeTableModel(dependencyProvider);
+        IngredientTableModel ingredientTableModel = new IngredientTableModel(dependencyProvider);
+        CategoryTableModel categoryTableModel = new CategoryTableModel(dependencyProvider);
+        UnitTableModel unitTableModel = new UnitTableModel(dependencyProvider);
         List<BasicTableModel<? extends Entity>> tableModels =
                 List.of(recipeTableModel, ingredientTableModel, categoryTableModel, unitTableModel);
 
@@ -94,16 +94,16 @@ public class MainWindow {
         var filterToolBar = new FilterToolbar(recipeCrudService, ingredientCrudService, categoryCrudService, unitCrudService, recipeRowSorter);
 
         // Set up actions for recipe table
-        addAction = new AddAction(unitTableModel, ingredientCrudService, categoryCrudService, unitCrudService);
+        addAction = new AddAction();
         deleteAction = new DeleteAction();
-        editAction = new EditAction(unitTableModel, ingredientCrudService, categoryCrudService, unitCrudService);
+        editAction = new EditAction(dependencyProvider);
         openAction = new OpenAction();
 
         // create import/export actions
         exportAction = new ExportAction(recipeTablePanel, exportService);
         final Runnable importCallback = () -> {tableModels.forEach(BasicTableModel::refresh); filterToolBar.updateFilters(true);};
         importAction = new ImportAction(recipeTablePanel, importService,  importCallback);
-        viewStatisticsAction = new ViewStatisticsAction(ingredientCrudService, recipeCrudService);
+        viewStatisticsAction = new ViewStatisticsAction(dependencyProvider);
         viewAboutAction = new ViewAboutAction();
         this.actions = List.of(addAction, editAction, deleteAction, openAction, importAction, exportAction, viewAboutAction, viewStatisticsAction);
         actions.forEach(a -> a.setFilterToolbar(filterToolBar));

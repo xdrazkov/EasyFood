@@ -13,8 +13,8 @@ import javax.swing.*;
 import java.util.List;
 
 public class CategoryTableModel extends BasicTableModel<Category> {
-    public CategoryTableModel(DependencyProvider dependencyProvider, CrudService<Category> categoryCrudService) {
-        super(dependencyProvider, dependencyProvider.getCategoryValidator(), categoryCrudService);
+    public CategoryTableModel(DependencyProvider dependencyProvider) {
+        super(dependencyProvider, dependencyProvider.getCategoryValidator(), dependencyProvider.getCategoryCrudService());
     }
 
     public List<Column<Category, ?>> makeColumns() {
@@ -24,14 +24,14 @@ public class CategoryTableModel extends BasicTableModel<Category> {
     }
 
     @Override
-    public void performAddAction(JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
+    public void performAddAction(JTable table) {
         CategoryTableModel categoryTableModel = (CategoryTableModel) table.getModel();
         var dialog = new AddCategoryDialog(entityValidator);
         dialog.show(table, "Add Category").ifPresent(categoryTableModel::addRow);
     }
 
     @Override
-    public void performEditAction(int[] selectedRows, JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
+    public void performEditAction(int[] selectedRows, JTable table) {
         int modelRow = table.convertRowIndexToModel(selectedRows[0]);
         CategoryTableModel categoryTableModel = (CategoryTableModel) table.getModel();
         var category = categoryTableModel.getEntity(modelRow);

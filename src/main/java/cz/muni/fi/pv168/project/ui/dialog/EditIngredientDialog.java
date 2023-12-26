@@ -4,6 +4,7 @@ import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Unit;
 import cz.muni.fi.pv168.project.service.validation.Validator;
 import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
+import cz.muni.fi.pv168.project.wiring.DependencyProvider;
 
 import javax.swing.*;
 
@@ -11,13 +12,13 @@ public class EditIngredientDialog extends EntityDialog<Ingredient> {
     private final JTextField name = new JTextField();
     private final JFormattedTextField nutritionalValue = FieldMaker.makeIntField();
     private final JComboBox<Unit> defaultUnit = new JComboBox<>();
-    private final UnitTableModel unitTableModel;
+    private final DependencyProvider dependencyProvider;
     private final Ingredient ingredient;
 
-    public EditIngredientDialog(Ingredient ingredient, UnitTableModel unitTableModel, Validator<Ingredient> ingredientValidator) {
+    public EditIngredientDialog(Ingredient ingredient, DependencyProvider dependencyProvider, Validator<Ingredient> ingredientValidator) {
         super(ingredientValidator);
         this.ingredient = ingredient;
-        this.unitTableModel = unitTableModel;
+        this.dependencyProvider = dependencyProvider;
         setValues();
         addFields();
     }
@@ -25,7 +26,7 @@ public class EditIngredientDialog extends EntityDialog<Ingredient> {
     private void setValues() {
         name.setText(ingredient.getName());
         nutritionalValue.setText(Float.toString(ingredient.getCaloriesPerUnit()));
-        defaultUnit.setModel(new javax.swing.DefaultComboBoxModel<>(unitTableModel.getEntities().toArray(new Unit[0])));
+        defaultUnit.setModel(new javax.swing.DefaultComboBoxModel<>(dependencyProvider.getUnitCrudService().findAll().toArray(new Unit[0])));
         defaultUnit.getModel().setSelectedItem(ingredient.getDefaultUnit());
     }
 

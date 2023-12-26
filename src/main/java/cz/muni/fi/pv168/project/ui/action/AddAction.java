@@ -16,18 +16,8 @@ import java.awt.event.KeyEvent;
 
 public final class AddAction extends GeneralAction {
 
-    private final UnitTableModel unitTableModel;
-
-    private final CrudService<Ingredient> ingredientCrudService;
-    private final CrudService<Category> categoryCrudService;
-    private final CrudService<Unit> unitCrudService;
-
-    public AddAction(UnitTableModel unitTableModel, CrudService<Ingredient> ingredientCrudService, CrudService<Category> categoryCrudService, CrudService<Unit> unitCrudService) {
+    public AddAction() {
         super("Add", Icons.ADD_ICON);
-        this.unitTableModel = unitTableModel;
-        this.ingredientCrudService = ingredientCrudService;
-        this.categoryCrudService = categoryCrudService;
-        this.unitCrudService = unitCrudService;
         putValue(SHORT_DESCRIPTION, "Adds new");
         putValue(MNEMONIC_KEY, KeyEvent.VK_A);
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl N"));
@@ -42,7 +32,7 @@ public final class AddAction extends GeneralAction {
 
         BasicTableModel model = (BasicTableModel) table.getModel();
         try {
-            model.performAddAction(table, unitTableModel, categoryCrudService.findAll(), ingredientCrudService.findAll(), unitCrudService.findAll());
+            model.performAddAction(table);
         } catch (ValidationException ex) {
             EntityDialog.openErrorDialog(ex.getValidationErrors());
         } finally {

@@ -38,9 +38,9 @@ public abstract class BasicTableModel<E extends Entity> extends AbstractTableMod
     public abstract List<Column<E, ?>> makeColumns();
 
     //TODO change to use the CDP
-    public abstract void performAddAction(JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units);
+    public abstract void performAddAction(JTable table);
 
-    public abstract void performEditAction(int[] selectedRows, JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units);
+    public abstract void performEditAction(int[] selectedRows, JTable table);
 
     public abstract void performOpenAction(JTable table, int modelRow);
 

@@ -2,6 +2,7 @@ package cz.muni.fi.pv168.project.ui.dialog;
 
 import cz.muni.fi.pv168.project.model.*;
 import cz.muni.fi.pv168.project.service.validation.Validator;
+import cz.muni.fi.pv168.project.wiring.DependencyProvider;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -30,11 +31,11 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
 
 
 
-    public AddRecipeDialog(List<Category> categories, List<Ingredient> ingredients, List<Unit> units, Validator<Recipe> recipeValidator) {
+    public AddRecipeDialog(DependencyProvider dependencyProvider, Validator<Recipe> recipeValidator) {
         super(recipeValidator);
-        this.categories = categories;
-        this.ingredients = ingredients;
-        this.units = units;
+        this.categories = dependencyProvider.getCategoryCrudService().findAll();
+        this.ingredients = dependencyProvider.getIngredientCrudService().findAll();
+        this.units = dependencyProvider.getUnitCrudService().findAll();
         setValues();
         addFields();
     }
