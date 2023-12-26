@@ -7,6 +7,7 @@ import cz.muni.fi.pv168.project.service.export.batch.BatchImporter;
 import cz.muni.fi.pv168.project.service.export.batch.BatchOperationException;
 import cz.muni.fi.pv168.project.service.export.format.Format;
 import cz.muni.fi.pv168.project.service.export.format.FormatMapping;
+import cz.muni.fi.pv168.project.storage.sql.db.TransactionExecutor;
 import cz.muni.fi.pv168.project.ui.action.ImportStrategy;
 
 import java.util.Collection;
@@ -24,16 +25,20 @@ public class GenericImportService implements ImportService {
     private final FormatMapping<BatchImporter> importers;
     // units are not imported, because all imported units are base, which ARE PART of the system
 
+    private final TransactionExecutor transactionExecutor;
+
     public GenericImportService(
             CrudService<Recipe> recipeCrudService,
             CrudService<Ingredient> ingredientCrudService,
             CrudService<Category> categoryCrudService,
-            Collection<BatchImporter> importers
+            Collection<BatchImporter> importers,
+            TransactionExecutor transactionExecutor
     ) {
         this.recipeCrudService = recipeCrudService;
         this.ingredientCrudService = ingredientCrudService;
         this.categoryCrudService = categoryCrudService;
         this.importers = new FormatMapping<>(importers);
+        this.transactionExecutor = transactionExecutor;
     }
 
     @Override
@@ -46,9 +51,9 @@ public class GenericImportService implements ImportService {
         var batch = getImporter(filePath).importBatch(filePath);
 
         switch (importStrategy) {
-            case REPLACE_ALL -> removeAllImport(batch);
-            case APPEND_REPLACE -> appendSkipImport(batch);
-            case APPEND_ERROR -> appendErrorImport(batch);
+            case REPLACE_ALL -> transactionExecutor.executeInTransaction(() -> removeAllImport(batch));
+            case APPEND_REPLACE -> transactionExecutor.executeInTransaction(() -> appendSkipImport(batch));
+            case APPEND_ERROR -> transactionExecutor.executeInTransaction(() ->appendErrorImport(batch));
         }
     }
 

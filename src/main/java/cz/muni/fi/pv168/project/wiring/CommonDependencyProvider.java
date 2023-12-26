@@ -94,10 +94,10 @@ public class CommonDependencyProvider implements DependencyProvider {
         recipeRepository = new RecipeSqlRepository(recipeDao, recipeIngredientDao, recipeMapper, recipeIngredientMapper);
         recipeCrudService = new GenericCrudService<>(recipeRepository, recipeValidator, guidProvider);
 
+
         importService = new GenericImportService(recipeCrudService, ingredientCrudService, categoryCrudService,
-                List.of(new BatchJsonImporter()));
+                List.of(new BatchJsonImporter()), transactionExecutor);
         exportService = new GenericExportService(List.of(new BatchJsonExporter(), new BatchPdfExporter()), recipeCrudService);
-//        importService = new TransactionalImportService(genericImportService, transactionExecutor);
 
         recipeCrudService.setGeneralDependencyChecker(new RecipeDependencyChecker());
         ingredientCrudService.setGeneralDependencyChecker(new IngredientDependencyChecker(recipeCrudService));

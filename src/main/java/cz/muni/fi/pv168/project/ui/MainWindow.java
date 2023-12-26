@@ -1,8 +1,6 @@
 package cz.muni.fi.pv168.project.ui;
 
-import cz.muni.fi.pv168.project.data.TestDataGenerator;
 import cz.muni.fi.pv168.project.model.*;
-import cz.muni.fi.pv168.project.storage.sql.TransactionalImportService;
 import cz.muni.fi.pv168.project.ui.action.*;
 import cz.muni.fi.pv168.project.ui.model.*;
 import cz.muni.fi.pv168.project.ui.panels.*;
@@ -101,11 +99,10 @@ public class MainWindow {
         editAction = new EditAction(unitTableModel, ingredientCrudService, categoryCrudService, unitCrudService);
         openAction = new OpenAction();
 
-        var transactionalImportService = new TransactionalImportService(importService, dependencyProvider.getTransactionExecutor());
         // create import/export actions
         exportAction = new ExportAction(recipeTablePanel, exportService);
         final Runnable importCallback = () -> {tableModels.forEach(BasicTableModel::refresh); filterToolBar.updateFilters(true);};
-        importAction = new ImportAction(recipeTablePanel, transactionalImportService,  importCallback);
+        importAction = new ImportAction(recipeTablePanel, importService,  importCallback);
         viewStatisticsAction = new ViewStatisticsAction(ingredientCrudService, recipeCrudService);
         viewAboutAction = new ViewAboutAction();
         this.actions = List.of(addAction, editAction, deleteAction, openAction, importAction, exportAction, viewAboutAction, viewStatisticsAction);
