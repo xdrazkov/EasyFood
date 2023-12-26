@@ -11,6 +11,7 @@ import cz.muni.fi.pv168.project.service.export.batch.BatchOperationException;
 import cz.muni.fi.pv168.project.service.export.format.Format;
 import cz.muni.fi.pv168.project.service.export.format.FormatMapping;
 import cz.muni.fi.pv168.project.ui.action.ImportStrategy;
+import cz.muni.fi.pv168.project.wiring.DependencyProvider;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -25,15 +26,10 @@ public class GenericImportService implements ImportService {
     private final FormatMapping<BatchImporter> importers;
     // units are not imported, because all imported units are base, which ARE PART of the system
 
-    public GenericImportService(
-            CrudService<Recipe> recipeCrudService,
-            CrudService<Ingredient> ingredientCrudService,
-            CrudService<Category> categoryCrudService,
-            Collection<BatchImporter> importers
-    ) {
-        this.recipeCrudService = recipeCrudService;
-        this.ingredientCrudService = ingredientCrudService;
-        this.categoryCrudService = categoryCrudService;
+    public GenericImportService(DependencyProvider dependencyProvider, Collection<BatchImporter> importers) {
+        this.recipeCrudService = dependencyProvider.getRecipeCrudService();
+        this.ingredientCrudService = dependencyProvider.getIngredientCrudService();
+        this.categoryCrudService = dependencyProvider.getCategoryCrudService();
         this.importers = new FormatMapping<>(importers);
     }
 

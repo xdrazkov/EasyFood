@@ -7,6 +7,7 @@ import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.ui.model.BasicTableModel;
 import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
+import cz.muni.fi.pv168.project.wiring.DependencyProvider;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -18,11 +19,11 @@ public final class EditAction extends GeneralAction {
     private final CrudService<Category> categoryCrudService;
     private final CrudService<Unit> unitCrudService;
 
-    public EditAction(UnitTableModel unitTableModel, CrudService<Ingredient> ingredientCrudService, CrudService<Category> categoryCrudService, CrudService<Unit> unitCrudService) {
+    public EditAction(UnitTableModel unitTableModel, DependencyProvider dependencyProvider) {
         super("Edit", Icons.EDIT_ICON);
-        this.ingredientCrudService = ingredientCrudService;
-        this.categoryCrudService = categoryCrudService;
-        this.unitCrudService = unitCrudService;
+        this.ingredientCrudService = dependencyProvider.getIngredientCrudService();
+        this.categoryCrudService = dependencyProvider.getCategoryCrudService();
+        this.unitCrudService = dependencyProvider.getUnitCrudService();
         this.unitTableModel = unitTableModel;
         putValue(MNEMONIC_KEY, KeyEvent.VK_E);
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl E"));

@@ -100,9 +100,9 @@ public class MainWindow {
         frame.add(tabbedPane, BorderLayout.CENTER);
 
         // Set up actions for recipe table
-        addAction = new AddAction(unitTableModel, ingredientCrudService, categoryCrudService, unitCrudService);
+        addAction = new AddAction(unitTableModel, dependencyProvider);
         deleteAction = new DeleteAction();
-        editAction = new EditAction(unitTableModel, ingredientCrudService, categoryCrudService, unitCrudService);
+        editAction = new EditAction(unitTableModel, dependencyProvider);
         openAction = new OpenAction();
 
         // Add row sorters
@@ -110,7 +110,7 @@ public class MainWindow {
 
         // TODO exporters by DAO
         var exportService = new GenericExportService(recipeRowSorter ,recipeTablePanel, List.of(new BatchJsonExporter(), new BatchPdfExporter()));
-        var importService = new GenericImportService(recipeCrudService, ingredientCrudService, categoryCrudService, List.of(new BatchJsonImporter()));
+        var importService = new GenericImportService(dependencyProvider, List.of(new BatchJsonImporter()));
 
         var transactionalImportService = new TransactionalImportService(importService, dependencyProvider.getTransactionExecutor());
 
@@ -118,7 +118,7 @@ public class MainWindow {
         exportAction = new ExportAction(recipeTablePanel, exportService);
         importAction = new ImportAction(recipeTablePanel, transactionalImportService, () -> tableModels.forEach(BasicTableModel::refresh));
 
-        viewStatisticsAction = new ViewStatisticsAction(ingredientCrudService, recipeCrudService);
+        viewStatisticsAction = new ViewStatisticsAction(dependencyProvider);
         viewAboutAction = new ViewAboutAction();
         this.actions = List.of(addAction, editAction, deleteAction, openAction, importAction, exportAction, viewAboutAction, viewStatisticsAction);
         setForbiddenActionsInTabs();
@@ -134,7 +134,7 @@ public class MainWindow {
         // adding listener to change text of status bar when filtering rows
         recipeRowSorter.addRowSorterListener(e -> setStatusBarName(statusBar));
 
-        var filterToolBar = new FilterToolbar(recipeCrudService, ingredientCrudService, categoryCrudService, unitCrudService, recipeRowSorter);
+        var filterToolBar = new FilterToolbar(dependencyProvider, recipeRowSorter);
         actions.forEach(a -> a.setFilterToolbar(filterToolBar));
 
         JPanel toolbarPanel = new JPanel(new GridLayout(2, 1));

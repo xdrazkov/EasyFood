@@ -7,6 +7,7 @@ import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.ui.model.BasicTableModel;
 import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
+import cz.muni.fi.pv168.project.wiring.DependencyProvider;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -20,12 +21,12 @@ public final class AddAction extends GeneralAction {
     private final CrudService<Category> categoryCrudService;
     private final CrudService<Unit> unitCrudService;
 
-    public AddAction(UnitTableModel unitTableModel, CrudService<Ingredient> ingredientCrudService, CrudService<Category> categoryCrudService, CrudService<Unit> unitCrudService) {
+    public AddAction(UnitTableModel unitTableModel, DependencyProvider dependencyProvider) {
         super("Add", Icons.ADD_ICON);
         this.unitTableModel = unitTableModel;
-        this.ingredientCrudService = ingredientCrudService;
-        this.categoryCrudService = categoryCrudService;
-        this.unitCrudService = unitCrudService;
+        this.ingredientCrudService = dependencyProvider.getIngredientCrudService();
+        this.categoryCrudService = dependencyProvider.getCategoryCrudService();
+        this.unitCrudService = dependencyProvider.getUnitCrudService();
         putValue(SHORT_DESCRIPTION, "Adds new");
         putValue(MNEMONIC_KEY, KeyEvent.VK_A);
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl N"));
