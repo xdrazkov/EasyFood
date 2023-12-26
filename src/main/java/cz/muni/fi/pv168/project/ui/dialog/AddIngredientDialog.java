@@ -32,8 +32,13 @@ public class AddIngredientDialog extends EntityDialog<Ingredient> {
         add("Nutritional value per default unit:", nutritionalValue, THIN_HEIGHT);
     }
 
+    // Helper method to remove commas from a string
+    private float removeCommas(String valueWithCommas) {
+        return Float.parseFloat(valueWithCommas.replaceAll(",", ""));
+    }
     @Override
     Ingredient getEntity() {
-        return new Ingredient(name.getText(), (Unit) defaultUnit.getSelectedItem(), FieldMaker.parseIntField(nutritionalValue));
+        return new Ingredient(name.getText(), (Unit) defaultUnit.getSelectedItem(),
+                Float.parseFloat(nutritionalValue.getValue().toString().replaceAll(" ", "")));
     }
 }
