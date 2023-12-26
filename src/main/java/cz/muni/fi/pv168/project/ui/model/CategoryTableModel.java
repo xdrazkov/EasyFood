@@ -19,7 +19,7 @@ public class CategoryTableModel extends BasicTableModel<Category> {
 
     public List<Column<Category, ?>> makeColumns() {
         return List.of(
-                Column.readonly("Name", Category.class, Category::getItself)
+                Column.readonly("Name", Category.class, (x -> x))
         );
     }
 

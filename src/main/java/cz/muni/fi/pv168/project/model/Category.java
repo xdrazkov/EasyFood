@@ -46,14 +46,6 @@ public class Category extends Entity {
         return name;
     }
 
-    /**
-     *     substitution for getClass, see usage
-     */
-    @JsonIgnore
-    public Category getItself() {
-        return this;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (! (o instanceof Category that)) {
