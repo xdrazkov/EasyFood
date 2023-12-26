@@ -89,8 +89,7 @@ public class CommonDependencyProvider implements DependencyProvider {
         recipeRepository = new RecipeSqlRepository(recipeDao, recipeIngredientDao, recipeMapper, recipeIngredientMapper);
         recipeCrudService = new GenericCrudService<Recipe>(recipeRepository, recipeValidator, guidProvider);
 
-        importService = new GenericImportService(recipeCrudService, ingredientCrudService, categoryCrudService,
-                List.of(new BatchJsonImporter()));
+        importService = new GenericImportService(this, List.of(new BatchJsonImporter()));
 
 //        exportService = new GenericExportService(recipeCrudServicerecipeRowSorter ,recipeTablePanel, List.of(new BatchJsonExporter(), new BatchPdfExporter()));
 //        var genericImportService = new GenericImportService(recipeCrudService, ingredientCrudService, categoryCrudService,
