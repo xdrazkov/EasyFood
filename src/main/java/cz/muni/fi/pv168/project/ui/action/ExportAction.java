@@ -67,10 +67,10 @@ public final class ExportAction extends GeneralAction {
                 try {
                     get();
                 } catch (ExecutionException| InterruptedException ex) {
-                    EntityDialog.openErrorDialog("Unexpected error during export: " + ex.getMessage());
+                    EntityDialog.openErrorDialog("Unexpected error during export.");
                     return;
                 } catch (DataManipulationException | BatchOperationException ex) {
-                    EntityDialog.openErrorDialog("Export not successful: " + ex.getMessage());
+                    EntityDialog.openErrorDialog("Export not successful.");
                     return;
                 }
                 JOptionPane.showMessageDialog(parent, "Export successful");

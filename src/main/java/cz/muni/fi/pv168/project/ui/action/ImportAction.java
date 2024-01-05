@@ -66,7 +66,7 @@ public final class ImportAction extends GeneralAction {
                 try {
                     validationErrors = get();
                 } catch (ExecutionException | InterruptedException ex) {
-                    EntityDialog.openErrorDialog("Unexpected error during import: " + ex.getMessage());
+                    EntityDialog.openErrorDialog("Unexpected error during import.");
                     return;
                 }
 
