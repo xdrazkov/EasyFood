@@ -76,7 +76,7 @@ public class Ingredient extends Entity {
 
     @Override
     public String toString() {
-        return name;
+        return defaultUnit.getIngredientType() + " " + name;
     }
 
     @Override

@@ -30,7 +30,7 @@ public class AddIngredientDialog extends EntityDialog<Ingredient> {
     private void addFields() {
         add("Name:", name, THIN_HEIGHT);
         add("Default Unit:", defaultUnit, THIN_HEIGHT);
-        add("Nutritional value per default unit:", nutritionalValue, THIN_HEIGHT);
+        add("Nutritional value(kcal) per default unit:", nutritionalValue, THIN_HEIGHT);
     }
 
     // Helper method to remove commas from a string
