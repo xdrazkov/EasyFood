@@ -91,7 +91,7 @@ public class MainWindow {
         // adding listener to change text of status bar when filtering rows
         recipeRowSorter.addRowSorterListener(e -> setStatusBarName(statusBar));
 
-        var filterToolBar = new FilterToolbar(recipeCrudService, ingredientCrudService, categoryCrudService, unitCrudService, recipeRowSorter);
+        var filterToolBar = new FilterToolbar(dependencyProvider, recipeRowSorter);
 
         // Set up actions for recipe table
         addAction = new AddAction();

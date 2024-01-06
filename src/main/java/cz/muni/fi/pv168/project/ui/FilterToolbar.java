@@ -18,6 +18,7 @@ import cz.muni.fi.pv168.project.ui.renderers.IngredientRenderer;
 import cz.muni.fi.pv168.project.ui.renderers.SpecialFilterCategoryValuesRenderer;
 import cz.muni.fi.pv168.project.ui.renderers.SpecialFilterIngredientValuesRenderer;
 import cz.muni.fi.pv168.project.util.Either;
+import cz.muni.fi.pv168.project.wiring.DependencyProvider;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.swing.*;
@@ -48,11 +49,11 @@ public class FilterToolbar {
     private final Button resetButton;
 
     private final JToolBar filterToolBar = new JToolBar();
-    public FilterToolbar(CrudService<Recipe> recipeCrudService, CrudService<Ingredient> ingredientCrudService, CrudService<Category> categoryCrudService, CrudService<Unit> unitCrudService, TableRowSorter<RecipeTableModel> recipeRowSorter){
-        this.recipeCrudService = recipeCrudService;
-        this.ingredientCrudService = ingredientCrudService;
-        this.categoryCrudService = categoryCrudService;
-        this.unitCrudService = unitCrudService;
+    public FilterToolbar(DependencyProvider dependencyProvider, TableRowSorter<RecipeTableModel> recipeRowSorter){
+        this.recipeCrudService = dependencyProvider.getRecipeCrudService();
+        this.ingredientCrudService = dependencyProvider.getIngredientCrudService();
+        this.categoryCrudService = dependencyProvider.getCategoryCrudService();
+        this.unitCrudService = dependencyProvider.getUnitCrudService();
         this.recipeRowSorter = recipeRowSorter;
 
         this.recipeTableFilter = new RecipeTableFilter(recipeRowSorter);

@@ -9,6 +9,7 @@ import cz.muni.fi.pv168.project.service.export.format.Format;
 import cz.muni.fi.pv168.project.service.export.format.FormatMapping;
 import cz.muni.fi.pv168.project.storage.sql.db.TransactionExecutor;
 import cz.muni.fi.pv168.project.ui.action.ImportStrategy;
+import cz.muni.fi.pv168.project.wiring.DependencyProvider;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -23,20 +24,14 @@ public class GenericImportService implements ImportService {
     private final CrudService<Ingredient> ingredientCrudService;
     private final CrudService<Category> categoryCrudService;
     private final FormatMapping<BatchImporter> importers;
+    private final TransactionExecutor transactionExecutor;
     // units are not imported, because all imported units are base, which ARE PART of the system
 
-    private final TransactionExecutor transactionExecutor;
 
-    public GenericImportService(
-            CrudService<Recipe> recipeCrudService,
-            CrudService<Ingredient> ingredientCrudService,
-            CrudService<Category> categoryCrudService,
-            Collection<BatchImporter> importers,
-            TransactionExecutor transactionExecutor
-    ) {
-        this.recipeCrudService = recipeCrudService;
-        this.ingredientCrudService = ingredientCrudService;
-        this.categoryCrudService = categoryCrudService;
+    public GenericImportService(DependencyProvider dependencyProvider, Collection<BatchImporter> importers, TransactionExecutor transactionExecutor) {
+        this.recipeCrudService = dependencyProvider.getRecipeCrudService();
+        this.ingredientCrudService = dependencyProvider.getIngredientCrudService();
+        this.categoryCrudService = dependencyProvider.getCategoryCrudService();
         this.importers = new FormatMapping<>(importers);
         this.transactionExecutor = transactionExecutor;
     }

@@ -95,8 +95,7 @@ public class CommonDependencyProvider implements DependencyProvider {
         recipeCrudService = new GenericCrudService<>(recipeRepository, recipeValidator, guidProvider);
 
 
-        importService = new GenericImportService(recipeCrudService, ingredientCrudService, categoryCrudService,
-                List.of(new BatchJsonImporter()), transactionExecutor);
+        importService = new GenericImportService(this, List.of(new BatchJsonImporter()), transactionExecutor);
         exportService = new GenericExportService(List.of(new BatchJsonExporter(), new BatchPdfExporter()), recipeCrudService);
 
         recipeCrudService.setGeneralDependencyChecker(new RecipeDependencyChecker());
