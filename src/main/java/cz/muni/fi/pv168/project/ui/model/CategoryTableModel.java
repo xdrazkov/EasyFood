@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class CategoryTableModel extends BasicTableModel<Category> {
+
     public CategoryTableModel(DependencyProvider dependencyProvider) {
         super(dependencyProvider, dependencyProvider.getCategoryValidator(), dependencyProvider.getCategoryCrudService());
         setupNoCategory();
@@ -28,9 +29,13 @@ public class CategoryTableModel extends BasicTableModel<Category> {
     public void setupNoCategory() {
         List<Category> categories = dependencyProvider.getCategoryCrudService().findAll();
         if (categories.isEmpty()) {
-            Category noCategory = new Category("No Category", Color.LIGHT_GRAY);
-            addRow(noCategory);
+            Category defaultCategory = new Category("No Category", Color.LIGHT_GRAY);
+            addRow(defaultCategory);
         }
+    }
+
+    public static boolean isDefaultCategory(String name){
+        return name.equals("No Category");
     }
 
     @Override
