@@ -4,6 +4,10 @@ import cz.muni.fi.pv168.project.storage.sql.db.DatabaseManager;
 
 public final class CreateDatabase {
     public static void main(String[] args) {
+        createDatabase();
+    }
+
+    public static void createDatabase() {
         var dbManager = DatabaseManager.createProductionInstance();
         dbManager.initSchema();
         System.out.println("Database created...");

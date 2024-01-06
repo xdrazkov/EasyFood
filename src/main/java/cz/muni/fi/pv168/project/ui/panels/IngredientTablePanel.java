@@ -15,5 +15,6 @@ public class IngredientTablePanel extends GeneralTablePanel<Ingredient> {
     @Override
     protected void setRenderer() {
         table.setDefaultRenderer(Float.class, new DefaultTableCellRenderer());
+        table.setDefaultRenderer(Integer.class, new DefaultTableCellRenderer());
     }
 }

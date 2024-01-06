@@ -13,7 +13,7 @@ import java.util.List;
 
 public class IngredientTableModel extends BasicTableModel<Ingredient> {
     public IngredientTableModel(DependencyProvider dependencyProvider) {
-        super(dependencyProvider, dependencyProvider.getIngredientCrudService());
+        super(dependencyProvider, dependencyProvider.getIngredientValidator(), dependencyProvider.getIngredientCrudService());
     }
 
     public List<Column<Ingredient, ?>> makeColumns() {
@@ -26,19 +26,20 @@ public class IngredientTableModel extends BasicTableModel<Ingredient> {
     }
 
     @Override
-    public void performAddAction(JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
+    public void performAddAction(JTable table) {
         IngredientTableModel ingredientTableModel = (IngredientTableModel) table.getModel();
-        var dialog = new AddIngredientDialog(unitTableModel);
+        var dialog = new AddIngredientDialog(dependencyProvider, entityValidator);
         dialog.show(table, "Add Ingredient").ifPresent(ingredientTableModel::addRow);
     }
 
     @Override
-    public void performEditAction(int[] selectedRows, JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
+    public void performEditAction(int[] selectedRows, JTable table) {
         int modelRow = table.convertRowIndexToModel(selectedRows[0]);
         IngredientTableModel ingredientTableModel = (IngredientTableModel) table.getModel();
         var ingredient = ingredientTableModel.getEntity(modelRow);
-        var dialog = new EditIngredientDialog(ingredient, unitTableModel);
-        dialog.show(table, "Edit Ingredient").ifPresent(ingredientTableModel::updateRow);
+        var dialog = new EditIngredientDialog(ingredient.deepClone(), dependencyProvider, entityValidator);
+        var optional = dialog.show(table, "Edit Ingredient");
+        setAndUpdate(optional, ingredient);
     }
 
     @Override

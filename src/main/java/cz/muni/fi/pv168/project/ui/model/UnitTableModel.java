@@ -17,7 +17,7 @@ import java.util.Objects;
 public class UnitTableModel extends BasicTableModel<Unit> {
     private static final HashMap<IngredientType, Unit> baseUnitsMap = new HashMap<>();
     public UnitTableModel(DependencyProvider dependencyProvider) {
-        super(dependencyProvider, dependencyProvider.getUnitCrudService());
+        super(dependencyProvider, dependencyProvider.getUnitValidator(), dependencyProvider.getUnitCrudService());
         setupBaseUnits();
     }
 
@@ -63,18 +63,20 @@ public class UnitTableModel extends BasicTableModel<Unit> {
     }
 
     @Override
-    public void performAddAction(JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
+    public void performAddAction(JTable table) {
         UnitTableModel unitTable = (UnitTableModel) table.getModel();
-        var dialog = new AddUnitDialog(table);
-        dialog.show(table, "Edit Unit").ifPresent(unitTable::addRow);
+        var dialog = new AddUnitDialog(table, entityValidator);
+        dialog.show(table, "Add Unit").ifPresent(unitTable::addRow);
     }
 
     @Override
-    public void performEditAction(int[] selectedRows, JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
+    public void performEditAction(int[] selectedRows, JTable table) {
         int modelRow = table.convertRowIndexToModel(selectedRows[0]);
+        UnitTableModel unitTableModel = (UnitTableModel) table.getModel();
         var unit = unitTableModel.getEntity(modelRow);
-        var dialog = new EditUnitDialog(unit, table);
-        dialog.show(table, "Edit Unit").ifPresent(unitTableModel::updateRow);
+        var dialog = new EditUnitDialog(unit.deepClone(), table, entityValidator);
+        var optional = dialog.show(table, "Edit Unit");
+        setAndUpdate(optional, unit);
     }
 
     @Override
@@ -87,5 +89,9 @@ public class UnitTableModel extends BasicTableModel<Unit> {
 
     public static Unit getBaseUnit(IngredientType ingredientType) {
         return baseUnitsMap.get(ingredientType);
+    }
+
+    public static boolean hasBaseUnitName(String unitName) {
+        return baseUnitsMap.values().stream().anyMatch(baseUnit -> baseUnit.getName().equals(unitName));
     }
 }

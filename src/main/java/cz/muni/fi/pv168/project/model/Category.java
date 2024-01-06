@@ -10,7 +10,7 @@ import java.awt.*;
 
 @JsonDeserialize(using = CategoryJsonDeserializer.class)
 @JsonSerialize(using = CategoryJsonSerializer.class)
-public class Category extends Entity{
+public class Category extends Entity {
     private String name;
     private Color color;
 
@@ -46,19 +46,26 @@ public class Category extends Entity{
         return name;
     }
 
-    /**
-     *     substitution for getClass, see usage
-     */
-    @JsonIgnore
-    public Category getItself() {
-        return this;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (! (o instanceof Category that)) {
             return false;
         }
         return this.color.equals(that.color) && this.name.equals(that.name);
+    }
+
+    @Override
+    public Category deepClone() {
+        return new Category(getGuid(),  getName(), getColor());
+    }
+
+    @Override
+    public void setAll(Entity setObject) {
+        if (!(setObject instanceof Category setCategory)) {
+            return;
+        }
+
+        this.setName(setCategory.getName());
+        this.setColor(setCategory.getColor());
     }
 }

@@ -44,7 +44,7 @@ public final class OpenRecipeDialog extends EntityDialog<Recipe> {
         add(description, THIN_HEIGHT);
         add(portionCount, THIN_HEIGHT);
         add(timeToPrepare, THIN_HEIGHT);
-        var categoryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        var categoryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 5));
         categoryPanel.add(category);
         categoryPanel.add(new ColoredCircle(recipe.getCategory().getColor()));
         add(categoryPanel, THIN_HEIGHT);

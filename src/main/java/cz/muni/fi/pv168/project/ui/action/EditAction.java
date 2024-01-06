@@ -1,9 +1,12 @@
 package cz.muni.fi.pv168.project.ui.action;
 
 import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.model.Entity;
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Unit;
 import cz.muni.fi.pv168.project.service.crud.CrudService;
+import cz.muni.fi.pv168.project.service.validation.ValidationException;
+import cz.muni.fi.pv168.project.ui.dialog.EntityDialog;
 import cz.muni.fi.pv168.project.ui.model.BasicTableModel;
 import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
@@ -14,23 +17,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 public final class EditAction extends GeneralAction {
-    private final UnitTableModel unitTableModel;
-    private final CrudService<Ingredient> ingredientCrudService;
-    private final CrudService<Category> categoryCrudService;
-    private final CrudService<Unit> unitCrudService;
+    private final DependencyProvider dependencyProvider;
 
-    public EditAction(UnitTableModel unitTableModel, DependencyProvider dependencyProvider) {
+    public EditAction(DependencyProvider dependencyProvider) {
         super("Edit", Icons.EDIT_ICON);
-        this.ingredientCrudService = dependencyProvider.getIngredientCrudService();
-        this.categoryCrudService = dependencyProvider.getCategoryCrudService();
-        this.unitCrudService = dependencyProvider.getUnitCrudService();
-        this.unitTableModel = unitTableModel;
+        this.dependencyProvider = dependencyProvider;
         putValue(MNEMONIC_KEY, KeyEvent.VK_E);
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl E"));
     }
 
     @Override
-    protected void actionPerformedImpl(ActionEvent e) {
+    public void actionPerformed(ActionEvent e) {
         JTable table = super.getTable();
         int[] selectedRows = table.getSelectedRows();
         if (selectedRows.length != 1) {
@@ -41,7 +38,13 @@ public final class EditAction extends GeneralAction {
         }
 
         BasicTableModel model = (BasicTableModel) table.getModel();
-        model.performEditAction(selectedRows, table, unitTableModel, categoryCrudService.findAll(), ingredientCrudService.findAll(), unitCrudService.findAll());
+        try {
+            model.performEditAction(selectedRows, table);
+        } catch (ValidationException ex) {
+            EntityDialog.openErrorDialog(ex.getValidationErrors());
+        } finally {
+            refresh();
+        }
     }
 
     @Override

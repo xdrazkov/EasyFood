@@ -17,7 +17,7 @@ public final class OpenAction extends GeneralAction {
     }
 
     @Override
-    protected void actionPerformedImpl(ActionEvent e) {
+    public void actionPerformed(ActionEvent e) {
         JTable table = super.getTable();
         int[] selectedRows = table.getSelectedRows();
         if (selectedRows.length != 1) {

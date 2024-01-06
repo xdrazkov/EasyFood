@@ -1,5 +1,7 @@
 package cz.muni.fi.pv168.project.ui.action;
 
+import cz.muni.fi.pv168.project.service.validation.ValidationException;
+import cz.muni.fi.pv168.project.ui.dialog.EntityDialog;
 import cz.muni.fi.pv168.project.ui.model.BasicTableModel;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
 
@@ -19,9 +21,9 @@ public final class DeleteAction extends GeneralAction {
     }
 
     @Override
-    protected void actionPerformedImpl(ActionEvent e) {
+    public void actionPerformed(ActionEvent e) {
         int dialogButton = JOptionPane.YES_NO_OPTION;
-        int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure you want to delete selected item(s)?","Warning",dialogButton);
+        int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete selected item(s)?","Warning",dialogButton);
         if (dialogResult != JOptionPane.YES_OPTION){
             return;
         }
@@ -30,11 +32,16 @@ public final class DeleteAction extends GeneralAction {
         BasicTableModel model = (BasicTableModel) table.getModel();
         Consumer<Integer> deleteFunction = model::deleteRow;
 
-        Arrays.stream(table.getSelectedRows())
-        .map(table::convertRowIndexToModel)
-        .boxed()
-        .sorted(Comparator.reverseOrder())
-        .forEach(deleteFunction);
+        try {
+            Arrays.stream(table.getSelectedRows())
+                    .map(table::convertRowIndexToModel)
+                    .boxed()
+                    .sorted(Comparator.reverseOrder())
+                    .forEach(deleteFunction);
+            refresh();
+        } catch (ValidationException ex) {
+            EntityDialog.openErrorDialog(ex.getValidationErrors());
+        }
     }
 
     @Override

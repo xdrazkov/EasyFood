@@ -2,6 +2,7 @@ package cz.muni.fi.pv168.project.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.introspect.AnnotatedMethodMap;
 import cz.muni.fi.pv168.project.export.json.deserializers.RecipeJsonDeserializer;
 import cz.muni.fi.pv168.project.export.json.seralizers.RecipeJsonSerializer;
 
@@ -150,7 +151,33 @@ public class Recipe extends Entity {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return this.title;
+    }
+
+    @Override
+    public Recipe deepClone() {
+        Recipe recipe = new Recipe(getGuid(), getTitle(), getDescription(), getPortionCount(), getInstructions(), getTimeToPrepare(), getCategory(), getIngredients());
+        HashMap<Ingredient, AmountInUnit> ingredientMap = new HashMap<>();
+        for (Map.Entry<Ingredient, AmountInUnit> entry: getIngredients().entrySet()) {
+            AmountInUnit amountInUnit = new AmountInUnit(entry.getValue().getUnit(), entry.getValue().getAmount());
+            ingredientMap.put(entry.getKey(), amountInUnit);
+        }
+        recipe.setIngredients(ingredientMap);
+        return recipe;
+    }
+
+    @Override
+    public void setAll(Entity setObject) {
+        if (!(setObject instanceof Recipe setRecipe)) {
+            return;
+        }
+        this.setTitle(setRecipe.getTitle());
+        this.setDescription(setRecipe.getDescription());
+        this.setPortionCount(setRecipe.getPortionCount());
+        this.setInstructions(setRecipe.getInstructions());
+        this.setTimeToPrepare(setRecipe.getTimeToPrepare());
+        this.setCategory(setRecipe.getCategory());
+        this.setIngredients(setRecipe.getIngredients());
     }
 }

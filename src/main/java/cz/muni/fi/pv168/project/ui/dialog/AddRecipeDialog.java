@@ -1,6 +1,8 @@
 package cz.muni.fi.pv168.project.ui.dialog;
 
 import cz.muni.fi.pv168.project.model.*;
+import cz.muni.fi.pv168.project.service.validation.Validator;
+import cz.muni.fi.pv168.project.wiring.DependencyProvider;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -15,9 +17,9 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
 
     private final JTextField title = new JTextField();
     private final JTextField description = new JTextField();
-    private final JTextField portionCount = FieldMaker.makeIntField();
+    private final JFormattedTextField portionCount = FieldMaker.makeIntField();
     private final JTextArea instructions = new JTextArea();
-    private final JTextField timeToPrepare = FieldMaker.makeIntField();
+    private final JFormattedTextField timeToPrepare = FieldMaker.makeIntField();
     private final JComboBox<Category> category = new JComboBox<>();
     private final JLabel ingredientsLabel = new JLabel();
     private final JButton newButton = new JButton();
@@ -29,10 +31,11 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
 
 
 
-    public AddRecipeDialog(List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
-        this.categories = categories;
-        this.ingredients = ingredients;
-        this.units = units;
+    public AddRecipeDialog(DependencyProvider dependencyProvider, Validator<Recipe> recipeValidator) {
+        super(recipeValidator);
+        this.categories = dependencyProvider.getCategoryCrudService().findAll();
+        this.ingredients = dependencyProvider.getIngredientCrudService().findAll();
+        this.units = dependencyProvider.getUnitCrudService().findAll();
         setValues();
         addFields();
     }
@@ -67,7 +70,7 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
 
         JComboBox<Ingredient> ingredient = new JComboBox<>();
         ingredient.setModel(new javax.swing.DefaultComboBoxModel<>(ingredients.toArray(new Ingredient[ingredients.size()])));
-        if (selectedIngredient != null){
+        if (selectedIngredient != null) {
             ingredient.setSelectedItem(selectedIngredient);
         } else {
             ingredient.setSelectedIndex(-1);
@@ -75,13 +78,13 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
         ingredient.addActionListener(new FilterUnits());
         newIngredient.add(ingredient);
 
-        JTextField quantity = new JTextField();
+        JTextField quantity = FieldMaker.makeIntField();
         quantity.setText(count);
         newIngredient.add(quantity);
 
         JComboBox<Unit> unitBox = new JComboBox<>();
         filterUnits(ingredient);
-        if (selectedUnit != null){
+        if (selectedUnit != null) {
             unitBox.setSelectedItem(selectedUnit);
         }
         newIngredient.add(unitBox);
@@ -108,9 +111,9 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
         recipe.setIngredients(newIgredients);
         recipe.setTitle(title.getText());
         recipe.setDescription(description.getText());
-        recipe.setPortionCount(Integer.parseInt(portionCount.getText().replaceAll(" ", "")));
+        recipe.setPortionCount(FieldMaker.parseIntField(portionCount));
         recipe.setInstructions(instructions.getText());
-        recipe.setTimeToPrepare(Integer.parseInt(timeToPrepare.getText().replaceAll(" ", "")));
+        recipe.setTimeToPrepare(FieldMaker.parseIntField(timeToPrepare));
         recipe.setCategory((Category) category.getSelectedItem());
         return recipe;
     }
@@ -119,10 +122,10 @@ public final class AddRecipeDialog extends EntityDialog<Recipe> {
         HashMap<Ingredient, AmountInUnit> newIgredients = new HashMap<>();
         for (Component component : ingredientsPanel.getComponents()){
             Ingredient ingredient = (Ingredient)((JComboBox<Ingredient>)((JPanel)component).getComponent(0)).getSelectedItem();
-            int count = Integer.parseInt(((JTextField)((JPanel)component).getComponent(1)).getText());
+            int count = FieldMaker.parseIntField((JFormattedTextField) ((JPanel)component).getComponent(1));
             Unit unit = (Unit)((JComboBox<Unit>)((JPanel)component).getComponent(2)).getSelectedItem();
-            if (newIgredients.containsKey(ingredient)){
-                JOptionPane.showConfirmDialog(null, "There are some duplicities in your ingredients.\nNot possible to save.", "Warning", JOptionPane.CLOSED_OPTION);
+            if (newIgredients.containsKey(ingredient)) {
+                EntityDialog.openErrorDialog("There are some duplicities in your ingredients.\nNot possible to save.");
                 return null;
             }
             newIgredients.put(ingredient, new AmountInUnit(unit, count));

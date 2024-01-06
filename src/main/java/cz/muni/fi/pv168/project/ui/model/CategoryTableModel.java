@@ -14,15 +14,13 @@ import java.util.List;
 import java.util.Objects;
 
 public class CategoryTableModel extends BasicTableModel<Category> {
-
     public CategoryTableModel(DependencyProvider dependencyProvider) {
-        super(dependencyProvider, dependencyProvider.getCategoryCrudService());
-        setupBaseUnits();
+        super(dependencyProvider, dependencyProvider.getCategoryValidator(), dependencyProvider.getCategoryCrudService());
     }
 
     public List<Column<Category, ?>> makeColumns() {
         return List.of(
-                Column.readonly("Name", Category.class, Category::getItself)
+                Column.readonly("Name", Category.class, (x -> x))
         );
     }
 
@@ -35,19 +33,20 @@ public class CategoryTableModel extends BasicTableModel<Category> {
     }
 
     @Override
-    public void performAddAction(JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
+    public void performAddAction(JTable table) {
         CategoryTableModel categoryTableModel = (CategoryTableModel) table.getModel();
-        var dialog = new AddCategoryDialog();
+        var dialog = new AddCategoryDialog(entityValidator);
         dialog.show(table, "Add Category").ifPresent(categoryTableModel::addRow);
     }
 
     @Override
-    public void performEditAction(int[] selectedRows, JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
+    public void performEditAction(int[] selectedRows, JTable table) {
         int modelRow = table.convertRowIndexToModel(selectedRows[0]);
         CategoryTableModel categoryTableModel = (CategoryTableModel) table.getModel();
         var category = categoryTableModel.getEntity(modelRow);
-        var dialog = new EditCategoryDialog(category);
-        dialog.show(table, "Edit Category").ifPresent(categoryTableModel::updateRow);
+        var dialog = new EditCategoryDialog(category.deepClone(), entityValidator);
+        var optional = dialog.show(table, "Edit Category");
+        setAndUpdate(optional, category);
     }
 
     @Override
