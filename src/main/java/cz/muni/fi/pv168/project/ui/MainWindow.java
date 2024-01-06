@@ -80,9 +80,7 @@ public class MainWindow {
         tabbedPane.setBorder(padding);
         frame.add(tabbedPane, BorderLayout.CENTER);
 
-        // Add popup menu, toolbar, menubar, status bar
-        generalTablePanels.forEach(
-                r -> r.getTable().setComponentPopupMenu(createTablePopupMenu(r.getTablePanelType())));
+        // Add toolbar, menubar, status bar
         JLabel statusBar = createStatusBar();
         setStatusBarName(statusBar);
 
@@ -110,6 +108,11 @@ public class MainWindow {
         setForbiddenActionsInTabs(); // TODO via GeneralAction
         setToDefaultActionEnablement(getCurrentTableIndex(tabbedPane));
 
+        // Add popup menu
+        for (GeneralTablePanel tablePanel : generalTablePanels) {
+            tablePanel.getTable().setComponentPopupMenu(createTablePopupMenu(tablePanel.getTablePanelType()));
+        }
+
         JPanel toolbarPanel = new JPanel(new GridLayout(2, 1));
         var toolbar = createToolbar();
         var filtersToolbar = filterToolBar.getFilterToolBar();
@@ -118,8 +121,8 @@ public class MainWindow {
         toolbarPanel.setBorder(padding);
         frame.add(toolbarPanel, BorderLayout.BEFORE_FIRST_LINE);
 
-        var menubar = createMenuBar();
-        frame.setJMenuBar(menubar);
+        var menuBar = createMenuBar();
+        frame.setJMenuBar(menuBar);
         frame.pack();
 
         // maps starting table to all actions
@@ -161,7 +164,7 @@ public class MainWindow {
     }
 
     private JPopupMenu createTablePopupMenu(TablePanelType tablePanelType) {
-        var menu = new JPopupMenu();
+        JPopupMenu menu = new JPopupMenu();
         menu.add(addAction);
         menu.add(editAction);
         menu.add(deleteAction);
@@ -173,7 +176,6 @@ public class MainWindow {
             menu.add(importAction);
             menu.add(exportAction);
         }
-
         return menu;
     }
 
