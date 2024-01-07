@@ -17,6 +17,19 @@ public enum IngredientType {
     public String toString() {
         switch(this) {
             case POURABLE:
+                return "Ⓟ Pourable";
+            case WEIGHABLE:
+                return "Ⓦ Weighable";
+            case COUNTABLE:
+                return "Ⓒ Countable";
+            default:
+                return "○";
+        }
+    }
+
+    public String getSymbol() {
+        switch(this) {
+            case POURABLE:
                 return "Ⓟ";
             case WEIGHABLE:
                 return "Ⓦ";
