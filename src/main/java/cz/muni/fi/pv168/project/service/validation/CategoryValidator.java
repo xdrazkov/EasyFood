@@ -18,9 +18,11 @@ public class CategoryValidator implements Validator<Category> {
 
         ValidationResult validationResult = Validator.compose(validators).validate(model);
 
-        if (model.getName().equals("No Category")) {
+        Category defaultCategory = CategoryTableModel.getDefaultCategory(); // null if only base units are added
+        if (defaultCategory != null && defaultCategory.equals(model)) {
             validationResult.add("Default category \"No Category\" cannot be manipulated");
         }
+
         return validationResult;
     }
 }

@@ -31,7 +31,7 @@ public class EditCategoryDialog extends EntityDialog<Category> {
 
     @Override
     Category getEntity() {
-        if (CategoryTableModel.isDefaultCategory(category.getName())) {
+        if (CategoryTableModel.isDefaultCategory(category)) {
             EntityDialog.openErrorDialog("Cannot edit default category");
             return null;
         }

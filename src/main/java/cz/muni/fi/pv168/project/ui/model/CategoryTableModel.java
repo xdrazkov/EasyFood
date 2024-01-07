@@ -2,6 +2,7 @@ package cz.muni.fi.pv168.project.ui.model;
 
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Ingredient;
+import cz.muni.fi.pv168.project.model.IngredientType;
 import cz.muni.fi.pv168.project.model.Unit;
 import cz.muni.fi.pv168.project.ui.dialog.AddCategoryDialog;
 import cz.muni.fi.pv168.project.ui.dialog.EditCategoryDialog;
@@ -10,10 +11,13 @@ import cz.muni.fi.pv168.project.wiring.DependencyProvider;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
 public class CategoryTableModel extends BasicTableModel<Category> {
+
+    private static Category defaultCategory = null;
 
     public CategoryTableModel(DependencyProvider dependencyProvider) {
         super(dependencyProvider, dependencyProvider.getCategoryValidator(), dependencyProvider.getCategoryCrudService());
@@ -29,13 +33,22 @@ public class CategoryTableModel extends BasicTableModel<Category> {
     public void setupNoCategory() {
         List<Category> categories = dependencyProvider.getCategoryCrudService().findAll();
         if (categories.isEmpty()) {
-            Category defaultCategory = new Category("No Category", Color.LIGHT_GRAY);
-            addRow(defaultCategory);
+            Category newCategory = new Category("No Category", Color.LIGHT_GRAY);
+            addRow(newCategory);
+            defaultCategory = newCategory;
         }
     }
 
-    public static boolean isDefaultCategory(String name){
+    public static boolean hasDefaultCategory(String name){
         return name.equals("No Category");
+    }
+
+    public static boolean isDefaultCategory(Category category){
+        return category.equals(defaultCategory);
+    }
+
+    public static Category getDefaultCategory(){
+        return defaultCategory;
     }
 
     @Override

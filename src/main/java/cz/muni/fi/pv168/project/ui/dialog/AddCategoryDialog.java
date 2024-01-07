@@ -29,7 +29,7 @@ public class AddCategoryDialog extends EntityDialog<Category> {
 
     @Override
     Category getEntity() {
-        if (CategoryTableModel.isDefaultCategory(name.getText())) {
+        if (CategoryTableModel.hasDefaultCategory(name.getText())) {
             EntityDialog.openErrorDialog("Cannot add default category");
             return null;
         }
