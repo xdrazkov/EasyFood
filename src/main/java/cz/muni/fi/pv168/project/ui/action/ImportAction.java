@@ -40,6 +40,9 @@ public final class ImportAction extends GeneralAction {
         if (dialogResult == JFileChooser.APPROVE_OPTION) {
             File importFile = fileChooser.getSelectedFile();
             ImportStrategy importStrategy = showAppendImportDecisionDialog();
+            if (importStrategy == ImportStrategy.INVALID) {
+                return;
+            }
             var swingWorker = getSwingWorker(importFile, importStrategy);
 
             swingWorker.execute();
