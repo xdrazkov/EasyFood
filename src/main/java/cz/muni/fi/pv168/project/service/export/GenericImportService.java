@@ -47,7 +47,7 @@ public class GenericImportService implements ImportService {
 
         switch (importStrategy) {
             case REPLACE_ALL -> transactionExecutor.executeInTransaction(() -> removeAllImport(batch));
-            case APPEND_REPLACE -> transactionExecutor.executeInTransaction(() -> appendSkipImport(batch));
+            case APPEND_SKIP -> transactionExecutor.executeInTransaction(() -> appendSkipImport(batch));
             case APPEND_ERROR -> transactionExecutor.executeInTransaction(() ->appendErrorImport(batch));
         }
     }

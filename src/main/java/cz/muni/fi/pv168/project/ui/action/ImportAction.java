@@ -95,7 +95,7 @@ public final class ImportAction extends GeneralAction {
     }
 
     private static ImportStrategy showAppendImportDecisionDialog() {
-        Object[] options = {"Replace all", "Append + replace", "Append or throw error"};
+        Object[] options = {"Replace all", "Append + skip", "Append or throw error"};
         int choice = JOptionPane.showOptionDialog(
                 null,
                 "Select import strategy option",
@@ -109,7 +109,7 @@ public final class ImportAction extends GeneralAction {
 
         return switch (choice) {
             case JOptionPane.YES_OPTION -> ImportStrategy.REPLACE_ALL;
-            case JOptionPane.NO_OPTION -> ImportStrategy.APPEND_REPLACE;
+            case JOptionPane.NO_OPTION -> ImportStrategy.APPEND_SKIP;
             case JOptionPane.CANCEL_OPTION -> ImportStrategy.APPEND_ERROR;
             default -> ImportStrategy.INVALID;
         };
