@@ -36,6 +36,13 @@ public class CategoryTableModel extends BasicTableModel<Category> {
             Category newCategory = new Category("No Category", Color.LIGHT_GRAY);
             addRow(newCategory);
             defaultCategory = newCategory;
+        } else {
+            for (Category category : categories) {
+                if (hasDefaultCategory(category.getName())){
+                    defaultCategory = category;
+                    break;
+                }
+            }
         }
     }
 
