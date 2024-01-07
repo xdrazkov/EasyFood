@@ -42,7 +42,7 @@ public class MainWindow {
 
     public MainWindow(DependencyProvider dependencyProvider) {
         frame = createFrame();
-        frame.setMinimumSize(new Dimension(1400, 800));
+        frame.setMinimumSize(new Dimension(1800, 800));
         frame.setIconImage(Icons.APP_ICON);
 
         var recipeCrudService = dependencyProvider.getRecipeCrudService();
