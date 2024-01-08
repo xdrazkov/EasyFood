@@ -64,7 +64,7 @@ public class GenericCrudService <T extends Entity> implements CrudService<T> {
         var dependentEntities = generalDependencyChecker.getDependentEntities(entity);
         if (!dependentEntities.isEmpty()) {
             validationResult.add(dependentEntities.stream().map(e -> e.toString() + " is dependent on " + entity).collect(Collectors.toSet()));
-        } else {
+        } else if (validationResult.isValid()) {
             entityRepository.deleteByGuid(guid);
         }
 
@@ -79,5 +79,10 @@ public class GenericCrudService <T extends Entity> implements CrudService<T> {
     @Override
     public void setGeneralDependencyChecker(GeneralDependencyChecker<T> generalDependencyChecker) {
         this.generalDependencyChecker = generalDependencyChecker;
+    }
+
+    @Override
+    public Optional<T> findByGuid(String guid) {
+        return entityRepository.findByGuid(guid);
     }
 }

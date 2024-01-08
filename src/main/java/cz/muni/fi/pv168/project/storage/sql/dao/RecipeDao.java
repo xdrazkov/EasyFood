@@ -141,6 +141,7 @@ public final class RecipeDao implements DataAccessObject<RecipeEntity> {
             statement.setString(4, entity.instructions());
             statement.setInt(5, entity.timeToPrepare());
             statement.setString(6, entity.category());
+            statement.setString(7, entity.guid());
 
             int rowsUpdated = statement.executeUpdate();
             if (rowsUpdated == 0) {

@@ -4,7 +4,6 @@ import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Recipe;
 import cz.muni.fi.pv168.project.model.Unit;
-import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.ui.dialog.AddRecipeDialog;
 import cz.muni.fi.pv168.project.ui.dialog.EditRecipeDialog;
 import cz.muni.fi.pv168.project.ui.dialog.OpenRecipeDialog;
@@ -14,8 +13,8 @@ import javax.swing.*;
 import java.util.List;
 
 public class RecipeTableModel extends BasicTableModel<Recipe> {
-    public RecipeTableModel(DependencyProvider dependencyProvider, CrudService<Recipe> recipeCrudService) {
-        super(dependencyProvider, recipeCrudService);
+    public RecipeTableModel(DependencyProvider dependencyProvider) {
+        super(dependencyProvider, dependencyProvider.getRecipeValidator(), dependencyProvider.getRecipeCrudService());
     }
 
     public List<Column<Recipe, ?>> makeColumns() {
@@ -29,19 +28,20 @@ public class RecipeTableModel extends BasicTableModel<Recipe> {
     }
 
     @Override
-    public void performAddAction(JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
+    public void performAddAction(JTable table) {
         RecipeTableModel recipeTableModel = (RecipeTableModel) table.getModel();
-        var dialog = new AddRecipeDialog(categories, ingredients, units);
+        var dialog = new AddRecipeDialog(dependencyProvider, entityValidator);
         dialog.show(table, "Add Recipe").ifPresent(recipeTableModel::addRow);
     }
 
     @Override
-    public void performEditAction(int[] selectedRows, JTable table, UnitTableModel unitTableModel, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
+    public void performEditAction(int[] selectedRows, JTable table) {
         int modelRow = table.convertRowIndexToModel(selectedRows[0]);
         RecipeTableModel recipeTableModel = (RecipeTableModel) table.getModel();
         var recipe = recipeTableModel.getEntity(modelRow);
-        var dialog = new EditRecipeDialog(recipe, categories, ingredients, units);
-        dialog.show(table, "Edit Recipe").ifPresent(recipeTableModel::updateRow);
+        var dialog = new EditRecipeDialog(recipe.deepClone(), dependencyProvider, entityValidator);
+        var optional = dialog.show(table, "Edit Recipe");
+        setAndUpdate(optional, recipe);
     }
 
     @Override

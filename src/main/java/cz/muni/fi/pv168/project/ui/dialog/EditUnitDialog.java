@@ -2,6 +2,7 @@ package cz.muni.fi.pv168.project.ui.dialog;
 
 import cz.muni.fi.pv168.project.model.IngredientType;
 import cz.muni.fi.pv168.project.model.Unit;
+import cz.muni.fi.pv168.project.service.validation.Validator;
 import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
 
 import javax.swing.*;
@@ -16,17 +17,11 @@ public class EditUnitDialog extends EntityDialog<Unit> {
     private final Unit unit;
     private final JTable unitTable;
 
-    public EditUnitDialog(Unit unit, JTable unitTable) {
+    public EditUnitDialog(Unit unit, JTable unitTable, Validator<Unit> unitValidator) {
+        super(unitValidator);
         this.unit = unit;
         this.unitTable = unitTable;
         setValues(unit.getName(), unit.getAbbreviation(), unit.getIngredientType(), unit.getConversionRate());
-        addFields();
-    }
-
-    public EditUnitDialog(Unit unit, JTable unitTable, String name, String abbreviation, IngredientType ingredientType, float conversionRate) {
-        this.unit = unit;
-        this.unitTable = unitTable;
-        setValues(name, abbreviation, ingredientType, conversionRate);
         addFields();
     }
 
@@ -47,8 +42,8 @@ public class EditUnitDialog extends EntityDialog<Unit> {
 
     @Override
     Unit getEntity() {
-        if (Objects.equals(unit.getName(), "grams") || Objects.equals(unit.getName(), "milliliters") || Objects.equals(unit.getName(), "pieces")) {
-            JOptionPane.showMessageDialog(panel, "Cannot edit base units", "Error", JOptionPane.ERROR_MESSAGE);
+        if (UnitTableModel.hasBaseUnitName(unit.getName())) {
+            EntityDialog.openErrorDialog("Cannot edit base units");
             return null;
         }
 
@@ -56,12 +51,7 @@ public class EditUnitDialog extends EntityDialog<Unit> {
         try {
             conversionRateFloat = Float.parseFloat(conversionRate.getText().replace(',', '.'));
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(panel, "Conversion rate must be a decimal number", "Error", JOptionPane.ERROR_MESSAGE);
-
-            var dialog = new EditUnitDialog(unit, unitTable, name.getText(), abbreviation.getText(), (IngredientType) ingredientType.getSelectedItem(), unit.getConversionRate());
-            UnitTableModel unitTableModel = (UnitTableModel) unitTable.getModel();
-            dialog.show(unitTable, "Edit Unit").ifPresent(unitTableModel::updateRow);
-
+            EntityDialog.openErrorDialog("Conversion rate must be a decimal number");
             return null;
         }
         unit.setName(name.getText());

@@ -1,6 +1,8 @@
 package cz.muni.fi.pv168.project.ui.dialog;
 
 import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.service.validation.Validator;
+import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +11,8 @@ public class AddCategoryDialog extends EntityDialog<Category> {
     private final JTextField name = new JTextField();
     private final JColorChooser color = new JColorChooser();
 
-    public AddCategoryDialog() {
+    public AddCategoryDialog(Validator<Category> entityValidator) {
+        super(entityValidator);
         setValues();
         addFields();
     }
@@ -26,6 +29,10 @@ public class AddCategoryDialog extends EntityDialog<Category> {
 
     @Override
     Category getEntity() {
+        if (CategoryTableModel.hasDefaultCategory(name.getText())) {
+            EntityDialog.openErrorDialog("Cannot add default category");
+            return null;
+        }
         return new Category(name.getText(), color.getColor());
     }
 }

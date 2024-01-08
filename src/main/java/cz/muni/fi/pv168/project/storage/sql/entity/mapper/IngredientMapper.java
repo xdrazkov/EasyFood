@@ -35,7 +35,7 @@ public final class IngredientMapper implements EntityMapper<IngredientEntity, In
                 entity.guid(),
                 entity.name(),
                 unit,
-                (int) entity.caloriesPerUnit()
+                entity.caloriesPerUnit()
         );
     }
 

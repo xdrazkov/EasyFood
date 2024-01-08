@@ -2,6 +2,7 @@ package cz.muni.fi.pv168.project.ui.action;
 
 import cz.muni.fi.pv168.project.service.export.ImportService;
 import cz.muni.fi.pv168.project.service.validation.ValidationException;
+import cz.muni.fi.pv168.project.ui.dialog.EntityDialog;
 import cz.muni.fi.pv168.project.ui.panels.GeneralTablePanel;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
 import cz.muni.fi.pv168.project.util.Filter;
@@ -29,48 +30,58 @@ public final class ImportAction extends GeneralAction {
     }
 
     @Override
-    protected void actionPerformedImpl(ActionEvent e) {
+    public void actionPerformed(ActionEvent e) {
         var fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         importService.getFormats().forEach(f -> fileChooser.addChoosableFileFilter(new Filter(f)));
 
-        // TODO import strategy (delete all / add to existing)
         int dialogResult = fileChooser.showOpenDialog(recipeTablePanel);
 
         if (dialogResult == JFileChooser.APPROVE_OPTION) {
             File importFile = fileChooser.getSelectedFile();
             ImportStrategy importStrategy = showAppendImportDecisionDialog();
-            SwingWorker<List<String>, File> swingWorker = getSwingWorker(importFile, importStrategy);
-            try {
-                var validationErrors = swingWorker.get();
-                if (!validationErrors.isEmpty()) {
-                    throw new ValidationException("", validationErrors);
-                }
-            } catch (InterruptedException |  ExecutionException ex) {
-                throw new RuntimeException(ex);
+            if (importStrategy == ImportStrategy.INVALID) {
+                return;
             }
+            var swingWorker = getSwingWorker(importFile, importStrategy);
 
-            JOptionPane.showMessageDialog(recipeTablePanel, "Import was done");
+            swingWorker.execute();
         }
     }
 
-    private SwingWorker<List<String>, File> getSwingWorker(File importFile, ImportStrategy importStrategy) {
-        SwingWorker<List<String>, File> swingWorker = new SwingWorker<>() {
+    private SwingWorker<List<String>, Void> getSwingWorker(File importFile, ImportStrategy importStrategy) {
+        return new SwingWorker<>() {
             @Override
-            protected List<String> doInBackground() {
-                List<String> validationErrors = List.of();
+            protected List<String> doInBackground() throws Exception {
                 try {
+                    Thread.sleep(5); // set to any number (5000) to see effect
                     importService.importData(importFile.getAbsolutePath(), importStrategy);
-                } catch (ValidationException e) {
-                    validationErrors = e.getValidationErrors();
+                } catch (ValidationException validationException) {
+                    return validationException.getValidationErrors();
                 }
-                callback.run();
-                return validationErrors;
+                return List.of();
             }
 
+            @Override
+            protected void done() {
+                super.done();
+                List<String> validationErrors;
+                try {
+                    validationErrors = get();
+                } catch (ExecutionException | InterruptedException ex) {
+                    EntityDialog.openErrorDialog("Unexpected error during import.");
+                    return;
+                }
+
+                if (validationErrors.isEmpty()) {
+                    JOptionPane.showMessageDialog(recipeTablePanel, "Import was done");
+                } else {
+                    EntityDialog.openErrorDialog(validationErrors);
+                }
+
+                callback.run();
+            }
         };
-        swingWorker.execute();
-        return swingWorker;
     }
 
     @Override
@@ -84,7 +95,7 @@ public final class ImportAction extends GeneralAction {
     }
 
     private static ImportStrategy showAppendImportDecisionDialog() {
-        Object[] options = {"Replace all", "Append + replace", "Append or throw error"};
+        Object[] options = {"Replace all", "Append + skip", "Append or throw error"};
         int choice = JOptionPane.showOptionDialog(
                 null,
                 "Select import strategy option",
@@ -98,7 +109,7 @@ public final class ImportAction extends GeneralAction {
 
         return switch (choice) {
             case JOptionPane.YES_OPTION -> ImportStrategy.REPLACE_ALL;
-            case JOptionPane.NO_OPTION -> ImportStrategy.APPEND_REPLACE;
+            case JOptionPane.NO_OPTION -> ImportStrategy.APPEND_SKIP;
             case JOptionPane.CANCEL_OPTION -> ImportStrategy.APPEND_ERROR;
             default -> ImportStrategy.INVALID;
         };

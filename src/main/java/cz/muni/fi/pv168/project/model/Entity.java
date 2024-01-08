@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.Objects;
 
-public abstract class Entity {
+public abstract class Entity implements DeepCloneable<Entity>, Settable<Entity> {
 
     protected String guid;
 
@@ -42,4 +42,11 @@ public abstract class Entity {
     {
         return Objects.hash(guid);
     }
+
+    @Override
+    public abstract Entity deepClone();
+
+    @Override
+    public abstract void setAll(Entity setObject);
+
 }

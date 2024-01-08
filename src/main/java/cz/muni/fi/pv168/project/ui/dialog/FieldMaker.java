@@ -26,4 +26,8 @@ public class FieldMaker extends JComponent {
 
         return new JFormattedTextField(formatter);
     }
+
+    static public int parseIntField(JFormattedTextField field) {
+        return Integer.parseInt(field.getValue().toString().replaceAll(" ", ""));
+    }
 }

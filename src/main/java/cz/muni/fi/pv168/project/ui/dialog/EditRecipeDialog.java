@@ -1,6 +1,8 @@
 package cz.muni.fi.pv168.project.ui.dialog;
 
 import cz.muni.fi.pv168.project.model.*;
+import cz.muni.fi.pv168.project.service.validation.Validator;
+import cz.muni.fi.pv168.project.wiring.DependencyProvider;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -18,7 +20,7 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
     private final JTextField description = new JTextField();
     private final JFormattedTextField portionCount = FieldMaker.makeIntField();
     private final JTextArea instructions = new JTextArea();
-    private final JTextField timeToPrepare = FieldMaker.makeIntField();
+    private final JFormattedTextField timeToPrepare = FieldMaker.makeIntField();
     private final JComboBox<Category> category = new JComboBox<>();
     private final JButton newButton = new JButton();
     private final JPanel ingredientsPanel = new JPanel();
@@ -28,11 +30,12 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
     private final List<Ingredient> ingredients;
     private final List<Unit> units;
 
-    public EditRecipeDialog(Recipe recipe, List<Category> categories, List<Ingredient> ingredients, List<Unit> units) {
+    public EditRecipeDialog(Recipe recipe, DependencyProvider dependencyProvider, Validator<Recipe> recipeValidator) {
+        super(recipeValidator);
         this.recipe = recipe;
-        this.categories = categories;
-        this.ingredients = ingredients;
-        this.units = units;
+        this.categories = dependencyProvider.getCategoryCrudService().findAll();
+        this.ingredients = dependencyProvider.getIngredientCrudService().findAll();
+        this.units = dependencyProvider.getUnitCrudService().findAll();
         setValues();
         addFields();
         addIngredients();
@@ -118,26 +121,26 @@ public final class EditRecipeDialog extends EntityDialog<Recipe> {
         recipe.setIngredients(newIgredients);
         recipe.setTitle(title.getText());
         recipe.setDescription(description.getText());
-        recipe.setPortionCount(Integer.parseInt(portionCount.getText().replaceAll(" ", "")));
+        recipe.setPortionCount(FieldMaker.parseIntField(portionCount));
         recipe.setInstructions(instructions.getText());
-        recipe.setTimeToPrepare(Integer.parseInt(timeToPrepare.getText().replaceAll(" ", "")));
+        recipe.setTimeToPrepare(FieldMaker.parseIntField(timeToPrepare));
         recipe.setCategory((Category) category.getSelectedItem());
         return recipe;
     }
 
     public HashMap<Ingredient, AmountInUnit> getAllIngredients(){
-        HashMap<Ingredient, AmountInUnit> newIgredients = new HashMap<>();
+        HashMap<Ingredient, AmountInUnit> newIngredients = new HashMap<>();
         for (Component component : ingredientsPanel.getComponents()){
             Ingredient ingredient = (Ingredient)((JComboBox<Ingredient>)((JPanel)component).getComponent(0)).getSelectedItem();
-            int count = Integer.parseInt(((JTextField)((JPanel)component).getComponent(1)).getText());
+            int count = FieldMaker.parseIntField((JFormattedTextField) ((JPanel)component).getComponent(1));
             Unit unit = (Unit)((JComboBox<Unit>)((JPanel)component).getComponent(2)).getSelectedItem();
-            if (newIgredients.containsKey(ingredient)){
-                JOptionPane.showConfirmDialog(null, "There are some duplicities in your ingredients.\nNot possible to save.", "Warning", JOptionPane.CLOSED_OPTION);
+            if (newIngredients.containsKey(ingredient)) {
+                EntityDialog.openErrorDialog("There are some duplicities in your ingredients.\nNot possible to save.");
                 return null;
             }
-            newIgredients.put(ingredient, new AmountInUnit(unit, count));
+            newIngredients.put(ingredient, new AmountInUnit(unit, count));
         }
-        return newIgredients;
+        return newIngredients;
     }
 
     public Unit[] filterUnits(JComboBox<Ingredient> source){

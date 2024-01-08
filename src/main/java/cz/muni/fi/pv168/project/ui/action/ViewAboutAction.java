@@ -17,7 +17,7 @@ public class ViewAboutAction extends GeneralAction {
     }
 
     @Override
-    protected void actionPerformedImpl(ActionEvent e) {
+    public void actionPerformed(ActionEvent e) {
         JTable table = super.getTable();
         var dialog = new ViewAboutDialog();
         dialog.show(table, "About");

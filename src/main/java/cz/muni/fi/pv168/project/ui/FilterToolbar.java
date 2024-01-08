@@ -18,6 +18,7 @@ import cz.muni.fi.pv168.project.ui.renderers.IngredientRenderer;
 import cz.muni.fi.pv168.project.ui.renderers.SpecialFilterCategoryValuesRenderer;
 import cz.muni.fi.pv168.project.ui.renderers.SpecialFilterIngredientValuesRenderer;
 import cz.muni.fi.pv168.project.util.Either;
+import cz.muni.fi.pv168.project.wiring.DependencyProvider;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.swing.*;
@@ -37,8 +38,8 @@ public class FilterToolbar {
     private final CrudService<Unit> unitCrudService;
     private final TableRowSorter<RecipeTableModel> recipeRowSorter;
 
-    private final RangeSlider preparationTimeSlider;
-    private final RangeSlider nutritionalValuesSlider;
+    private RangeSlider preparationTimeSlider;
+    private RangeSlider nutritionalValuesSlider;
 
     private final RecipeTableFilter recipeTableFilter;
 
@@ -48,11 +49,11 @@ public class FilterToolbar {
     private final Button resetButton;
 
     private final JToolBar filterToolBar = new JToolBar();
-    public FilterToolbar(CrudService<Recipe> recipeCrudService, CrudService<Ingredient> ingredientCrudService, CrudService<Category> categoryCrudService, CrudService<Unit> unitCrudService, TableRowSorter<RecipeTableModel> recipeRowSorter){
-        this.recipeCrudService = recipeCrudService;
-        this.ingredientCrudService = ingredientCrudService;
-        this.categoryCrudService = categoryCrudService;
-        this.unitCrudService = unitCrudService;
+    public FilterToolbar(DependencyProvider dependencyProvider, TableRowSorter<RecipeTableModel> recipeRowSorter){
+        this.recipeCrudService = dependencyProvider.getRecipeCrudService();
+        this.ingredientCrudService = dependencyProvider.getIngredientCrudService();
+        this.categoryCrudService = dependencyProvider.getCategoryCrudService();
+        this.unitCrudService = dependencyProvider.getUnitCrudService();
         this.recipeRowSorter = recipeRowSorter;
 
         this.recipeTableFilter = new RecipeTableFilter(recipeRowSorter);
@@ -94,21 +95,27 @@ public class FilterToolbar {
     /**
      * updates contents of all filters in recipe tab whenever any action is applied
      */
-    public void updateFilters() {
-        resetFilters();
-        updateSliderRange(preparationTimeSlider, Recipe::getTimeToPrepare);
-        updateSliderRange(nutritionalValuesSlider, Recipe::getNutritionalValue);
+    public void updateFilters(boolean isRecipes) {
+//        resetFilters();
+//        updateSliderRange(preparationTimeSlider, Recipe::getTimeToPrepare);
+//        updateSliderRange(nutritionalValuesSlider, Recipe::getNutritionalValue);
 
+        this.preparationTimeSlider = createRangeSlider(recipeTableFilter::filterPreparationTime,
+                Recipe::getTimeToPrepare, "Preparation time (min)");
+        this.nutritionalValuesSlider =  createRangeSlider(recipeTableFilter::filterNutritionalValues,
+                Recipe::getNutritionalValue, "Nutritional values (kcal)");
         categoryFilter = createCategoryFilter();
         ingredientFilter = createIngredientFilter();
-
-        filterToolBar.remove(0);
-        filterToolBar.add(categoryFilter, 0);
-
-        filterToolBar.remove(1);
-        filterToolBar.add(new JScrollPane(ingredientFilter), 1);
-
         resetFilters();
+
+        filterToolBar.removeAll();
+        addFiltersToToolbar();
+        // DO NOT ASK ANY QUESTIONS
+        filterToolBar.setVisible(false);
+        if (isRecipes) {
+            filterToolBar.setVisible(true);
+        }
+
     }
 
     public void resetFilters() {

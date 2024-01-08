@@ -1,7 +1,10 @@
 package cz.muni.fi.pv168.project.service.validation;
 
 import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.model.Unit;
 import cz.muni.fi.pv168.project.service.validation.common.StringLengthValidator;
+import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
+import cz.muni.fi.pv168.project.ui.model.UnitTableModel;
 
 import java.util.List;
 
@@ -13,6 +16,13 @@ public class CategoryValidator implements Validator<Category> {
                 Validator.extracting(Category::getName, new StringLengthValidator(1, 150, "Category name"))
         );
 
-        return Validator.compose(validators).validate(model);
+        ValidationResult validationResult = Validator.compose(validators).validate(model);
+
+        Category defaultCategory = CategoryTableModel.getDefaultCategory(); // null if only base units are added
+        if (defaultCategory != null && defaultCategory.equals(model)) {
+            validationResult.add("Default category \"No Category\" cannot be manipulated");
+        }
+
+        return validationResult;
     }
 }

@@ -12,19 +12,19 @@ import java.util.Objects;
 
 @JsonSerialize(using = IngredientJsonSerializer.class)
 @JsonDeserialize(using = IngredientJsonDeserializer.class)
-public class Ingredient extends Entity{
+public class Ingredient extends Entity {
     private String name;
     private Unit defaultUnit;
     private float caloriesPerUnit;
 
-    public Ingredient(String guid, String name, Unit defaultUnit, int caloriesPerUnit) {
+    public Ingredient(String guid, String name, Unit defaultUnit, float caloriesPerUnit) {
         super(guid);
         this.name = name;
         this.defaultUnit = defaultUnit;
         this.caloriesPerUnit = caloriesPerUnit; // calories per default unit
     }
 
-    public Ingredient(String name, Unit defaultUnit, int caloriesPerUnit) {
+    public Ingredient(String name, Unit defaultUnit, float caloriesPerUnit) {
         this.name = name;
         this.defaultUnit = defaultUnit;
         this.caloriesPerUnit = caloriesPerUnit; // calories per default unit
@@ -54,7 +54,8 @@ public class Ingredient extends Entity{
     }
 
     public int getTotalCalories(Unit anyUnit, int amount) {
-        return (int) (caloriesPerUnit / defaultUnit.getConversionRate() * anyUnit.getConversionRate() * amount);
+        float result = caloriesPerUnit / defaultUnit.getConversionRate() * anyUnit.getConversionRate() * amount;
+        return (int) result;
     }
 
     public int countInstances(List<Recipe> recipes){
@@ -75,7 +76,7 @@ public class Ingredient extends Entity{
 
     @Override
     public String toString() {
-        return name;
+        return defaultUnit.getIngredientType().getSymbol() + " " + name;
     }
 
     @Override
@@ -83,7 +84,23 @@ public class Ingredient extends Entity{
         if (! (obj instanceof Ingredient theirs)) {
             return false;
         }
-        return Objects.equals(this.name, theirs.name) && Objects.equals(this.defaultUnit, theirs.defaultUnit);
+        return Objects.equals(this.name, theirs.name);
+    }
+
+    @Override
+    public Ingredient deepClone() {
+        return new Ingredient(getGuid(), getName(), getDefaultUnit(), getCaloriesPerUnit());
+    }
+
+    @Override
+    public void setAll(Entity setObject) {
+        if (!(setObject instanceof Ingredient setIngredient)) {
+            return;
+        }
+
+        this.setName(setIngredient.getName());
+        this.setDefaultUnit(setIngredient.getDefaultUnit());
+        this.setCaloriesPerUnit(setIngredient.getCaloriesPerUnit());
     }
 }
 

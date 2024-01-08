@@ -1,9 +1,10 @@
 package cz.muni.fi.pv168.project.ui.action;
 
+import cz.muni.fi.pv168.project.model.Entity;
 import cz.muni.fi.pv168.project.service.export.DataManipulationException;
 import cz.muni.fi.pv168.project.service.export.ExportService;
 import cz.muni.fi.pv168.project.service.export.batch.BatchOperationException;
-import cz.muni.fi.pv168.project.service.validation.ValidationException;
+import cz.muni.fi.pv168.project.ui.dialog.EntityDialog;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
 import cz.muni.fi.pv168.project.util.Filter;
 
@@ -12,7 +13,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
@@ -32,49 +32,56 @@ public final class ExportAction extends GeneralAction {
     }
 
     @Override
-    protected void actionPerformedImpl(ActionEvent e) {
+    public void actionPerformed(ActionEvent e) {
         var fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         exportService.getFormats().forEach(f -> fileChooser.addChoosableFileFilter(new Filter(f)));
 
         int dialogResult = fileChooser.showSaveDialog(parent);
-        if (dialogResult == JFileChooser.APPROVE_OPTION) {
-            String exportFile = fileChooser.getSelectedFile().getAbsolutePath();
-            var filter = fileChooser.getFileFilter();
-            if (filter instanceof Filter) {
-                exportFile = ((Filter) filter).decorate(exportFile);
-            }
-
-            try {
-                SwingWorker<List<String>, String> swingWorker = getSwingWorker(exportFile);
-                swingWorker.execute();
-                var  validationErrors = swingWorker.get();
-                if (!validationErrors.isEmpty()) {
-                    throw new ValidationException("", validationErrors);
-                }
-            } catch (DataManipulationException | BatchOperationException| ExecutionException | InterruptedException ex) {
-                JOptionPane.showMessageDialog(parent, "Export has successfully failed.\n" + ex.getMessage());
-                return;
-            }
-            JOptionPane.showMessageDialog(parent, "Export has successfully finished.");
+        if (dialogResult != JFileChooser.APPROVE_OPTION) {
+            return;
         }
+
+        String exportFile = fileChooser.getSelectedFile().getAbsolutePath();
+        var filter = fileChooser.getFileFilter();
+        if (filter instanceof Filter) {
+            exportFile = ((Filter) filter).decorate(exportFile);
+        }
+
+        var swingWorker = getSwingWorker(exportFile);
+        swingWorker.execute();
     }
 
-    private SwingWorker<List<String>, String> getSwingWorker(String exportFile) {
-        SwingWorker<List<String>, String> swingWorker = new SwingWorker<>() {
+    private SwingWorker<Void, String> getSwingWorker(String exportFile) {
+        return new SwingWorker<>() {
             @Override
-            protected List<String> doInBackground() {
-                List<String> validationErrors = List.of();
+            protected Void doInBackground() throws Exception {
+                Thread.sleep(5); // set to any number (5000) to see effect
+                var exportGuids = ExportAction.super.getSelectedEntities().stream().map(Entity::getGuid).toList();
+                exportService.exportData(exportFile, exportGuids);
+                return null;
+            }
+            @Override
+            protected void done() {
+                super.done();
                 try {
-                    exportService.exportData(exportFile);
-                } catch (ValidationException e) {
-                    validationErrors = e.getValidationErrors();
+                    get();
+                } catch (DataManipulationException | BatchOperationException ex) {
+                    EntityDialog.openErrorDialog("Export not successful: " + ex.getMessage());
+                    return;
+                } catch (ExecutionException| InterruptedException ex) {
+                    if (ex.getCause() != null) {
+                        if (ex.getCause().getClass() == BatchOperationException.class) {
+                            EntityDialog.openErrorDialog("Export not successful: " + ex.getCause().getMessage());
+                            return;
+                        }
+                    }
+                    EntityDialog.openErrorDialog("Unexpected error during export.");
+                    return;
                 }
-                return validationErrors;
+                JOptionPane.showMessageDialog(parent, "Export successful");
             }
         };
-        swingWorker.execute();
-        return swingWorker;
     }
 
     @Override

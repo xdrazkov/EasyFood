@@ -1,18 +1,19 @@
 package cz.muni.fi.pv168.project.service.export;
 
-import cz.muni.fi.pv168.project.model.Category;
-import cz.muni.fi.pv168.project.model.Entity;
-import cz.muni.fi.pv168.project.model.Ingredient;
-import cz.muni.fi.pv168.project.model.Recipe;
+import cz.muni.fi.pv168.project.model.*;
 import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.service.export.batch.Batch;
 import cz.muni.fi.pv168.project.service.export.batch.BatchImporter;
 import cz.muni.fi.pv168.project.service.export.batch.BatchOperationException;
 import cz.muni.fi.pv168.project.service.export.format.Format;
 import cz.muni.fi.pv168.project.service.export.format.FormatMapping;
+import cz.muni.fi.pv168.project.storage.sql.db.TransactionExecutor;
 import cz.muni.fi.pv168.project.ui.action.ImportStrategy;
+import cz.muni.fi.pv168.project.wiring.DependencyProvider;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -23,18 +24,16 @@ public class GenericImportService implements ImportService {
     private final CrudService<Ingredient> ingredientCrudService;
     private final CrudService<Category> categoryCrudService;
     private final FormatMapping<BatchImporter> importers;
+    private final TransactionExecutor transactionExecutor;
     // units are not imported, because all imported units are base, which ARE PART of the system
 
-    public GenericImportService(
-            CrudService<Recipe> recipeCrudService,
-            CrudService<Ingredient> ingredientCrudService,
-            CrudService<Category> categoryCrudService,
-            Collection<BatchImporter> importers
-    ) {
-        this.recipeCrudService = recipeCrudService;
-        this.ingredientCrudService = ingredientCrudService;
-        this.categoryCrudService = categoryCrudService;
+
+    public GenericImportService(DependencyProvider dependencyProvider, Collection<BatchImporter> importers, TransactionExecutor transactionExecutor) {
+        this.recipeCrudService = dependencyProvider.getRecipeCrudService();
+        this.ingredientCrudService = dependencyProvider.getIngredientCrudService();
+        this.categoryCrudService = dependencyProvider.getCategoryCrudService();
         this.importers = new FormatMapping<>(importers);
+        this.transactionExecutor = transactionExecutor;
     }
 
     @Override
@@ -47,9 +46,9 @@ public class GenericImportService implements ImportService {
         var batch = getImporter(filePath).importBatch(filePath);
 
         switch (importStrategy) {
-            case REPLACE_ALL -> removeAllImport(batch);
-            case APPEND_REPLACE -> appendSkipImport(batch);
-            case APPEND_ERROR -> appendErrorImport(batch);
+            case REPLACE_ALL -> transactionExecutor.executeInTransaction(() -> removeAllImport(batch));
+            case APPEND_SKIP -> transactionExecutor.executeInTransaction(() -> appendSkipImport(batch));
+            case APPEND_ERROR -> transactionExecutor.executeInTransaction(() ->appendErrorImport(batch));
         }
     }
 
@@ -65,14 +64,14 @@ public class GenericImportService implements ImportService {
     private void appendErrorImport(Batch batch) {
         getUniqueIngredients(batch).forEach(e -> createEntity(e, ingredientCrudService));
         getUniqueCategories(batch).forEach(e -> createEntity(e, categoryCrudService));
-        batch.recipes().forEach(e -> createEntity(e, recipeCrudService));
+        replaceInvalidEntitiesInRecipe(batch).forEach(e -> createEntity(e, recipeCrudService));
     }
 
     /** if in memory same entity, continues */
     private void appendSkipImport(Batch batch) {
         appendSkipEntities(ingredientCrudService, getUniqueIngredients(batch));
         appendSkipEntities(categoryCrudService, getUniqueCategories(batch));
-        appendSkipEntities(recipeCrudService, batch.recipes());
+        appendSkipEntities(recipeCrudService, replaceInvalidEntitiesInRecipe(batch));
     }
 
     private static <E extends Entity> void appendSkipEntities(CrudService<E> crudService, Collection<E> appendCollection) {
@@ -117,5 +116,27 @@ public class GenericImportService implements ImportService {
     }
     private static <E extends Entity> E getEquivalentEntity(E entity, Collection<E> collection) {
         return collection.stream().filter(o -> o.equals(entity)).findFirst().orElse(null);
+    }
+
+    private Collection<Recipe> replaceInvalidEntitiesInRecipe(Batch batch) {
+        // all ingredients and categories in recipes ARE already in crud service
+        Collection<Category> categories = categoryCrudService.findAll();
+        Collection<Ingredient> ingredients = ingredientCrudService.findAll();
+
+        for (Recipe recipe: batch.recipes()) {
+            Category category = recipe.getCategory();
+            Category inMemoryCategory = getEquivalentEntity(category, categories);
+            recipe.setCategory(inMemoryCategory);
+
+            HashMap<Ingredient, AmountInUnit> newIngredients = new HashMap<>();
+            for (Map.Entry<Ingredient, AmountInUnit> entry: recipe.getIngredients().entrySet()) {
+                Ingredient inMemoryIngredient = getEquivalentEntity(entry.getKey(), ingredients);
+                newIngredients.put(inMemoryIngredient, entry.getValue());
+            }
+
+            recipe.setIngredients(newIngredients);
+        }
+
+        return batch.recipes();
     }
 }

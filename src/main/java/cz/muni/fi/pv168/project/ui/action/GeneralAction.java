@@ -1,12 +1,16 @@
 package cz.muni.fi.pv168.project.ui.action;
 
 import cz.muni.fi.pv168.project.model.Entity;
-import cz.muni.fi.pv168.project.service.validation.ValidationException;
 import cz.muni.fi.pv168.project.ui.FilterToolbar;
+import cz.muni.fi.pv168.project.ui.model.BasicTableModel;
 import cz.muni.fi.pv168.project.ui.panels.GeneralTablePanel;
+import cz.muni.fi.pv168.project.ui.panels.TablePanelType;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * provides actions to change their target context (table)
@@ -37,41 +41,24 @@ public abstract class GeneralAction extends AbstractAction {
     }
 
     @Override
-    public final void actionPerformed(ActionEvent e) {
-        try {
-            actionPerformedImpl(e);
-        } catch (ValidationException exception) {
-            openErrorDialog(exception);
-        }
+    public abstract void actionPerformed(ActionEvent e);
+
+    protected void refresh() {
         if (filterToolbar != null) {
-            filterToolbar.updateFilters();
+            filterToolbar.updateFilters(generalTablePanel.getTablePanelType() == TablePanelType.RECIPE);
         }
     }
-
-    /**
-     * helper method for actionPerformed
-     */
-    protected abstract void actionPerformedImpl(ActionEvent e);
-
     public abstract void setShortDescription();
 
     public JTable getTable() {
         return this.generalTablePanel.getTable();
     }
 
-    protected void openErrorDialog(ValidationException e) {
-        DefaultListModel<String> listModel = new DefaultListModel<>();
+    protected <T extends Entity> Collection<T> getSelectedEntities() {
+        BasicTableModel<T> model = (BasicTableModel <T>) getTable().getModel();
+        return Arrays.stream(generalTablePanel.getTable().getSelectedRows())
+                .mapToObj(row -> model.getEntity(getTable().getRowSorter().convertRowIndexToModel(row)))
+                .collect(Collectors.toList());
 
-        for (String validationError : e.getValidationErrors()) {
-            listModel.addElement(validationError);
-        }
-
-        JList<String> errorList = new JList<>(listModel);
-
-        JPanel panel = new JPanel();
-        panel.add(new JScrollPane(errorList));
-
-        JOptionPane.showMessageDialog(null, panel,"Action not successful!", JOptionPane.ERROR_MESSAGE);
     }
-
 }
