@@ -9,6 +9,7 @@ import cz.muni.fi.pv168.project.service.export.format.Format;
 import cz.muni.fi.pv168.project.service.export.format.FormatMapping;
 import cz.muni.fi.pv168.project.storage.sql.db.TransactionExecutor;
 import cz.muni.fi.pv168.project.ui.action.ImportStrategy;
+import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
 import cz.muni.fi.pv168.project.wiring.DependencyProvider;
 
 import java.util.Collection;
@@ -54,10 +55,14 @@ public class GenericImportService implements ImportService {
 
     private void removeAllImport(Batch batch) {
         recipeCrudService.deleteAll();
-        categoryCrudService.deleteAll();
+        for (Category category: categoryCrudService.findAll()) {
+            if (! CategoryTableModel.isDefaultCategory(category)) {
+                categoryCrudService.deleteByGuid(category.getGuid());
+            }
+        }
         ingredientCrudService.deleteAll();
 
-        appendErrorImport(batch);
+        appendSkipImport(batch);
     }
 
     /** if in memory same entity, fails */

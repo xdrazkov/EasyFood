@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
 
 import java.awt.*;
 import java.io.IOException;
@@ -20,11 +21,13 @@ public class CategoryJsonDeserializer extends JsonDeserializer<Category> {
         JsonNode rootNode = mapper.readTree(jsonParser);
 
         String name = rootNode.get(CATEGORY_NAME).asText();
-
         JsonNode colorNode = rootNode.get(CATEGORY_COLOR);
         Color color = parseColor(colorNode);
-
-        return new Category(name, color);
+        Category category = new Category(name, color);
+        if (CategoryTableModel.isDefaultCategory(category)) {
+            return CategoryTableModel.getDefaultCategory();
+        }
+        return category;
     }
 
     private Color parseColor(JsonNode colorNode) {
