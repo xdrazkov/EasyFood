@@ -10,7 +10,7 @@ import javax.swing.*;
 
 public class AddIngredientDialog extends EntityDialog<Ingredient> {
     private final JTextField name = new JTextField();
-    private final JFormattedTextField nutritionalValue = FieldMaker.makeIntField();
+    private final JFormattedTextField nutritionalValue = FieldMaker.makeFloatField();
     private final JComboBox<Unit> defaultUnit = new JComboBox<>();
     private final DependencyProvider dependencyProvider;
 
