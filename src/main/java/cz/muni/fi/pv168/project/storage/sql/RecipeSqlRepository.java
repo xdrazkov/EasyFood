@@ -80,7 +80,7 @@ public class RecipeSqlRepository implements Repository<Recipe> {
 
         for (Map.Entry<Ingredient, AmountInUnit> recipeIngredientEntity : existingRecipe.getIngredients().entrySet()) {
             if (!entity.getIngredients().containsKey(recipeIngredientEntity.getKey())) {
-                recipeIngredientDao.deleteByRecipeGuidIngredientName(recipeIngredientEntity.getKey().getGuid(), recipeIngredientEntity.getKey().getGuid());
+                recipeIngredientDao.deleteByRecipeGuidIngredientName(existingRecipe.getGuid(), recipeIngredientEntity.getKey().getGuid());
             }
         }
     }
