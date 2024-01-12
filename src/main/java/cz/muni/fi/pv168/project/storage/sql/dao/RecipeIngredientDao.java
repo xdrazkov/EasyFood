@@ -192,6 +192,23 @@ public final class RecipeIngredientDao implements DataAccessObject<RecipeIngredi
         }
     }
 
+    public void deleteByRecipeGuidIngredientName(String guid, String ingredient) {
+        var sql = """
+                DELETE FROM RecipeIngredient
+                WHERE recipe = ? AND ingredient = ?
+                """;
+        try (
+                var connection = connections.get();
+                var statement = connection.use().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)
+        ) {
+            statement.setString(1, guid);
+            statement.setString(2, ingredient);
+            int rowsUpdated = statement.executeUpdate();
+        } catch (SQLException ex) {
+            throw new DataStorageException("Failed to delete recipeIngredient, guid: " + guid, ex);
+        }
+    }
+
     @Override
     public void deleteAll() {
         var sql = "DELETE FROM RecipeIngredient";

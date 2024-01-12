@@ -1,5 +1,7 @@
 package cz.muni.fi.pv168.project.storage.sql;
 
+import cz.muni.fi.pv168.project.model.AmountInUnit;
+import cz.muni.fi.pv168.project.model.Ingredient;
 import cz.muni.fi.pv168.project.model.Recipe;
 import cz.muni.fi.pv168.project.repository.Repository;
 import cz.muni.fi.pv168.project.storage.sql.dao.DataAccessObject;
@@ -12,6 +14,7 @@ import cz.muni.fi.pv168.project.storage.sql.entity.mapper.RecipeIngredientMapper
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -58,9 +61,9 @@ public class RecipeSqlRepository implements Repository<Recipe> {
 
     @Override
     public void update(Recipe entity) {
-        var existingRecipe = recipeDao.findByGuid(entity.getGuid())
+        var existingRecipe = findByGuid(entity.getGuid())
                 .orElseThrow(() -> new DataStorageException("Recipe not found, guid: " + entity.getGuid()));
-        var updatedRecipe = recipeMapper.mapExistingEntityToDatabase(entity, existingRecipe.guid());
+        var updatedRecipe = recipeMapper.mapExistingEntityToDatabase(entity, existingRecipe.getGuid());
 
         recipeDao.update(updatedRecipe);
 
@@ -72,6 +75,12 @@ public class RecipeSqlRepository implements Repository<Recipe> {
                 recipeIngredientDao.update(recipeIngredientEntity);
             } else {
                 recipeIngredientDao.create(recipeIngredientEntity);
+            }
+        }
+
+        for (Map.Entry<Ingredient, AmountInUnit> recipeIngredientEntity : existingRecipe.getIngredients().entrySet()) {
+            if (!entity.getIngredients().containsKey(recipeIngredientEntity.getKey())) {
+                recipeIngredientDao.deleteByRecipeGuidIngredientName(recipeIngredientEntity.getKey().getGuid(), recipeIngredientEntity.getKey().getGuid());
             }
         }
     }
