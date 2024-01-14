@@ -48,15 +48,16 @@ public final class ExportAction extends GeneralAction {
             exportFile = ((Filter) filter).decorate(exportFile);
         }
 
-        var swingWorker = getSwingWorker(exportFile);
+        var swingWorker = getSwingWorker(exportFile, this.generalTablePanel.getTable().getRootPane());
         swingWorker.execute();
     }
 
-    private SwingWorker<Void, String> getSwingWorker(String exportFile) {
+    private SwingWorker<Void, String> getSwingWorker(String exportFile, JRootPane rootPane) {
         return new SwingWorker<>() {
             @Override
             protected Void doInBackground() throws Exception {
-                Thread.sleep(5); // set to any number (5000) to see effect
+                rootPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                Thread.sleep(1000); // set to any number (5000) to see effect
                 var exportGuids = ExportAction.super.getSelectedEntities().stream().map(Entity::getGuid).toList();
                 exportService.exportData(exportFile, exportGuids);
                 return null;
@@ -78,6 +79,9 @@ public final class ExportAction extends GeneralAction {
                     }
                     EntityDialog.openErrorDialog("Unexpected error during export.");
                     return;
+                }
+                finally {
+                    rootPane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 }
                 JOptionPane.showMessageDialog(parent, "Export successful");
             }

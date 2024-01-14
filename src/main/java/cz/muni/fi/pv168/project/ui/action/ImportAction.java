@@ -8,6 +8,7 @@ import cz.muni.fi.pv168.project.ui.resources.Icons;
 import cz.muni.fi.pv168.project.util.Filter;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -43,18 +44,19 @@ public final class ImportAction extends GeneralAction {
             if (importStrategy == ImportStrategy.INVALID) {
                 return;
             }
-            var swingWorker = getSwingWorker(importFile, importStrategy);
+            var swingWorker = getSwingWorker(importFile, importStrategy, this.generalTablePanel.getTable().getRootPane());
 
             swingWorker.execute();
         }
     }
 
-    private SwingWorker<List<String>, Void> getSwingWorker(File importFile, ImportStrategy importStrategy) {
+    private SwingWorker<List<String>, Void> getSwingWorker(File importFile, ImportStrategy importStrategy, JRootPane rootPane) {
         return new SwingWorker<>() {
             @Override
             protected List<String> doInBackground() throws Exception {
                 try {
-                    Thread.sleep(5); // set to any number (5000) to see effect
+                    rootPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                    Thread.sleep(1000); // set to any number (5000) to see effect
                     importService.importData(importFile.getAbsolutePath(), importStrategy);
                 } catch (ValidationException validationException) {
                     return validationException.getValidationErrors();
@@ -72,6 +74,9 @@ public final class ImportAction extends GeneralAction {
                     EntityDialog.openErrorDialog("Unexpected error during import.");
 //                    EntityDialog.openErrorDialog(ex.getMessage());
                     return;
+                }
+                finally {
+                    rootPane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 }
 
                 if (validationErrors.isEmpty()) {
