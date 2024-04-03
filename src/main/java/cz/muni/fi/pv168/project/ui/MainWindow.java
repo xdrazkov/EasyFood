@@ -30,7 +30,9 @@ public class MainWindow {
     private final GeneralAction exportAction;
     private final GeneralAction viewStatisticsAction;
     private final GeneralAction viewAboutAction;
-    private final GeneralAction authAction;
+    private final GeneralAction loginAction;
+    private final GeneralAction logoutAction;
+    private final GeneralAction nukeAction;
 
     private final List<GeneralAction> actions;
 
@@ -105,8 +107,10 @@ public class MainWindow {
         importAction = new ImportAction(recipeTablePanel, importService,  importCallback);
         viewStatisticsAction = new ViewStatisticsAction(dependencyProvider);
         viewAboutAction = new ViewAboutAction();
-        authAction = new AuthAction();
-        this.actions = List.of(addAction, editAction, deleteAction, openAction, importAction, exportAction, viewAboutAction, viewStatisticsAction, authAction);
+        loginAction = new LoginAction();
+        logoutAction = new LogoutAction();
+        nukeAction = new NukeAction();
+        this.actions = List.of(addAction, editAction, deleteAction, openAction, importAction, exportAction, viewAboutAction, viewStatisticsAction, loginAction, logoutAction, nukeAction);
         actions.forEach(a -> a.setFilterToolbar(filterToolBar));
         setForbiddenActionsInTabs(); // TODO via GeneralAction
         setToDefaultActionEnablement(getCurrentTableIndex(tabbedPane));
@@ -208,8 +212,9 @@ public class MainWindow {
         toolbar.add(importAction);
         toolbar.add(exportAction);
         toolbar.addSeparator();
-        toolbar.addSeparator(new Dimension(1000,10));
-        toolbar.add(authAction);
+        toolbar.add(loginAction);
+        toolbar.add(logoutAction);
+        toolbar.add(nukeAction);
 
         return toolbar;
     }
@@ -233,6 +238,10 @@ public class MainWindow {
         editAction.setEnabled(selectedItemsCount == 1 && isActionAllowed(editAction, currentTabIndex));
         deleteAction.setEnabled(selectedItemsCount >= 1 && isActionAllowed(deleteAction, currentTabIndex));
         exportAction.setEnabled(selectedItemsCount >= 1 && isActionAllowed(exportAction, currentTabIndex));
+
+        loginAction.setEnabled(true);
+        logoutAction.setEnabled(true);
+        nukeAction.setEnabled(false);
 
         actions.forEach(GeneralAction::setShortDescription);
     }

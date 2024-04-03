@@ -9,19 +9,19 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-public final class AuthAction extends GeneralAction {
+public final class LogoutAction extends GeneralAction {
 
-        public AuthAction() {
-            super("Authenticate Admin", Icons.AUTH_ICON);
-            putValue(SHORT_DESCRIPTION, "Authenticates");
-            putValue(MNEMONIC_KEY, KeyEvent.VK_J);
-            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl J"));
-        }
+    public LogoutAction() {
+        super("Authenticate Admin", Icons.LOGOUT_ICON);
+        putValue(SHORT_DESCRIPTION, "Logouts");
+        putValue(MNEMONIC_KEY, KeyEvent.VK_K);
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl K"));
+    }
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
+    @Override
+    public void actionPerformed(ActionEvent e) {
 
-        }
+    }
 
     @Override
     public void setShortDescription() {
