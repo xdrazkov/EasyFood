@@ -239,10 +239,6 @@ public class MainWindow {
         deleteAction.setEnabled(selectedItemsCount >= 1 && isActionAllowed(deleteAction, currentTabIndex));
         exportAction.setEnabled(selectedItemsCount >= 1 && isActionAllowed(exportAction, currentTabIndex));
 
-        loginAction.setEnabled(true);
-        logoutAction.setEnabled(true);
-        nukeAction.setEnabled(false);
-
         actions.forEach(GeneralAction::setShortDescription);
     }
 
@@ -270,6 +266,10 @@ public class MainWindow {
         importAction.setEnabled(isActionAllowed(importAction, currentTabIndex)); // and import
         viewStatisticsAction.setEnabled(true); //and views
         viewAboutAction.setEnabled(true);
+
+        loginAction.setEnabled(true);
+        logoutAction.setEnabled(false);
+        nukeAction.setEnabled(false);
 
     }
 
