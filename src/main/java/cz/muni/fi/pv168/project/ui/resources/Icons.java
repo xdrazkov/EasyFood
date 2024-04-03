@@ -18,6 +18,8 @@ public final class Icons {
     public static final Icon EXPORT_ICON = createIcon("export_action.png");
     public static final Icon STATISTICS_ICON = createIcon("statistics_action.png");
     public static final Icon ABOUT_ICON = createIcon("about_action.png");
+    public static final Icon AUTH_ICON = createIcon("log-in.png");
+    public static final Icon LOGOUT_ICON = createIcon("logout.png");
 
     public static final Image APP_ICON = createImage("app_icon.jpg");
 
