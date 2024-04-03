@@ -30,6 +30,8 @@ public class MainWindow {
     private final GeneralAction exportAction;
     private final GeneralAction viewStatisticsAction;
     private final GeneralAction viewAboutAction;
+    private final GeneralAction authAction;
+
     private final List<GeneralAction> actions;
 
     // key is list of indices of tabs, where action is not allowed
@@ -103,7 +105,8 @@ public class MainWindow {
         importAction = new ImportAction(recipeTablePanel, importService,  importCallback);
         viewStatisticsAction = new ViewStatisticsAction(dependencyProvider);
         viewAboutAction = new ViewAboutAction();
-        this.actions = List.of(addAction, editAction, deleteAction, openAction, importAction, exportAction, viewAboutAction, viewStatisticsAction);
+        authAction = new AuthAction();
+        this.actions = List.of(addAction, editAction, deleteAction, openAction, importAction, exportAction, viewAboutAction, viewStatisticsAction, authAction);
         actions.forEach(a -> a.setFilterToolbar(filterToolBar));
         setForbiddenActionsInTabs(); // TODO via GeneralAction
         setToDefaultActionEnablement(getCurrentTableIndex(tabbedPane));
@@ -205,6 +208,8 @@ public class MainWindow {
         toolbar.add(importAction);
         toolbar.add(exportAction);
         toolbar.addSeparator();
+        toolbar.addSeparator(new Dimension(1000,10));
+        toolbar.add(authAction);
 
         return toolbar;
     }
