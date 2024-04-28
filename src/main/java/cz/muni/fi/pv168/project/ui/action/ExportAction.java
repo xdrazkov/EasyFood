@@ -9,10 +9,12 @@ import cz.muni.fi.pv168.project.ui.resources.Icons;
 import cz.muni.fi.pv168.project.util.Filter;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
@@ -33,7 +35,7 @@ public final class ExportAction extends GeneralAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        var fileChooser = new JFileChooser();
+        JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         exportService.getFormats().forEach(f -> fileChooser.addChoosableFileFilter(new Filter(f)));
 
@@ -43,12 +45,12 @@ public final class ExportAction extends GeneralAction {
         }
 
         String exportFile = fileChooser.getSelectedFile().getAbsolutePath();
-        var filter = fileChooser.getFileFilter();
+        FileFilter filter = fileChooser.getFileFilter();
         if (filter instanceof Filter) {
             exportFile = ((Filter) filter).decorate(exportFile);
         }
 
-        var swingWorker = getSwingWorker(exportFile, this.generalTablePanel.getTable().getRootPane());
+        SwingWorker swingWorker = getSwingWorker(exportFile, this.generalTablePanel.getTable().getRootPane());
         swingWorker.execute();
     }
 
@@ -58,7 +60,7 @@ public final class ExportAction extends GeneralAction {
             protected Void doInBackground() throws Exception {
                 rootPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 Thread.sleep(1000); // set to any number (5000) to see effect
-                var exportGuids = ExportAction.super.getSelectedEntities().stream().map(Entity::getGuid).toList();
+                Collection<String> exportGuids = ExportAction.super.getSelectedEntities().stream().map(Entity::getGuid).toList();
                 exportService.exportData(exportFile, exportGuids);
                 return null;
             }
