@@ -43,7 +43,7 @@ public class InMemoryRepository<T extends Entity> implements Repository<T> {
 
     @Override
     public void update(T entity) {
-        var entityOptional = findByGuid(entity.getGuid());
+        Optional entityOptional = findByGuid(entity.getGuid());
         if (entityOptional.isEmpty()) {
             throw new IllegalArgumentException("No existing entity found with given guid: " + entity.getGuid());
         }

@@ -48,7 +48,7 @@ public class Category extends Entity {
 
     @Override
     public boolean equals(Object o) {
-        if (! (o instanceof Category that)) {
+        if (!(o instanceof Category that)) {
             return false;
         }
         return this.color.equals(that.color) && this.name.equals(that.name);
